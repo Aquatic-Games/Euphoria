@@ -1,3 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using u4.Core;
 
-Console.WriteLine("Hello, World!");
+Logger.AttachConsole();
+
+Logger.Trace("Trace message.");
+Logger.Debug("Debug message.");
+Logger.Info("Info message.");
+Logger.Warn("Warning message");
+Logger.Error("Error message.");
+Logger.Fatal("Fatal message.");

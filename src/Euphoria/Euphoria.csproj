@@ -8,4 +8,8 @@
         <RootNamespace>u4</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Euphoria.Engine\Euphoria.Engine.csproj" />
+    </ItemGroup>
+
 </Project>
