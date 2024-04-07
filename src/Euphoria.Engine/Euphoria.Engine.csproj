@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>u4.Engine</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +13,10 @@
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
       <ProjectReference Include="..\Euphoria.Graphics\Euphoria.Graphics.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
     </ItemGroup>
 
 </Project>
