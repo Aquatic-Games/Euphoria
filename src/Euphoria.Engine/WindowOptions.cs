@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using u4.Graphics;
 
 namespace u4.Engine;
 
@@ -9,6 +8,4 @@ public struct WindowOptions
     public Size Size;
 
     public string Title;
-
-    public GraphicsAPI Api;
 }

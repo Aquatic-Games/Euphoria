@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Core", "src\Euphor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Math", "src\Euphoria.Math\Euphoria.Math.csproj", "{456FECB4-3F96-41A6-9DF4-4713B7EBA2FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Graphics", "src\Euphoria.Graphics\Euphoria.Graphics.csproj", "{675B43B1-2A5D-4D71-A679-A662E7800E60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Render", "src\Euphoria.Render\Euphoria.Render.csproj", "{675B43B1-2A5D-4D71-A679-A662E7800E60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Audio", "src\Euphoria.Audio\Euphoria.Audio.csproj", "{8C61DB53-F792-41D3-B81F-1A90AC0370B8}"
 EndProject

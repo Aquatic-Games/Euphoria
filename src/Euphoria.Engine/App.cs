@@ -1,9 +1,9 @@
-﻿using u4.Graphics;
+﻿using Euphoria.Render;
 
 namespace u4.Engine;
 
 public static class App
 {
     public static Window Window;
-    public static Renderer Renderer;
+    public static Graphics Graphics;
 }
