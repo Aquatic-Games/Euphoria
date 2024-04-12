@@ -2,13 +2,24 @@
 
 public class GLGraphics : Graphics
 {
+    private Action<int> _presentFunc;
+    
+    public Silk.NET.OpenGL.GL GL;
+    
+    public GLGraphics(Func<string, nint> getProcAddressFunc, Action<int> presentFunc)
+    {
+        _presentFunc = presentFunc;
+        
+        GL = Silk.NET.OpenGL.GL.GetApi(getProcAddressFunc);
+    }
+    
     public override void Present()
     {
-        throw new NotImplementedException();
+        _presentFunc(1);
     }
 
     public override void Dispose()
     {
-        throw new NotImplementedException();
+        GL.Dispose();
     }
 }

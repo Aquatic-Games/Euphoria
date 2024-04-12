@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Euphoria.Render\Euphoria.Render.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.20.0" />
+    </ItemGroup>
+
 </Project>
