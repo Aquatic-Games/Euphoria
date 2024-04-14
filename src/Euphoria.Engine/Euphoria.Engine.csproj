@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
         <RootNamespace>u4.Engine</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
@@ -11,6 +11,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Euphoria.Audio\Euphoria.Audio.csproj" />
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
+      <ProjectReference Include="..\Euphoria.Render.GL\Euphoria.Render.GL.csproj" />
       <ProjectReference Include="..\Euphoria.Render\Euphoria.Render.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
     </ItemGroup>

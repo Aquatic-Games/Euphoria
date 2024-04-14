@@ -1,4 +1,6 @@
-﻿namespace Euphoria.Render.GL;
+﻿using System;
+
+namespace Euphoria.Render.GL;
 
 public class GLGraphics : Graphics
 {

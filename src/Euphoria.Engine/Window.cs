@@ -1,15 +1,18 @@
-﻿using Silk.NET.SDL;
+﻿using System;
+using Silk.NET.SDL;
 using SdlWindow = Silk.NET.SDL.Window;
 
 namespace u4.Engine;
 
 public unsafe class Window : IDisposable
 {
+    public event OnCloseRequested CloseRequested = delegate { };
+    
     private Sdl _sdl;
     private SdlWindow* _window;
     private void* _glContext;
 
-    public Window(GraphicsOptions options)
+    public Window(in LaunchOptions options)
     {
         _sdl = Sdl.GetApi();
 
@@ -28,7 +31,40 @@ public unsafe class Window : IDisposable
             throw new Exception("Failed to create SDL window.");
 
         _glContext = _sdl.GLCreateContext(_window);
-        
+        _sdl.GLMakeCurrent(_window, _glContext);
+    }
+
+    internal void ProcessEvents()
+    {
+        Event winEvent;
+        while (_sdl.PollEvent(&winEvent) != 0)
+        {
+            switch ((EventType) winEvent.Type)
+            {
+                case EventType.Windowevent:
+                {
+                    switch ((WindowEventID) winEvent.Window.Event)
+                    {
+                        case WindowEventID.Close:
+                            CloseRequested();
+                            break;
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    internal void CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc)
+    {
+        presentFunc = i =>
+        {
+            _sdl.GLSetSwapInterval(i);
+            _sdl.GLSwapWindow(_window);
+        };
+
+        getProcAddressFunc = s => (nint) _sdl.GLGetProcAddress(s);
     }
 
     public void Dispose()
@@ -40,4 +76,6 @@ public unsafe class Window : IDisposable
         _sdl.Quit();
         _sdl.Dispose();
     }
+    
+    public delegate void OnCloseRequested();
 }

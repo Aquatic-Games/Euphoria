@@ -1,4 +1,6 @@
-﻿namespace Euphoria.Render;
+﻿using System;
+
+namespace Euphoria.Render;
 
 public abstract class Graphics : IDisposable
 {
