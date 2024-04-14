@@ -6,13 +6,15 @@ public class GLGraphics : Graphics
     
     public Silk.NET.OpenGL.GL GL;
     
+    public override RenderAPI RenderAPI => RenderAPI.OpenGL;
+    
     public GLGraphics(Func<string, nint> getProcAddressFunc, Action<int> presentFunc)
     {
         _presentFunc = presentFunc;
         
         GL = Silk.NET.OpenGL.GL.GetApi(getProcAddressFunc);
     }
-    
+
     public override void Present()
     {
         _presentFunc(1);
