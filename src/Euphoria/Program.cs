@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using u4.Core;
 using u4.Engine;
+using u4.Engine.Exceptions;
 
 Logger.AttachConsole();
 
@@ -13,4 +13,12 @@ Logger.Error("Error message.");
 Logger.Fatal("Fatal message.");
 
 LaunchOptions options = new LaunchOptions("Test", new Version(1, 0));
-App.Run(options);
+
+try
+{
+    App.Run(options);
+}
+catch (MultipleInstanceException e)
+{
+    MessageBox.Show(MessageBox.Type.Error, $"{options.WindowTitle} error", e.Message);
+}

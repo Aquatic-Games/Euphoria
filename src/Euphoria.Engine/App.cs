@@ -1,7 +1,10 @@
 ﻿using System;
 using Euphoria.Render;
 using Euphoria.Render.GL;
+using Silk.NET.SDL;
 using u4.Core;
+using u4.Engine.Exceptions;
+using Mutex = System.Threading.Mutex;
 
 namespace u4.Engine;
 
@@ -16,7 +19,12 @@ public static class App
     {
         Logger.Info($"{options.AppName} v{options.AppVersion}");
         Logger.Info("Starting up.");
-        
+
+        using Mutex lockMut = new Mutex(true, $"Global\\EE-{options.AppName}", out bool createdNew);
+
+        if (!createdNew)
+            throw new MultipleInstanceException(options.AppName);
+
         Logger.Trace("Creating window.");
         Window = new Window(options);
         Window.CloseRequested += () => IsRunning = false;
