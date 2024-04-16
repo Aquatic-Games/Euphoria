@@ -20,6 +20,7 @@ public static class App
         Logger.Info($"{options.AppName} v{options.AppVersion}");
         Logger.Info("Starting up.");
 
+        // EE = Euphoria Engine
         using Mutex lockMut = new Mutex(true, $"Global\\EE-{options.AppName}", out bool createdNew);
 
         if (!createdNew)
