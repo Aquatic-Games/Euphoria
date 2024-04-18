@@ -1,12 +1,30 @@
 ﻿using System;
+using grabs.Graphics;
 
 namespace Euphoria.Render;
 
-public abstract class Graphics : IDisposable
+public sealed class Graphics : IDisposable
 {
-    public abstract RenderAPI RenderAPI { get; }
+    private Swapchain _swapchain;
+    private Texture _swapchainTexture;
+    private Framebuffer _swapchainBuffer;
     
-    public abstract void Present();
+    public Instance Instance;
+    public Device Device;
+    public CommandList CommandList;
 
-    public abstract void Dispose();
+    public Graphics(Instance instance, Surface surface)
+    {
+        
+    }
+    
+    public void Present()
+    {
+        _swapchain.Present();
+    }
+
+    public void Dispose()
+    {
+        
+    }
 }

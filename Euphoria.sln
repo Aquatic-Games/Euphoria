@@ -12,6 +12,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Engine", "src\Euph
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria", "src\Euphoria\Euphoria.csproj", "{05BFD2B6-E566-426F-BC32-2A8C67278944}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "grabs", "grabs", "{E1164F69-7032-446A-9DA8-23D0407C58B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics", "lib\grabs\src\grabs.Graphics\grabs.Graphics.csproj", "{B6124373-549F-4A9D-8979-A48CBCB22C79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics.D3D11", "lib\grabs\src\grabs.Graphics.D3D11\grabs.Graphics.D3D11.csproj", "{2257D205-5D1F-4837-834A-9CC95405069F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.ShaderCompiler.Spirv", "lib\grabs\src\grabs.ShaderCompiler.Spirv\grabs.ShaderCompiler.Spirv.csproj", "{66F70750-0336-4DC2-92C9-5F785E7D9DB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.ShaderCompiler.DXC", "lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj", "{B2A3B319-0345-4861-9A85-2FA0463A882E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics.GL43", "lib\grabs\src\grabs.Graphics.GL43\grabs.Graphics.GL43.csproj", "{81158ABF-3FE7-4B78-BF6E-122556907D5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +54,32 @@ Global
 		{05BFD2B6-E566-426F-BC32-2A8C67278944}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05BFD2B6-E566-426F-BC32-2A8C67278944}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05BFD2B6-E566-426F-BC32-2A8C67278944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6124373-549F-4A9D-8979-A48CBCB22C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6124373-549F-4A9D-8979-A48CBCB22C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6124373-549F-4A9D-8979-A48CBCB22C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6124373-549F-4A9D-8979-A48CBCB22C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2257D205-5D1F-4837-834A-9CC95405069F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2257D205-5D1F-4837-834A-9CC95405069F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2257D205-5D1F-4837-834A-9CC95405069F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2257D205-5D1F-4837-834A-9CC95405069F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66F70750-0336-4DC2-92C9-5F785E7D9DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66F70750-0336-4DC2-92C9-5F785E7D9DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66F70750-0336-4DC2-92C9-5F785E7D9DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66F70750-0336-4DC2-92C9-5F785E7D9DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2A3B319-0345-4861-9A85-2FA0463A882E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2A3B319-0345-4861-9A85-2FA0463A882E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2A3B319-0345-4861-9A85-2FA0463A882E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2A3B319-0345-4861-9A85-2FA0463A882E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81158ABF-3FE7-4B78-BF6E-122556907D5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81158ABF-3FE7-4B78-BF6E-122556907D5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81158ABF-3FE7-4B78-BF6E-122556907D5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81158ABF-3FE7-4B78-BF6E-122556907D5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B6124373-549F-4A9D-8979-A48CBCB22C79} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
+		{2257D205-5D1F-4837-834A-9CC95405069F} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
+		{66F70750-0336-4DC2-92C9-5F785E7D9DB7} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
+		{B2A3B319-0345-4861-9A85-2FA0463A882E} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
+		{81158ABF-3FE7-4B78-BF6E-122556907D5B} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
 	EndGlobalSection
 EndGlobal
