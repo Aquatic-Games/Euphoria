@@ -6,4 +6,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="EngineContent\" />
+    </ItemGroup>
+
+    <!-- TODO: Content builder, rather than copying this out -->
+    <ItemGroup>
+        <Content Include="EngineContent\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

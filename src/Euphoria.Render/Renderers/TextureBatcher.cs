@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 using grabs.Graphics;
+using grabs.ShaderCompiler.DXC;
 using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render.Renderers;
@@ -31,13 +33,24 @@ public class TextureBatcher : IDisposable
         _vertexBuffer =
             device.CreateBuffer(new BufferDescription(BufferType.Vertex, MaxVertices * Vertex.SizeInBytes, true));
         _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, MaxIndices * sizeof(uint), true));
-        
-        
+
+        string textureShader = File.ReadAllText("EngineContent/Shaders/Texture.hlsl");
+        ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
+            Compiler.CompileToSpirV(textureShader, "Vertex", ShaderStage.Vertex), "Vertex");
+        ShaderModule pTexModule = device.CreateShaderModule(ShaderStage.Pixel,
+            Compiler.CompileToSpirV(textureShader, "Pixel", ShaderStage.Pixel), "Pixel");
+
+        _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
+        {
+            new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
+            new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
+            new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
+        }));
     }
     
     public void Dispose()
     {
-        //_pipeline.Dispose();
+        _pipeline.Dispose();
         _indexBuffer.Dispose();
         _vertexBuffer.Dispose();
     }

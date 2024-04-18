@@ -12,6 +12,7 @@
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.D3D11\grabs.Graphics.D3D11.csproj" />
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.GL43\grabs.Graphics.GL43.csproj" />
       <ProjectReference Include="..\Euphoria.Audio\Euphoria.Audio.csproj" />
+      <ProjectReference Include="..\Euphoria.Content\Euphoria.Content.csproj" />
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
       <ProjectReference Include="..\Euphoria.Render\Euphoria.Render.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />

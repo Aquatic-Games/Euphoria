@@ -12,12 +12,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics\grabs.Graphics.csproj" />
+      <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
+      <ProjectReference Include="..\Euphoria.Content\Euphoria.Content.csproj" />
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ClCompile Include="Shaders\Texture.hlsl" />
     </ItemGroup>
 
 </Project>
