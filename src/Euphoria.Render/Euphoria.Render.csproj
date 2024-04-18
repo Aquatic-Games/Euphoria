@@ -16,4 +16,8 @@
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Renderers\" />
+    </ItemGroup>
+
 </Project>

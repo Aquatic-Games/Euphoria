@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
@@ -32,12 +33,14 @@ public static class App
         Window.CloseRequested += () => IsRunning = false;
 
         Logger.Debug($"Selected API: {options.Api}");
+        string releaseConfigName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration ?? "";
+        Window.EngineTitle = $" v{options.AppVersion} {releaseConfigName.ToUpper()} - {options.Api}";
         
         switch (options.Api)
         {
             case GraphicsApi.D3D11:
                 Logger.Trace("Creating D3D11 graphics.");
-                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels);
+                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels, options.GraphicsOptions);
                 break;
             
             case GraphicsApi.OpenGL:
@@ -46,7 +49,7 @@ public static class App
                 
                 Logger.Trace("Creating GL graphics.");
                 Graphics = new Graphics(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
-                    Window.SizeInPixels);
+                    Window.SizeInPixels, options.GraphicsOptions);
                 break;
             
             default:

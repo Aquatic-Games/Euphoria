@@ -14,6 +14,9 @@ public unsafe class Window : IDisposable
     private SdlWindow* _window;
     private void* _glContext;
 
+    private string _userTitle;
+    private string _engineTitle;
+
     public Size<int> Size
     {
         get
@@ -37,8 +40,20 @@ public unsafe class Window : IDisposable
         }
     }
 
+    public string Title
+    {
+        get => _userTitle;
+        set
+        {
+            _userTitle = value;
+            _sdl.SetWindowTitle(_window, _userTitle + _engineTitle);
+        }
+    }
+
     public Window(in LaunchOptions options)
     {
+        _userTitle = options.WindowTitle;
+        
         _sdl = Sdl.GetApi();
 
         if (_sdl.Init(Sdl.InitVideo | Sdl.InitEvents) < 0)
@@ -83,6 +98,16 @@ public unsafe class Window : IDisposable
             _sdl.GetWindowWMInfo(_window, &info);
 
             return info.Info.Win.Hwnd;
+        }
+    }
+
+    internal string EngineTitle
+    {
+        get => _engineTitle;
+        set
+        {
+            _engineTitle = value;
+            _sdl.SetWindowTitle(_window, _userTitle + _engineTitle);
         }
     }
 

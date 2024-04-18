@@ -26,7 +26,6 @@ public sealed class Graphics : IDisposable
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
-
         set
         {
             _swapchain.PresentMode = value switch
@@ -39,7 +38,7 @@ public sealed class Graphics : IDisposable
         }
     }
 
-    public Graphics(Instance instance, Surface surface, Size<int> size, Adapter? adapter = null)
+    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
     {
         Instance = instance;
         Device = Instance.CreateDevice(adapter);

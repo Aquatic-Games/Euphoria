@@ -18,6 +18,8 @@ public struct LaunchOptions
 
     public GraphicsApi Api;
 
+    public GraphicsOptions GraphicsOptions;
+
     public LaunchOptions(string appName, Version appVersion)
     {
         AppName = appName;
@@ -30,5 +32,7 @@ public struct LaunchOptions
             Api = GraphicsApi.D3D11;
         else
             Api = GraphicsApi.OpenGL;
+        
+        GraphicsOptions = GraphicsOptions.Default;
     }
 }
