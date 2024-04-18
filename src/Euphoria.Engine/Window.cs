@@ -1,4 +1,5 @@
 ﻿using System;
+using grabs.Graphics;
 using Silk.NET.SDL;
 using u4.Math;
 using SdlWindow = Silk.NET.SDL.Window;
@@ -43,19 +44,46 @@ public unsafe class Window : IDisposable
         if (_sdl.Init(Sdl.InitVideo | Sdl.InitEvents) < 0)
             throw new Exception($"Failed to initialize SDL: {_sdl.GetErrorS()}");
 
-        _sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
-        _sdl.GLSetAttribute(GLattr.ContextMajorVersion, 4);
-        _sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
-        _sdl.GLSetAttribute(GLattr.AlphaSize, 0);
+        WindowFlags flags = WindowFlags.Shown;
+        
+        switch (options.Api)
+        {
+            case GraphicsApi.D3D11:
+                break;
+            case GraphicsApi.OpenGL:
+                _sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
+                _sdl.GLSetAttribute(GLattr.ContextMajorVersion, 4);
+                _sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
+                _sdl.GLSetAttribute(GLattr.AlphaSize, 0);
+
+                flags |= WindowFlags.Opengl;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         _window = _sdl.CreateWindow(options.WindowTitle, Sdl.WindowposCentered, Sdl.WindowposCentered,
-            options.WindowSize.Width, options.WindowSize.Height, (uint) WindowFlags.Opengl);
+            options.WindowSize.Width, options.WindowSize.Height, (uint) flags);
 
         if (_window == null)
             throw new Exception("Failed to create SDL window.");
 
-        _glContext = _sdl.GLCreateContext(_window);
-        _sdl.GLMakeCurrent(_window, _glContext);
+        if (options.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
+        {
+            _glContext = _sdl.GLCreateContext(_window);
+            _sdl.GLMakeCurrent(_window, _glContext);
+        }
+    }
+
+    internal nint Hwnd
+    {
+        get
+        {
+            SysWMInfo info = new SysWMInfo();
+            _sdl.GetWindowWMInfo(_window, &info);
+
+            return info.Info.Win.Hwnd;
+        }
     }
 
     internal void ProcessEvents()

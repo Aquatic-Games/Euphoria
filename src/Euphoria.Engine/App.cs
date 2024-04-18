@@ -1,6 +1,7 @@
 ﻿using System;
 using Euphoria.Render;
 using grabs.Graphics;
+using grabs.Graphics.D3D11;
 using grabs.Graphics.GL43;
 using u4.Core;
 using u4.Engine.Exceptions;
@@ -34,6 +35,11 @@ public static class App
         
         switch (options.Api)
         {
+            case GraphicsApi.D3D11:
+                Logger.Trace("Creating D3D11 graphics.");
+                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels);
+                break;
+            
             case GraphicsApi.OpenGL:
                 Logger.Trace("Creating GL context.");
                 Window.CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc);
