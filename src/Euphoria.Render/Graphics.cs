@@ -14,6 +14,31 @@ public sealed class Graphics : IDisposable
     public Device Device;
     public CommandList CommandList;
 
+    public VSyncMode VSyncMode
+    {
+        get
+        {
+            return _swapchain.PresentMode switch
+            {
+                PresentMode.Immediate => VSyncMode.Off,
+                PresentMode.VerticalSync => VSyncMode.VSync,
+                PresentMode.AdaptiveSync => VSyncMode.Adaptive,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        set
+        {
+            _swapchain.PresentMode = value switch
+            {
+                VSyncMode.Off => PresentMode.Immediate,
+                VSyncMode.VSync => PresentMode.VerticalSync,
+                VSyncMode.Adaptive => PresentMode.AdaptiveSync,
+                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            };
+        }
+    }
+
     public Graphics(Instance instance, Surface surface, Size<int> size, Adapter? adapter = null)
     {
         Instance = instance;
