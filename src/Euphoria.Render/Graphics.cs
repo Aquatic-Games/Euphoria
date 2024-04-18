@@ -1,5 +1,7 @@
 ﻿using System;
+using Euphoria.Render.Renderers;
 using grabs.Graphics;
+using u4.Core;
 using u4.Math;
 
 namespace Euphoria.Render;
@@ -13,6 +15,11 @@ public sealed class Graphics : IDisposable
     public Instance Instance;
     public Device Device;
     public CommandList CommandList;
+
+    public TextureRenderer TextureRenderer;
+
+    public Renderer2D Renderer2D;
+    public Renderer3D Renderer3D;
 
     public VSyncMode VSyncMode
     {
@@ -50,6 +57,29 @@ public sealed class Graphics : IDisposable
         _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<Texture>(ref _swapchainTexture));
 
         CommandList = Device.CreateCommandList();
+        
+        Logger.Trace("Creating texture renderer.");
+        TextureRenderer = new TextureRenderer();
+        
+        Logger.Debug($"Render type: {options.RenderType}");
+
+        switch (options.RenderType)
+        {
+            case RenderType.None:
+                break;
+            case RenderType.Only2D:
+                Renderer2D = new Renderer2D();
+                break;
+            case RenderType.Only3D:
+                Renderer3D = new Renderer3D();
+                break;
+            case RenderType.Both:
+                Renderer2D = new Renderer2D();
+                Renderer3D = new Renderer3D();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
     
     public void Present()
