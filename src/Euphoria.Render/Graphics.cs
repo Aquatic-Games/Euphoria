@@ -8,18 +8,18 @@ namespace Euphoria.Render;
 
 public sealed class Graphics : IDisposable
 {
-    private Swapchain _swapchain;
-    private Texture _swapchainTexture;
-    private Framebuffer _swapchainBuffer;
+    private readonly Swapchain _swapchain;
+    private readonly Texture _swapchainTexture;
+    private readonly Framebuffer _swapchainBuffer;
     
-    public Instance Instance;
-    public Device Device;
-    public CommandList CommandList;
+    public readonly Instance Instance;
+    public readonly Device Device;
+    public readonly CommandList CommandList;
 
-    public TextureRenderer TextureRenderer;
+    public readonly TextureBatcher TextureBatcher;
 
-    public Renderer2D Renderer2D;
-    public Renderer3D Renderer3D;
+    public readonly Renderer2D Renderer2D;
+    public readonly Renderer3D Renderer3D;
 
     public VSyncMode VSyncMode
     {
@@ -59,7 +59,7 @@ public sealed class Graphics : IDisposable
         CommandList = Device.CreateCommandList();
         
         Logger.Trace("Creating texture renderer.");
-        TextureRenderer = new TextureRenderer();
+        TextureBatcher = new TextureBatcher(Device, CommandList);
         
         Logger.Debug($"Render type: {options.RenderType}");
 
@@ -89,6 +89,8 @@ public sealed class Graphics : IDisposable
 
     public void Dispose()
     {
+        TextureBatcher.Dispose();
+        
         CommandList.Dispose();
         _swapchainBuffer.Dispose();
         _swapchainTexture.Dispose();
