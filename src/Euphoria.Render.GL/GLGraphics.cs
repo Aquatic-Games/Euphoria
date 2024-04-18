@@ -1,4 +1,6 @@
 ﻿using System;
+using Silk.NET.OpenGL;
+using u4.Core;
 
 namespace Euphoria.Render.GL;
 
@@ -15,6 +17,10 @@ public class GLGraphics : Graphics
         _presentFunc = presentFunc;
         
         GL = Silk.NET.OpenGL.GL.GetApi(getProcAddressFunc);
+        
+        Logger.Info($"Renderer: {GL.GetStringS(StringName.Renderer)}");
+        Logger.Info($"Vendor: {GL.GetStringS(StringName.Vendor)}");
+        Logger.Info($"Version: {GL.GetStringS(StringName.Version)}");
     }
 
     public override void Present()

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using Euphoria.Render;
+using u4.Math;
 
 namespace u4.Engine;
 
@@ -13,7 +13,7 @@ public struct LaunchOptions
     public string WindowTitle;
     
     // TODO: Euphoria.Math.Size<T>
-    public Size WindowSize;
+    public Size<int> WindowSize;
 
     public RenderAPI API;
 
@@ -23,7 +23,7 @@ public struct LaunchOptions
         AppVersion = appVersion;
 
         WindowTitle = appName;
-        WindowSize = new Size(1280, 720);
+        WindowSize = new Size<int>(1280, 720);
         API = RenderAPI.OpenGL;
     }
 }
