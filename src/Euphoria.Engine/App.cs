@@ -1,7 +1,7 @@
 ﻿using System;
 using Euphoria.Render;
-using Euphoria.Render.GL;
-using Silk.NET.SDL;
+using grabs.Graphics;
+using grabs.Graphics.GL43;
 using u4.Core;
 using u4.Engine.Exceptions;
 using Mutex = System.Threading.Mutex;
@@ -30,17 +30,19 @@ public static class App
         Window = new Window(options);
         Window.CloseRequested += () => IsRunning = false;
 
-        Logger.Debug($"Selected API: {options.API}");
+        Logger.Debug($"Selected API: {options.Api}");
         
-        switch (options.API)
+        switch (options.Api)
         {
-            case RenderAPI.OpenGL:
+            case GraphicsApi.OpenGL:
                 Logger.Trace("Creating GL context.");
                 Window.CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc);
                 
                 Logger.Trace("Creating GL graphics.");
-                Graphics = new GLGraphics(getProcAddressFunc, presentFunc);
+                Graphics = new Graphics(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
+                    Window.SizeInPixels);
                 break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }

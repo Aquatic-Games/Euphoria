@@ -1,5 +1,6 @@
 ﻿using System;
 using Silk.NET.SDL;
+using u4.Math;
 using SdlWindow = Silk.NET.SDL.Window;
 
 namespace u4.Engine;
@@ -11,6 +12,29 @@ public unsafe class Window : IDisposable
     private Sdl _sdl;
     private SdlWindow* _window;
     private void* _glContext;
+
+    public Size<int> Size
+    {
+        get
+        {
+            int w, h;
+            _sdl.GetWindowSize(_window, &w, &h);
+
+            return new Size<int>(w, h);
+        }
+        set => _sdl.SetWindowSize(_window, value.Width, value.Height);
+    }
+
+    public Size<int> SizeInPixels
+    {
+        get
+        {
+            int w, h;
+            _sdl.GetWindowSizeInPixels(_window, &w, &h);
+
+            return new Size<int>(w, h);
+        }
+    }
 
     public Window(in LaunchOptions options)
     {
