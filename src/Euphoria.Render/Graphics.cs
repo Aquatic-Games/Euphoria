@@ -48,6 +48,13 @@ public sealed class Graphics : IDisposable
     public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
     {
         Instance = instance;
+
+        // TOO MANY ADAPTERS
+        Adapter[] adapters = Instance.EnumerateAdapters();
+        Adapter currentAdapter = adapters[adapter?.Index ?? 0];
+        Logger.Debug($"EnumerateAdapters:\n    {string.Join('\n', adapters).Replace("\n", "\n    ")}");
+        Logger.Info($"Using adapter {currentAdapter.Name}");
+        
         Device = Instance.CreateDevice(adapter);
 
         _swapchain = Device.CreateSwapchain(surface,
@@ -68,13 +75,18 @@ public sealed class Graphics : IDisposable
             case RenderType.None:
                 break;
             case RenderType.Only2D:
+                Logger.Trace("Creating 2D renderer.");
                 Renderer2D = new Renderer2D();
                 break;
             case RenderType.Only3D:
+                Logger.Trace("Creating 3D renderer.");
                 Renderer3D = new Renderer3D();
                 break;
             case RenderType.Both:
+                Logger.Trace("Creating 2D renderer.");
                 Renderer2D = new Renderer2D();
+                
+                Logger.Trace("Creating 3D renderer.");
                 Renderer3D = new Renderer3D();
                 break;
             default:

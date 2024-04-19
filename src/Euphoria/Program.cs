@@ -1,4 +1,5 @@
 ﻿using System;
+using grabs.Graphics;
 using u4.Core;
 using u4.Engine;
 using u4.Engine.Exceptions;
@@ -12,7 +13,10 @@ Logger.Warn("Warning message");
 Logger.Error("Error message.");
 Logger.Fatal("Fatal message.");
 
-LaunchOptions options = new LaunchOptions("Test", new Version(1, 0));
+LaunchOptions options = new LaunchOptions("Test", new Version(1, 0))
+{
+    //Api = GraphicsApi.OpenGL
+};
 
 try
 {

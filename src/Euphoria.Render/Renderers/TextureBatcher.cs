@@ -46,6 +46,9 @@ public class TextureBatcher : IDisposable
             new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
             new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
         }));
+        
+        vTexModule.Dispose();
+        pTexModule.Dispose();
     }
     
     public void Dispose()
