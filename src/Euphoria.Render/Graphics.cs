@@ -1,4 +1,7 @@
-﻿using System;
+﻿global using GrabsTexture = grabs.Graphics.Texture;
+
+using System;
+using System.Numerics;
 using Euphoria.Render.Renderers;
 using grabs.Graphics;
 using u4.Core;
@@ -9,8 +12,10 @@ namespace Euphoria.Render;
 public sealed class Graphics : IDisposable
 {
     private readonly Swapchain _swapchain;
-    private readonly Texture _swapchainTexture;
+    private readonly GrabsTexture _swapchainTexture;
     private readonly Framebuffer _swapchainBuffer;
+
+    private Size<int> _size;
     
     public readonly Instance Instance;
     public readonly Device Device;
@@ -49,6 +54,8 @@ public sealed class Graphics : IDisposable
     {
         Instance = instance;
 
+        _size = size;
+
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
         Adapter currentAdapter = adapters[adapter?.Index ?? 0];
@@ -61,12 +68,12 @@ public sealed class Graphics : IDisposable
             new SwapchainDescription((uint) size.Width, (uint) size.Height, presentMode: PresentMode.VerticalSync));
         _swapchainTexture = _swapchain.GetSwapchainTexture();
 
-        _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<Texture>(ref _swapchainTexture));
+        _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
 
         CommandList = Device.CreateCommandList();
         
         Logger.Trace("Creating texture renderer.");
-        TextureBatcher = new TextureBatcher(Device, CommandList);
+        TextureBatcher = new TextureBatcher(Device);
         
         Logger.Debug($"Render type: {options.RenderType}");
 
@@ -93,9 +100,35 @@ public sealed class Graphics : IDisposable
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    public Texture CreateTexture(Bitmap bitmap)
+    {
+        GrabsTexture texture =
+            Device.CreateTexture(
+                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
+                    TextureUsage.ShaderResource | TextureUsage.GenerateMips), new ReadOnlySpan<byte>(bitmap.Data));
+        
+        // TODO: Mipmaps queue to be done in present.
+        CommandList.Begin();
+        CommandList.GenerateMipmaps(texture);
+        CommandList.End();
+        Device.ExecuteCommandList(CommandList);
+
+        return new Texture(texture);
+    }
     
     public void Present()
     {
+        CommandList.Begin();
+        CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
+        
+        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, new Vector4(1.0f, 0.5f, 0.25f, 1.0f)));
+        TextureBatcher.DispatchDrawQueue(CommandList, _size);
+        CommandList.EndRenderPass();
+        
+        CommandList.End();
+        Device.ExecuteCommandList(CommandList);
+        
         _swapchain.Present();
     }
 

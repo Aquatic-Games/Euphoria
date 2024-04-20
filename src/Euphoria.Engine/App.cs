@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Reflection;
 using Euphoria.Render;
 using grabs.Graphics;
@@ -7,6 +8,7 @@ using grabs.Graphics.GL43;
 using u4.Core;
 using u4.Engine.Exceptions;
 using Mutex = System.Threading.Mutex;
+using Texture = Euphoria.Render.Texture;
 
 namespace u4.Engine;
 
@@ -57,11 +59,16 @@ public static class App
         }
 
         Logger.Trace("Entering main loop.");
+
+        Texture texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
         
         IsRunning = true;
         while (IsRunning)
         {
             Window.ProcessEvents();
+
+            Graphics.TextureBatcher.Draw(texture, new Vector2(0, 0), new Vector2(512, 0), new Vector2(0, 512),
+                new Vector2(512, 512), Vector4.One);
             
             Graphics.Present();
         }

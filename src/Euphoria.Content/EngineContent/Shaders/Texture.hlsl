@@ -22,6 +22,9 @@ cbuffer CameraMatrices : register(b0)
     float4x4 Projection;
 }
 
+Texture2D Texture  : register(t1);
+SamplerState State : register(s1);
+
 VSOutput Vertex(const in VSInput input)
 {
     VSOutput output;
@@ -37,7 +40,7 @@ PSOutput Pixel(const in VSOutput input)
 {
     PSOutput output;
 
-    output.Color = input.Tint;
+    output.Color = Texture.Sample(State, input.TexCoord) * input.Tint;
     
     return output;
 }
