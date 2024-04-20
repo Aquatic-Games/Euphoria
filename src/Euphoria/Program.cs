@@ -1,5 +1,6 @@
 ﻿using System;
 using grabs.Graphics;
+using u4;
 using u4.Core;
 using u4.Engine;
 using u4.Engine.Exceptions;
@@ -20,7 +21,7 @@ LaunchOptions options = new LaunchOptions("Test", new Version(1, 0))
 
 try
 {
-    App.Run(options);
+    App.Run(options, new TestApp());
 }
 catch (MultipleInstanceException e)
 {

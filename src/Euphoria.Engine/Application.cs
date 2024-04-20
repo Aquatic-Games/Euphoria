@@ -1,6 +1,18 @@
-﻿namespace u4.Engine;
+﻿using System;
+using Euphoria.Render;
 
-public class Application
+namespace u4.Engine;
+
+public class Application : IDisposable
 {
+    public Window Window => App.Window;
+    public Graphics Graphics => App.Graphics;
     
+    public virtual void Initialize() { }
+
+    public virtual void Update(float dt) { }
+
+    public virtual void Draw() { }
+
+    public virtual void Dispose() { }
 }

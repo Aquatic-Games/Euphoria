@@ -14,12 +14,14 @@ namespace u4.Engine;
 
 public static class App
 {
+    public static Application Application;
+    
     public static Window Window;
     public static Graphics Graphics;
 
     public static bool IsRunning;
 
-    public static void Run(in LaunchOptions options)
+    public static void Run(in LaunchOptions options, Application application = null)
     {
         Logger.Info($"{options.AppName} v{options.AppVersion}");
         Logger.Info("Starting up.");
@@ -29,6 +31,8 @@ public static class App
 
         if (!createdNew)
             throw new MultipleInstanceException(options.AppName);
+
+        Application = application ?? new Application();
 
         Logger.Trace("Creating window.");
         Window = new Window(options);
@@ -57,21 +61,19 @@ public static class App
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
+        Logger.Debug("Initializing user code.");
+        Application.Initialize();
 
         Logger.Trace("Entering main loop.");
-
-        Texture texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
         
         IsRunning = true;
         while (IsRunning)
         {
             Window.ProcessEvents();
-
-            Graphics.TextureBatcher.Draw(texture, new Vector2(0), Vector4.One);
-            Graphics.TextureBatcher.Draw(texture, new Vector2(50), Vector4.One);
-            Graphics.TextureBatcher.Draw(texture, new Vector2(100), Vector4.One);
-            Graphics.TextureBatcher.Draw(texture, new Vector2(150), Vector4.One);
-            Graphics.TextureBatcher.Draw(texture, new Vector2(200), Vector4.One);
+            
+            Application.Update(1f / 60f);
+            Application.Draw();
             
             Graphics.Present();
         }
