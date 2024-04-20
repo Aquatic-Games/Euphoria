@@ -71,6 +71,18 @@ public class TextureBatcher : IDisposable
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
     }
 
+    public void Draw(Texture texture, Vector2 position, Vector4 tint)
+    {
+        Size<int> size = texture.Size;
+
+        Vector2 topLeft = position;
+        Vector2 topRight = position + new Vector2(size.Width, 0);
+        Vector2 bottomLeft = position + new Vector2(0, size.Height);
+        Vector2 bottomRight = position + new Vector2(size.Width, size.Height);
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
+    }
+
     internal void DispatchDrawQueue(CommandList cl, Size<int> viewportSize)
     {
         cl.UpdateBuffer(_transformBuffer, 0,
@@ -129,7 +141,7 @@ public class TextureBatcher : IDisposable
         cl.SetIndexBuffer(_indexBuffer, Format.R32_UInt);
         
         cl.SetConstantBuffer(0, _transformBuffer);
-        cl.SetTexture(1, texture.ApiTexture);
+        cl.SetTexture(1, texture.GTexture);
         
         cl.DrawIndexed(drawCount * NumIndices);
     }

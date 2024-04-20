@@ -1,18 +1,22 @@
 ﻿using System;
+using u4.Math;
 
 namespace Euphoria.Render;
 
 public class Texture : IDisposable
 {
-    public GrabsTexture ApiTexture;
+    internal readonly GrabsTexture GTexture;
 
-    public Texture(GrabsTexture apiTexture)
+    public readonly Size<int> Size;
+
+    internal Texture(GrabsTexture gTexture, Size<int> size)
     {
-        ApiTexture = apiTexture;
+        GTexture = gTexture;
+        Size = size;
     }
 
     public void Dispose()
     {
-        ApiTexture.Dispose();
+        GTexture.Dispose();
     }
 }

@@ -67,10 +67,16 @@ public static class App
         {
             Window.ProcessEvents();
 
-            Graphics.TextureBatcher.Draw(texture, new Vector2(0, 0), new Vector2(512, 0), new Vector2(0, 512),
-                new Vector2(512, 512), Vector4.One);
+            Graphics.TextureBatcher.Draw(texture, new Vector2(0), Vector4.One);
+            Graphics.TextureBatcher.Draw(texture, new Vector2(50), Vector4.One);
+            Graphics.TextureBatcher.Draw(texture, new Vector2(100), Vector4.One);
+            Graphics.TextureBatcher.Draw(texture, new Vector2(150), Vector4.One);
+            Graphics.TextureBatcher.Draw(texture, new Vector2(200), Vector4.One);
             
             Graphics.Present();
         }
+        
+        Graphics.Dispose();
+        Window.Dispose();
     }
 }

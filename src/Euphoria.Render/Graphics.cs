@@ -17,9 +17,9 @@ public sealed class Graphics : IDisposable
 
     private Size<int> _size;
     
-    public readonly Instance Instance;
-    public readonly Device Device;
-    public readonly CommandList CommandList;
+    internal readonly Instance Instance;
+    internal readonly Device Device;
+    internal readonly CommandList CommandList;
 
     public readonly TextureBatcher TextureBatcher;
 
@@ -114,7 +114,7 @@ public sealed class Graphics : IDisposable
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
 
-        return new Texture(texture);
+        return new Texture(texture, bitmap.Size);
     }
     
     public void Present()
