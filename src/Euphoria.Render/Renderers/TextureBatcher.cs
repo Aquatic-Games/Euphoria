@@ -70,6 +70,19 @@ public class TextureBatcher : IDisposable
     {
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
     }
+    
+    public void Draw(Texture texture, Vector2 position, Vector4 tint, float rotation, Vector2 scale, Vector2 origin)
+    {
+        Size<int> size = texture.Size;
+        Matrix4x4 transformMatrix = Matrix4x4.CreateRotationZ(rotation);
+
+        Vector2 topLeft = Vector2.Transform(-origin * scale, transformMatrix) + position;
+        Vector2 topRight = Vector2.Transform((-origin + new Vector2(size.Width, 0)) * scale, transformMatrix) + position;
+        Vector2 bottomLeft = Vector2.Transform((-origin + new Vector2(0, size.Height)) * scale, transformMatrix) + position;
+        Vector2 bottomRight = Vector2.Transform((-origin + new Vector2(size.Width, size.Height)) * scale, transformMatrix) + position;
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
+    }
 
     public void Draw(Texture texture, Vector2 position, Vector4 tint)
     {

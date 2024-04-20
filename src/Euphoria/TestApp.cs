@@ -27,6 +27,6 @@ public class TestApp : Application
     {
         base.Draw();
         
-        Graphics.TextureBatcher.Draw(_texture, new Vector2(float.Sin(_value * 4) * 200 + 200, 50), Vector4.One);
+        Graphics.TextureBatcher.Draw(_texture, new Vector2(100), Vector4.One, _value, Vector2.One, Vector2.Zero);
     }
 }
