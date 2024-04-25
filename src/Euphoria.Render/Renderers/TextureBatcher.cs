@@ -66,12 +66,12 @@ public class TextureBatcher : IDisposable
         _drawQueue = new List<DrawQueueItem>();
     }
 
-    public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector4 tint)
+    public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint)
     {
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
     }
     
-    public void Draw(Texture texture, Vector2 position, Vector4 tint, float rotation, Vector2 scale, Vector2 origin)
+    public void Draw(Texture texture, Vector2 position, Color tint, float rotation, Vector2 scale, Vector2 origin)
     {
         Size<int> size = texture.Size;
         Matrix4x4 transformMatrix = Matrix4x4.CreateRotationZ(rotation);
@@ -84,7 +84,7 @@ public class TextureBatcher : IDisposable
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint));
     }
 
-    public void Draw(Texture texture, Vector2 position, Vector4 tint)
+    public void Draw(Texture texture, Vector2 position, Color tint)
     {
         Size<int> size = texture.Size;
 
@@ -172,9 +172,9 @@ public class TextureBatcher : IDisposable
     {
         public readonly Vector2 Position;
         public readonly Vector2 TexCoord;
-        public readonly Vector4 Tint;
+        public readonly Color Tint;
 
-        public Vertex(Vector2 position, Vector2 texCoord, Vector4 tint)
+        public Vertex(Vector2 position, Vector2 texCoord, Color tint)
         {
             Position = position;
             TexCoord = texCoord;
@@ -191,9 +191,9 @@ public class TextureBatcher : IDisposable
         public readonly Vector2 TopRight;
         public readonly Vector2 BottomLeft;
         public readonly Vector2 BottomRight;
-        public readonly Vector4 Tint;
+        public readonly Color Tint;
 
-        public DrawQueueItem(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector4 tint)
+        public DrawQueueItem(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint)
         {
             Texture = texture;
             TopLeft = topLeft;
