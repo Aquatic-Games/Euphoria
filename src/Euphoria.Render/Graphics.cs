@@ -122,7 +122,9 @@ public sealed class Graphics : IDisposable
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         
-        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, new Vector4(1.0f, 0.5f, 0.25f, 1.0f)));
+        Renderer2D.DispatchRender(CommandList, _swapchainBuffer);
+        
+        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         

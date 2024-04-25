@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Euphoria.Render;
+using Euphoria.Render.Renderers;
 using u4.Engine;
 using u4.Math;
 
@@ -27,6 +28,8 @@ public class TestApp : Application
     public override void Draw()
     {
         base.Draw();
+        
+        Graphics.Renderer2D.DrawSprite(new Sprite(_texture, new Vector3(0, 0, 0)));
         
         Graphics.TextureBatcher.Draw(_texture, new Vector2(100), Color.White, _value, Vector2.One, Vector2.Zero);
     }
