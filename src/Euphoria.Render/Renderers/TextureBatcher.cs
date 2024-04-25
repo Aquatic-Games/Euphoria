@@ -10,7 +10,7 @@ using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render.Renderers;
 
-public class TextureBatcher : IDisposable
+public sealed class TextureBatcher : IDisposable
 {
     public const uint MaxBatchSize = 2048;
 
@@ -19,8 +19,6 @@ public class TextureBatcher : IDisposable
 
     private const uint MaxVertices = NumVertices * MaxBatchSize;
     private const uint MaxIndices = NumIndices * MaxBatchSize;
-
-    private Device _device;
 
     private Vertex[] _vertices;
     private uint[] _indices;
@@ -36,8 +34,6 @@ public class TextureBatcher : IDisposable
 
     public TextureBatcher(Device device)
     {
-        _device = device;
-
         _vertices = new Vertex[MaxVertices];
         _indices = new uint[MaxIndices];
 

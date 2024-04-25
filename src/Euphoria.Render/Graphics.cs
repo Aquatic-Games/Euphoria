@@ -83,7 +83,7 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Only2D:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D();
+                Renderer2D = new Renderer2D(Device, size);
                 break;
             case RenderType.Only3D:
                 Logger.Trace("Creating 3D renderer.");
@@ -91,7 +91,7 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Both:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D();
+                Renderer2D = new Renderer2D(Device, size);
                 
                 Logger.Trace("Creating 3D renderer.");
                 Renderer3D = new Renderer3D();
@@ -134,6 +134,8 @@ public sealed class Graphics : IDisposable
 
     public void Dispose()
     {
+        // TODO Renderer3D?.Dispose();
+        Renderer2D?.Dispose();
         TextureBatcher.Dispose();
         
         CommandList.Dispose();
