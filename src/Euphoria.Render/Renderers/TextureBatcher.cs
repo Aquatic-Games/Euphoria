@@ -118,8 +118,8 @@ public sealed class TextureBatcher : IDisposable
         IEnumerable<DrawQueueItem> drawQueue = sortMode switch
         {
             SortMode.Ignore => _drawQueue,
-            SortMode.LowestFirst => _drawQueue.OrderBy(item => item.SortIndex),
-            SortMode.HighestFirst => _drawQueue.OrderByDescending(item => item.SortIndex),
+            SortMode.LowestFirst => _drawQueue.OrderByDescending(item => item.SortIndex),
+            SortMode.HighestFirst => _drawQueue.OrderBy(item => item.SortIndex),
             _ => throw new ArgumentOutOfRangeException(nameof(sortMode), sortMode, null)
         };
 

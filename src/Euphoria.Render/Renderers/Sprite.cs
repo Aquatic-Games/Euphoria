@@ -25,7 +25,7 @@ public struct Sprite
     public Sprite(Texture texture, Vector3 position, float rotation)
     {
         Texture = texture;
-        World = Matrix3x2.CreateRotation(rotation) *
+        World = Matrix3x2.CreateRotation(-rotation) *
                 Matrix3x2.CreateTranslation(position.X, position.Y);
         ZIndex = position.Z;
     }

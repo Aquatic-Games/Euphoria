@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics.GL43", "lib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Content", "src\Euphoria.Content\Euphoria.Content.csproj", "{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "epcon", "epcon\epcon.csproj", "{6F0F27E4-84CC-476B-ADDB-690BF3A45C84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0F27E4-84CC-476B-ADDB-690BF3A45C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0F27E4-84CC-476B-ADDB-690BF3A45C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0F27E4-84CC-476B-ADDB-690BF3A45C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0F27E4-84CC-476B-ADDB-690BF3A45C84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B6124373-549F-4A9D-8979-A48CBCB22C79} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
