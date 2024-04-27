@@ -7,5 +7,7 @@ public interface IContentItem
     /// </summary>
     public static abstract string ItemType { get; }
     
-    public string Name { get; }
+    public string Name { get; set; }
+    
+    public bool Validate();
 }
