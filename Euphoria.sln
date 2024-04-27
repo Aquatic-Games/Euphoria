@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.ShaderCompiler.DXC", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics.GL43", "lib\grabs\src\grabs.Graphics.GL43\grabs.Graphics.GL43.csproj", "{81158ABF-3FE7-4B78-BF6E-122556907D5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Content", "src\Euphoria.Content\Euphoria.Content.csproj", "{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.ContentBuilder", "src\Euphoria.ContentBuilder\Euphoria.ContentBuilder.csproj", "{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "epcon", "epcon", "{66F635BF-637A-4C08-ABA3-8C3F17A195EC}"
 EndProject

@@ -7,4 +7,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Euphoria.ContentBuilder\Euphoria.ContentBuilder.csproj" />
+    </ItemGroup>
+
 </Project>
