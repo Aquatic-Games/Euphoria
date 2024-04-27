@@ -4,7 +4,10 @@
   "Items": [
     {
       "Type": "shader",
-      "Name": "ASDASDASDASDASDASD"
+      "Name": "Shaders/Texture",
+      "Path": "C:\\Users\\ollie\\Documents\\C#\\Euphoria\\src\\Euphoria.ContentBuilder\\EngineContent\\Shaders\\Texture.hlsl",
+      "VEntry": "Vertex",
+      "PEntry": "Pixel"
     }
   ]
 }

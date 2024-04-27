@@ -16,5 +16,8 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
+    </ItemGroup>
 
 </Project>

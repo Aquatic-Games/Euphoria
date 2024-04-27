@@ -10,10 +10,10 @@ using Newtonsoft.Json;
 
 Console.WriteLine("EPCON content manager.");
 
-string contentFile = File.ReadAllText(args[0]);
+string contentFile = args[0];
 Console.WriteLine($"Processing file {contentFile}");
 
-ContentFile file = JsonConvert.DeserializeObject<ContentFile>(contentFile);
+ContentFile file = JsonConvert.DeserializeObject<ContentFile>(File.ReadAllText(contentFile));
 
 Assembly contentBuilderAssembly = Assembly.GetAssembly(typeof(Builder));
 
@@ -71,3 +71,5 @@ ContentInfo info = new ContentInfo()
 Console.WriteLine("Initializing builder.");
 
 Builder builder = new Builder(info);
+Console.WriteLine("Building.");
+builder.Build();
