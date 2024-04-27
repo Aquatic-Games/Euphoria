@@ -2,9 +2,10 @@
   "OutDir": "bin/Debug/net8.0/Content",
   "Items": [
     {
-      "Type": "image",
+      "Type": "dds",
       "Name": "testdds",
-      "Path": "C:\\Users\\ollie\\Pictures\\final_place.png"
+      "Path": "C:\\Users\\ollie\\Pictures\\awesomeface.png",
+      "Format": "BC7_UNorm"
     }
   ]
 }

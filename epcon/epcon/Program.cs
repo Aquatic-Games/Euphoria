@@ -54,7 +54,10 @@ foreach (Dictionary<string, object> itemJson in file.Items)
         if (property == null)
             throw new Exception($"Could not find property with name \"{key}\".");
 
-        property.SetValue(item, value);
+        if (property.PropertyType.IsEnum)
+            property.SetValue(item, Enum.Parse(property.PropertyType, (string) value, true));
+        else
+            property.SetValue(item, value);
     }
     
     items.Add(item);

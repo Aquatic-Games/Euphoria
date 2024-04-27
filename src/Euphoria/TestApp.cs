@@ -20,7 +20,7 @@ public class TestApp : Application
         base.Initialize();
 
         _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
-        _texture2 = Graphics.CreateTexture(new Bitmap(File.ReadAllBytes("Content/testdds.bin"), new Size<int>(2000, 2000), Format.BC7_UNorm));
+        _texture2 = Graphics.CreateTexture(new Bitmap(File.ReadAllBytes("Content/testdds.bin"), new Size<int>(512, 512), Format.BC7_UNorm));
     }
 
     public override void Update(float dt)
