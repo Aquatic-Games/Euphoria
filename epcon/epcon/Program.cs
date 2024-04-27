@@ -11,9 +11,14 @@ using Newtonsoft.Json;
 Console.WriteLine("EPCON content manager.");
 
 string contentFile = args[0];
-Console.WriteLine($"Processing file {contentFile}");
 
+Console.WriteLine($"Processing file {contentFile}");
 ContentFile file = JsonConvert.DeserializeObject<ContentFile>(File.ReadAllText(contentFile));
+file.Items ??= [];
+
+string contentFileLoc = Path.GetDirectoryName(contentFile);
+string outDir = Path.Combine(contentFileLoc, file.OutDir);
+Console.WriteLine($"Full output path: {outDir}");
 
 Assembly contentBuilderAssembly = Assembly.GetAssembly(typeof(Builder));
 
@@ -59,7 +64,7 @@ Console.WriteLine("Creating content info.");
 
 ContentInfo info = new ContentInfo()
 {
-    OutputDirectory = file.OutputDir,
+    OutputDirectory = outDir,
     Items = items.ToArray()
 };
 

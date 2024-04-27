@@ -21,6 +21,8 @@ public sealed class Graphics : IDisposable
     internal readonly Device Device;
     internal readonly CommandList CommandList;
 
+    internal readonly string ShaderLocation;
+
     public readonly TextureBatcher TextureBatcher;
 
     public readonly Renderer2D Renderer2D;
@@ -50,11 +52,13 @@ public sealed class Graphics : IDisposable
         }
     }
 
-    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
+    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, string shaderLocation, Adapter? adapter = null)
     {
         Instance = instance;
 
         _size = size;
+
+        ShaderLocation = shaderLocation;
 
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
@@ -73,7 +77,7 @@ public sealed class Graphics : IDisposable
         CommandList = Device.CreateCommandList();
         
         Logger.Trace("Creating texture renderer.");
-        TextureBatcher = new TextureBatcher(Device);
+        TextureBatcher = new TextureBatcher(Device, ShaderLocation);
         
         Logger.Debug($"Render type: {options.RenderType}");
 
@@ -83,7 +87,7 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Only2D:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size);
+                Renderer2D = new Renderer2D(Device, size, ShaderLocation);
                 break;
             case RenderType.Only3D:
                 Logger.Trace("Creating 3D renderer.");
@@ -91,7 +95,7 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Both:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size);
+                Renderer2D = new Renderer2D(Device, size, ShaderLocation);
                 
                 Logger.Trace("Creating 3D renderer.");
                 Renderer3D = new Renderer3D();

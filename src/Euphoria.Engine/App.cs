@@ -41,12 +41,16 @@ public static class App
         Logger.Debug($"Selected API: {options.Api}");
         string releaseConfigName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration ?? "";
         Window.EngineTitle = $" v{options.AppVersion} {releaseConfigName.ToUpper()} - {options.Api}";
+
+        // TODO: This is temporary. The graphics system should have integration with the content manager.
+        const string shaderLocation = "Content/Shaders";
         
         switch (options.Api)
         {
             case GraphicsApi.D3D11:
                 Logger.Trace("Creating D3D11 graphics.");
-                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels, options.GraphicsOptions);
+                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels,
+                    options.GraphicsOptions, shaderLocation);
                 break;
             
             case GraphicsApi.OpenGL:
@@ -55,7 +59,7 @@ public static class App
                 
                 Logger.Trace("Creating GL graphics.");
                 Graphics = new Graphics(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
-                    Window.SizeInPixels, options.GraphicsOptions);
+                    Window.SizeInPixels, options.GraphicsOptions, shaderLocation);
                 break;
             
             default:

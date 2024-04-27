@@ -33,7 +33,7 @@ public sealed class TextureBatcher : IDisposable
 
     private List<DrawQueueItem> _drawQueue;
 
-    public TextureBatcher(Device device)
+    public TextureBatcher(Device device, string shaderLocation)
     {
         _vertices = new Vertex[MaxVertices];
         _indices = new uint[MaxIndices];
@@ -44,11 +44,10 @@ public sealed class TextureBatcher : IDisposable
 
         _transformBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
         
-        string textureShader = File.ReadAllText("EngineContent/Shaders/Texture.hlsl");
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
-            Compiler.CompileToSpirV(textureShader, "Vertex", ShaderStage.Vertex, true), "Vertex");
+            File.ReadAllBytes(Path.Combine(shaderLocation, "Texture_v.spv")), "Vertex");
         ShaderModule pTexModule = device.CreateShaderModule(ShaderStage.Pixel,
-            Compiler.CompileToSpirV(textureShader, "Pixel", ShaderStage.Pixel, true), "Pixel");
+            File.ReadAllBytes(Path.Combine(shaderLocation, "Texture_p.spv")), "Pixel");
 
         _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
         {

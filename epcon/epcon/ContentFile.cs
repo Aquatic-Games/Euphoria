@@ -4,7 +4,7 @@ namespace epcon;
 
 public class ContentFile
 {
-    public string OutputDir;
+    public string OutDir;
 
     public Dictionary<string, object>[] Items;
 }

@@ -15,10 +15,10 @@ public sealed class Renderer2D : IDisposable
 
     public CameraInfo Camera;
 
-    public Renderer2D(Device device, Size<int> size)
+    public Renderer2D(Device device, Size<int> size, string shaderLocation)
     {
         _size = size;
-        _batcher = new TextureBatcher(device);
+        _batcher = new TextureBatcher(device, shaderLocation);
         
         ColorTexture = device.CreateTexture(TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1,
             Format.R8G8B8A8_UNorm, TextureUsage.Framebuffer | TextureUsage.ShaderResource));
