@@ -15,9 +15,5 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-    
-    <ItemGroup>
-      <ClCompile Include="EngineContent\Test.hlsl" />
-    </ItemGroup>
 
 </Project>
