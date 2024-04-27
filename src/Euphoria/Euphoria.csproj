@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\epcon\epcon.Task\epcon.Task.csproj" />
       <ProjectReference Include="..\Euphoria.Engine\Euphoria.Engine.csproj" />
     </ItemGroup>
 
