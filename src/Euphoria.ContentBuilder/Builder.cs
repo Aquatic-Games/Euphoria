@@ -8,7 +8,7 @@ using Euphoria.ContentBuilder.Processors;
 
 namespace Euphoria.ContentBuilder;
 
-public class Builder
+public class Builder : IDisposable
 {
     private ContentInfo _info;
     private Dictionary<Type, ContentProcessorBase> _processors;
@@ -79,5 +79,11 @@ public class Builder
         }
         
         Console.WriteLine("Build complete.");
+    }
+
+    public void Dispose()
+    {
+        foreach ((_, ContentProcessorBase processor) in _processors)
+            processor.Dispose();
     }
 }

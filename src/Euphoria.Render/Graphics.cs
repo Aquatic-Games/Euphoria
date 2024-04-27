@@ -109,14 +109,14 @@ public sealed class Graphics : IDisposable
     {
         GrabsTexture texture =
             Device.CreateTexture(
-                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
-                    TextureUsage.ShaderResource | TextureUsage.GenerateMips), new ReadOnlySpan<byte>(bitmap.Data));
+                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 1, bitmap.Format,
+                    TextureUsage.ShaderResource), new ReadOnlySpan<byte>(bitmap.Data));
         
         // TODO: Mipmaps queue to be done in present.
-        CommandList.Begin();
+        /*CommandList.Begin();
         CommandList.GenerateMipmaps(texture);
         CommandList.End();
-        Device.ExecuteCommandList(CommandList);
+        Device.ExecuteCommandList(CommandList);*/
 
         return new Texture(texture, bitmap.Size);
     }

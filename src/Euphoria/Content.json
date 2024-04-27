@@ -1,3 +1,10 @@
 ﻿{
-  "OutDir": "bin/Debug/net8.0/Content"
+  "OutDir": "bin/Debug/net8.0/Content",
+  "Items": [
+    {
+      "Type": "image",
+      "Name": "testdds",
+      "Path": "C:\\Users\\ollie\\Pictures\\final_place.png"
+    }
+  ]
 }

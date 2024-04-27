@@ -1,8 +1,11 @@
-﻿using System.Numerics;
+﻿using System.IO;
+using System.Numerics;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
+using grabs.Graphics;
 using u4.Engine;
 using u4.Math;
+using Texture = Euphoria.Render.Texture;
 
 namespace u4;
 
@@ -17,7 +20,7 @@ public class TestApp : Application
         base.Initialize();
 
         _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
-        _texture2 = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\freef.png"));
+        _texture2 = Graphics.CreateTexture(new Bitmap(File.ReadAllBytes("Content/testdds.bin"), new Size<int>(2000, 2000), Format.BC7_UNorm));
     }
 
     public override void Update(float dt)
@@ -35,5 +38,6 @@ public class TestApp : Application
         Graphics.Renderer2D.DrawSprite(new Sprite(_texture2, new Vector3(0, 0, 0), _value * 0.5f));
         
         Graphics.TextureBatcher.Draw(_texture, new Vector2(100), Color.White, _value, Vector2.One, Vector2.Zero);
+        Graphics.TextureBatcher.Draw(_texture2, new Vector2(0), Color.White);
     }
 }

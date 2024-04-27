@@ -70,6 +70,6 @@ ContentInfo info = new ContentInfo()
 
 Console.WriteLine("Initializing builder.");
 
-Builder builder = new Builder(info);
+using Builder builder = new Builder(info);
 Console.WriteLine("Building.");
 builder.Build();

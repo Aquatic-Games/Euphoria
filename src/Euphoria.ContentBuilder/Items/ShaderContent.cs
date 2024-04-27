@@ -14,6 +14,6 @@ public struct ShaderContent : IContentItem
     
     public bool Validate()
     {
-        return Name != null;
+        return Name != null && Path != null && VEntry != null && PEntry != null;
     }
 }
