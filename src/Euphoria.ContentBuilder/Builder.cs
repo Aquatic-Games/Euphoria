@@ -42,8 +42,30 @@ public class Builder
     public void Build()
     {
         Console.WriteLine("Beginning build.");
+
+        List<IContentItemBase> contentItems = new List<IContentItemBase>(_info.Items);
         
-        foreach (IContentItem item in _info.Items)
+        Console.WriteLine("Adding engine content to build queue.");
+        string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        path = Path.Combine(path, "EngineContent");
+
+        foreach (string file in Directory.GetFiles(path, "*.hlsl", SearchOption.AllDirectories))
+        {
+            string relativeDir = Path.GetDirectoryName(Path.GetRelativePath(path, file))?.Replace('\\', '/');
+            string fileName = Path.GetFileNameWithoutExtension(file);
+
+            string name = relativeDir == null ? fileName : $"{relativeDir}/{fileName}";
+            
+            contentItems.Add(new ShaderContent()
+            {
+                Name = name,
+                Path = file,
+                VEntry = "Vertex",
+                PEntry = "Pixel"
+            });
+        }
+        
+        foreach (IContentItemBase item in contentItems)
         {
             Console.WriteLine($"Building item \"{item.Name}\"");
 

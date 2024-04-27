@@ -7,17 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="EngineContent\" />
+        <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
     </ItemGroup>
-
-    <!-- TODO: Content builder, rather than copying this out -->
+    
     <ItemGroup>
         <Content Include="EngineContent\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+    
     <ItemGroup>
-      <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
+      <ClCompile Include="EngineContent\Test.hlsl" />
     </ItemGroup>
 
 </Project>

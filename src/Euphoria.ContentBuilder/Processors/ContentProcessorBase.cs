@@ -4,5 +4,5 @@ namespace Euphoria.ContentBuilder.Processors;
 
 public abstract class ContentProcessorBase
 {
-    public abstract void Process(IContentItem item, string name, string outDir);
+    public abstract void Process(IContentItemBase item, string name, string outDir);
 }

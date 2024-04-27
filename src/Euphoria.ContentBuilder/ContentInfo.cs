@@ -6,5 +6,5 @@ public class ContentInfo
 {
     public string OutputDirectory;
 
-    public IContentItem[] Items;
+    public IContentItemBase[] Items;
 }

@@ -29,7 +29,7 @@ foreach (Type type in contentBuilderAssembly.GetTypes().Where(type => type.IsAss
 }
 
 Console.WriteLine("Creating content items from JSON.");
-List<object> items = new List<object>();
+List<IContentItemBase> items = new List<IContentItemBase>();
 
 foreach (Dictionary<string, object> itemJson in file.Items)
 {
@@ -37,7 +37,7 @@ foreach (Dictionary<string, object> itemJson in file.Items)
     Console.WriteLine($"Processing \"{name}\"");
     
     Type type = contentTypes[(string) itemJson["Type"]];
-    IContentItem item = (IContentItem) Activator.CreateInstance(type);
+    IContentItemBase item = (IContentItemBase) Activator.CreateInstance(type);
     item.Name = name;
     
     foreach ((string key, object value) in itemJson)
@@ -57,15 +57,10 @@ foreach (Dictionary<string, object> itemJson in file.Items)
 
 Console.WriteLine("Creating content info.");
 
-// There's probably better ways to do this. But it works.
-IContentItem[] itemArray = new IContentItem[items.Count];
-for (int i = 0; i < itemArray.Length; i++)
-    itemArray[i] = (IContentItem) items[i];
-
 ContentInfo info = new ContentInfo()
 {
     OutputDirectory = file.OutputDir,
-    Items = itemArray
+    Items = items.ToArray()
 };
 
 Console.WriteLine("Initializing builder.");

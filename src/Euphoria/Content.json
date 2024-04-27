@@ -1,13 +1,4 @@
 ﻿{
   "OutputDir": "C:\\Users\\ollie\\Documents\\C#\\Euphoria\\src\\Euphoria\\BUILTCONTENT",
-  
-  "Items": [
-    {
-      "Type": "shader",
-      "Name": "Shaders/Texture",
-      "Path": "C:\\Users\\ollie\\Documents\\C#\\Euphoria\\src\\Euphoria.ContentBuilder\\EngineContent\\Shaders\\Texture.hlsl",
-      "VEntry": "Vertex",
-      "PEntry": "Pixel"
-    }
-  ]
+  "Items": []
 }
