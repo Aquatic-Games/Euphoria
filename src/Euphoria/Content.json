@@ -5,7 +5,7 @@
       "Type": "dds",
       "Name": "testdds",
       "Path": "C:\\Users\\ollie\\Pictures\\awesomeface.png",
-      "Format": "BC7_UNorm"
+      "Format": "BC3_UNorm"
     }
   ]
 }
