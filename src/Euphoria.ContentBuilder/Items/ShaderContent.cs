@@ -4,8 +4,6 @@ namespace Euphoria.ContentBuilder.Items;
 
 public struct ShaderContent : IContentItem
 {
-    public static string ItemType => "shader";
-    
     public string Name { get; set; }
     
     public string Path { get; set; }
@@ -36,4 +34,8 @@ public struct ShaderContent : IContentItem
 
         return ValidateResult.Success;
     }
+    
+    public static string ItemType => "shader";
+
+    public static string FileTypeBlob => "*.hlsl";
 }

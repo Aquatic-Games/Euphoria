@@ -20,4 +20,6 @@ public struct CopyContent : IContentItem
     }
 
     public static string ItemType => "copy";
+
+    public static string FileTypeBlob => "*.*";
 }

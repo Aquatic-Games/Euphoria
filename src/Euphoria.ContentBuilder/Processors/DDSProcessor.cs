@@ -5,6 +5,7 @@ using grabs.Graphics;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using StbImageSharp;
+using u4.Core;
 using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 using PixelType = Silk.NET.OpenGL.PixelType;
 
@@ -23,7 +24,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         _sdl = Sdl.GetApi();
         _gl = GL.GetApi(s => (nint) _sdl.GLGetProcAddress(s));
 
-        Console.WriteLine("Initializing SDL.");
+        Logger.Trace("Initializing SDL.");
         if (_sdl.Init(Sdl.InitVideo) < 0)
             throw new Exception("Failed to initialize SDL.");
 
@@ -31,35 +32,35 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         _sdl.GLSetAttribute(GLattr.ContextMajorVersion, 3);
         _sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
         
-        Console.WriteLine("Creating hidden SDL window.");
+        Logger.Trace("Creating hidden SDL window.");
         _window = _sdl.CreateWindow("DDSProcessor", 0, 0, 0, 0, (uint) (WindowFlags.Hidden | WindowFlags.Opengl));
 
         if (_window == null)
             throw new Exception("Failed to create window.");
 
-        Console.WriteLine("Creating GL context.");
+        Logger.Trace("Creating GL context.");
         _glContext = _sdl.GLCreateContext(_window);
         _sdl.GLMakeCurrent(_window, _glContext);
     }
     
     public override void Process(DDSContent item, string name, string outDir)
     {
-        Console.WriteLine("Loading image.");
+        Logger.Trace("Loading image.");
         using FileStream stream = File.OpenRead(item.Path);
         ImageResult result = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
         Format format = item.Format;
-        Console.WriteLine($"format: {format}");
+        Logger.Trace($"format: {format}");
         
         bool isCompressed = format is >= Format.BC1_UNorm and <= Format.BC7_UNorm_SRGB;
-        Console.WriteLine($"isCompressed: {isCompressed}");
+        Logger.Trace($"isCompressed: {isCompressed}");
         
         bool genMips = item.GenerateMips;
-        Console.WriteLine($"genMips: {genMips}");
+        Logger.Trace($"genMips: {genMips}");
         
-        Console.WriteLine("Beginning DDS texture conversion.");
+        Logger.Trace("Beginning DDS texture conversion.");
 
-        Console.WriteLine("Creating texture.");
+        Logger.Trace("Creating texture.");
         uint texture = _gl.GenTexture();
         _gl.BindTexture(TextureTarget.Texture2D, texture);
 
@@ -82,20 +83,20 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
             Format.BC7_UNorm_SRGB => InternalFormat.CompressedSrgbAlphaBptcUnorm,
             _ => throw new NotSupportedException($"Format {format} is not supported.")
         };
-        Console.WriteLine($"iFmt: {iFmt}");
+        Logger.Trace($"iFmt: {iFmt}");
 
         // Upload texture data and generate mipmaps.
         // Note that if the texture is compressed we upload the data as standard RGBA data. Reasons explained below.
         fixed (byte* pData = result.Data)
         {
-            Console.WriteLine("Uploading texture data.");
+            Logger.Trace("Uploading texture data.");
             _gl.TexImage2D(TextureTarget.Texture2D, 0, isCompressed && genMips ? InternalFormat.Rgba8 : iFmt,
                 (uint) result.Width, (uint) result.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pData);
         }
 
         if (genMips)
         {
-            Console.WriteLine("Generating mipmaps.");
+            Logger.Trace("Generating mipmaps.");
             _gl.GenerateMipmap(TextureTarget.Texture2D);
         }
 
@@ -112,8 +113,8 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         // to install another library, but I might do that at some point anyway)
         if (isCompressed && genMips)
         {
-            Console.WriteLine("Beginning uncompressed->compressed texture conversion.");
-            Console.WriteLine("Creating texture2");
+            Logger.Trace("Beginning uncompressed->compressed texture conversion.");
+            Logger.Trace("Creating texture2");
             uint texture2 = _gl.GenTexture();
             
             uint newWidth = (uint) result.Width;
@@ -124,12 +125,12 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
             {
                 fixed (byte* pData = newTexData)
                 {
-                    Console.WriteLine($"Getting uncompressed data at level {i}.");
+                    Logger.Trace($"Getting uncompressed data at level {i}.");
                     
                     _gl.BindTexture(TextureTarget.Texture2D, texture);
                     _gl.GetTexImage(TextureTarget.Texture2D, i, PixelFormat.Rgba, PixelType.UnsignedByte, pData);
                     
-                    Console.WriteLine($"Uploading uncompressed->compressed data at level {i}.");
+                    Logger.Trace($"Uploading uncompressed->compressed data at level {i}.");
                     _gl.BindTexture(TextureTarget.Texture2D, texture2);
                     _gl.TexImage2D(TextureTarget.Texture2D, i, iFmt, newWidth, newHeight, 0, PixelFormat.Rgba,
                         PixelType.UnsignedByte, pData);
@@ -139,11 +140,11 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
                 newHeight = uint.Max(1, newHeight / 2);
             }
             
-            Console.WriteLine("Deleting original texture.");
+            Logger.Trace("Deleting original texture.");
             _gl.DeleteTexture(texture);
             texture = texture2;
             
-            Console.WriteLine("Texture conversion completed.");
+            Logger.Trace("Texture conversion completed.");
         }
 
         byte[][] texData = new byte[numMips][];
@@ -151,7 +152,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         uint width = (uint) result.Width;
         uint height = (uint) result.Height;
         
-        Console.WriteLine("Beginning data export.");
+        Logger.Trace("Beginning data export.");
         
         // Get each mip level for the texture and upload it to the corresponding mip level in the byte array.
         for (int i = 0; i < numMips; i++)
@@ -169,7 +170,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
 
             fixed (byte* pData = texData[i])
             {
-                Console.WriteLine($"Getting texture data for level {i}.");
+                Logger.Trace($"Getting texture data for level {i}.");
                 if (isCompressed)
                     _gl.GetCompressedTexImage(TextureTarget.Texture2D, i, pData);
                 else
@@ -180,12 +181,12 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
             height = uint.Max(1, height / 2);
         }
 
-        Console.WriteLine("Deleting texture.");
+        Logger.Trace("Deleting texture.");
         _gl.DeleteTexture(texture);
         
-        Console.WriteLine("DDS texture conversion complete.");
+        Logger.Trace("DDS texture conversion complete.");
         
-        Console.WriteLine("Begin DDS file.");
+        Logger.Trace("Begin DDS file.");
         using MemoryStream memStream = new MemoryStream();
         using BinaryWriter writer = new BinaryWriter(memStream);
         
@@ -193,7 +194,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         writer.Write(0x20534444); // dwMagic
         
         // DDS_HEADER
-        Console.WriteLine("Writing DDS header.");
+        Logger.Trace("Writing DDS header.");
         
         writer.Write(124); // dwSize
 
@@ -223,7 +224,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         writer.Write(reserved); // dwReserved1
         
         // ---- DDS_PIXELFORMAT
-        Console.WriteLine("Writing DDS pixelformat.");
+        Logger.Trace("Writing DDS pixelformat.");
         
         writer.Write(32); // dwSize
 
@@ -283,7 +284,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         writer.Write(0x00FF0000); // dwBBitMask
         writer.Write(0xFF000000); // dwABitMask
         
-        Console.WriteLine("DDS pixelformat written successfully.");
+        Logger.Trace("DDS pixelformat written successfully.");
         // ----
 
         uint dwCaps = 0x1000;
@@ -297,13 +298,13 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         writer.Write(0); // dwCaps4
         writer.Write(0); // dwReserved2
         
-        Console.WriteLine("DDS header written successfully.");
+        Logger.Trace("DDS header written successfully.");
 
         // DDS_HEADER_DXT10
         
         if (fourCC == dx10)
         {
-            Console.WriteLine("Writing DXT10 header.");
+            Logger.Trace("Writing DXT10 header.");
             
             uint dxFormat = format switch
             {
@@ -331,19 +332,19 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
             writer.Write(1); // arraySize
             writer.Write(0x1); // miscFlags2
             
-            Console.WriteLine("DXT10 header written successfully.");
+            Logger.Trace("DXT10 header written successfully.");
         }
         
         // Write all texture data to file.
-        Console.WriteLine("Begin writing data to file.");
+        Logger.Trace("Begin writing data to file.");
         for (int i = 0; i < numMips; i++)
         {
-            Console.WriteLine($"Writing texture level {i} to file.");
+            Logger.Trace($"Writing texture level {i} to file.");
             writer.Write(texData[i]);
         }
-        Console.WriteLine("Texture data written successfully.");
+        Logger.Trace("Texture data written successfully.");
         
-        Console.WriteLine("Writing DDS to file.");
+        Logger.Trace("Writing DDS to file.");
         File.WriteAllBytes(Path.Combine(outDir, $"{name}.dds"), memStream.ToArray());
     }
 
@@ -351,7 +352,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
     {
         base.Dispose();
         
-        Console.WriteLine("Closing SDL.");
+        Logger.Trace("Closing SDL.");
         _gl.Dispose();
         _sdl.GLDeleteContext(_glContext);
         _sdl.DestroyWindow(_window);

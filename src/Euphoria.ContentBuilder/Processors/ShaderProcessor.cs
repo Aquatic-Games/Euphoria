@@ -3,6 +3,7 @@ using System.IO;
 using Euphoria.ContentBuilder.Items;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
+using u4.Core;
 
 namespace Euphoria.ContentBuilder.Processors;
 
@@ -12,13 +13,13 @@ public class ShaderProcessor : ContentProcessor<ShaderContent>
     {
         string hlsl = File.ReadAllText(item.Path);
 
-        Console.WriteLine("Compiling vertex shader.");
+        Logger.Trace("Compiling vertex shader.");
         byte[] vertSpv = Compiler.CompileToSpirV(hlsl, item.VEntry, ShaderStage.Vertex, true);
         
-        Console.WriteLine("Compiling pixel shader.");
+        Logger.Trace("Compiling pixel shader.");
         byte[] pixlSpv = Compiler.CompileToSpirV(hlsl, item.PEntry, ShaderStage.Pixel, true);
         
-        Console.WriteLine("Outputting to directory.");
+        Logger.Trace("Outputting to directory.");
         File.WriteAllBytes(Path.Combine(outDir, $"{name}_v.spv"), vertSpv);
         File.WriteAllBytes(Path.Combine(outDir, $"{name}_p.spv"), pixlSpv);
     }

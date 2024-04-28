@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Euphoria.ContentBuilder.Items;
 using Euphoria.ContentBuilder.Processors;
+using u4.Core;
 
 namespace Euphoria.ContentBuilder;
 
@@ -17,7 +18,7 @@ public class Builder : IDisposable
     {
         _info = info;
         
-        Console.WriteLine("Validating items.");
+        Logger.Info("Validating items.");
         foreach (IContentItem item in _info.Items)
         {
             ValidateResult result = item.Validate();
@@ -25,13 +26,13 @@ public class Builder : IDisposable
                 throw new Exception($"Failed to validate content item \"{item.Name}\": {result.FailureReason}");
         }
         
-        Console.WriteLine("Detecting content processors.");
+        Logger.Info("Detecting content processors.");
         _processors = new Dictionary<Type, ContentProcessorBase>();
         
         foreach (Type type in Assembly.GetExecutingAssembly().GetTypes()
                      .Where(type => type.IsAssignableTo(typeof(ContentProcessorBase)) && type.BaseType.IsGenericType))
         {
-            Console.WriteLine($"Found {type}");
+            Logger.Debug($"Found {type}");
             
             Type processorContentType = type.BaseType.GenericTypeArguments[0];
             ContentProcessorBase processor = (ContentProcessorBase) Activator.CreateInstance(type);
@@ -42,11 +43,11 @@ public class Builder : IDisposable
 
     public void Build()
     {
-        Console.WriteLine("Beginning build.");
+        Logger.Info("Beginning build.");
 
         List<IContentItemBase> contentItems = new List<IContentItemBase>(_info.Items);
         
-        Console.WriteLine("Adding engine content to build queue.");
+        Logger.Debug("Adding engine content to build queue.");
         string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         path = Path.Combine(path, "EngineContent");
 
@@ -68,7 +69,7 @@ public class Builder : IDisposable
         
         foreach (IContentItemBase item in contentItems)
         {
-            Console.WriteLine($"Building item \"{item.Name}\"");
+            Logger.Info($"Building item \"{item.Name}\"");
 
             string[] splitItemName = item.Name.Split('/');
             string itemName = splitItemName[^1];
@@ -79,7 +80,7 @@ public class Builder : IDisposable
             _processors[item.GetType()].Process(item, itemName, outDir);
         }
         
-        Console.WriteLine("Build complete.");
+        Logger.Info("Build complete.");
     }
 
     public void Dispose()

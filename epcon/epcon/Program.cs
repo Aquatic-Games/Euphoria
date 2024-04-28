@@ -7,39 +7,42 @@ using epcon;
 using Euphoria.ContentBuilder;
 using Euphoria.ContentBuilder.Items;
 using Newtonsoft.Json;
+using u4.Core;
 
-Console.WriteLine("EPCON content manager.");
+Logger.AttachConsole();
+
+Logger.Info("EPCON content manager.");
 
 string contentFile = args[0];
 
-Console.WriteLine($"Processing file {contentFile}");
+Logger.Info($"Processing file {contentFile}");
 ContentFile file = JsonConvert.DeserializeObject<ContentFile>(File.ReadAllText(contentFile));
 file.Items ??= [];
 
 string contentFileLoc = Path.GetDirectoryName(contentFile);
 string outDir = Path.Combine(contentFileLoc, file.OutDir);
-Console.WriteLine($"Full output path: {outDir}");
+Logger.Trace($"Full output path: {outDir}");
 
 Assembly contentBuilderAssembly = Assembly.GetAssembly(typeof(Builder));
 
-Console.WriteLine("Detecting available content types...");
+Logger.Info("Detecting available content types...");
 Dictionary<string, Type> contentTypes = new Dictionary<string, Type>();
 
 Type contentItemType = typeof(IContentItem);
 foreach (Type type in contentBuilderAssembly.GetTypes().Where(type => type.IsAssignableTo(contentItemType) && type != contentItemType))
 {
     string jsonTypeName = (string) type.GetProperty("ItemType", BindingFlags.Public | BindingFlags.Static).GetValue(null);
-    Console.WriteLine($"Found \"{jsonTypeName}\" ({type})");
+    Logger.Debug($"Found \"{jsonTypeName}\" ({type})");
     contentTypes.Add(jsonTypeName, type);
 }
 
-Console.WriteLine("Creating content items from JSON.");
+Logger.Info("Creating content items from JSON.");
 List<IContentItemBase> items = new List<IContentItemBase>();
 
 foreach (Dictionary<string, object> itemJson in file.Items)
 {
     string name = (string) itemJson["Name"];
-    Console.WriteLine($"Processing \"{name}\"");
+    Logger.Debug($"Processing \"{name}\"");
     
     Type type = contentTypes[(string) itemJson["Type"]];
     IContentItemBase item = (IContentItemBase) Activator.CreateInstance(type);
@@ -63,7 +66,7 @@ foreach (Dictionary<string, object> itemJson in file.Items)
     items.Add(item);
 }
 
-Console.WriteLine("Creating content info.");
+Logger.Trace("Creating content info.");
 
 ContentInfo info = new ContentInfo()
 {
@@ -71,8 +74,8 @@ ContentInfo info = new ContentInfo()
     Items = items.ToArray()
 };
 
-Console.WriteLine("Initializing builder.");
+Logger.Trace("Initializing builder.");
 
 using Builder builder = new Builder(info);
-Console.WriteLine("Building.");
+Logger.Info("Building.");
 builder.Build();

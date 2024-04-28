@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
+        <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
     </ItemGroup>
     
     <ItemGroup>

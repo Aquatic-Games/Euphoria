@@ -31,4 +31,6 @@ public struct DDSContent : IContentItem
     }
 
     public static string ItemType => "dds";
+
+    public static string FileTypeBlob => "*.png | *.jpg | *.bmp | *.tga";
 }

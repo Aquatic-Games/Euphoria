@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Euphoria.ContentBuilder.Items;
+using u4.Core;
 
 namespace Euphoria.ContentBuilder.Processors;
 
@@ -10,7 +11,7 @@ public class CopyProcessor : ContentProcessor<CopyContent>
     {
         string dest = Path.Combine(outDir, name + Path.GetExtension(item.Path));
         
-        Console.WriteLine($"Copying file {item.Path} to {dest}");
-        File.Copy(item.Path, dest);
+        Logger.Trace($"Copying file {item.Path} to {dest}");
+        File.Copy(item.Path, dest, true);
     }
 }
