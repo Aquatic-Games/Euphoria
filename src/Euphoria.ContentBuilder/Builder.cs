@@ -20,8 +20,9 @@ public class Builder : IDisposable
         Console.WriteLine("Validating items.");
         foreach (IContentItem item in _info.Items)
         {
-            if (!item.Validate())
-                throw new Exception($"Failed to validate content item \"{item.Name}\"");
+            ValidateResult result = item.Validate();
+            if (!result.Succeeded)
+                throw new Exception($"Failed to validate content item \"{item.Name}\": {result.FailureReason}");
         }
         
         Console.WriteLine("Detecting content processors.");

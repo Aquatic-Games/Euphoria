@@ -4,5 +4,5 @@ public interface IContentItemBase
 {
     public string Name { get; set; }
     
-    public bool Validate();
+    public ValidateResult Validate();
 }

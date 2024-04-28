@@ -1,23 +1,12 @@
 ﻿using System.IO;
-using grabs.Graphics;
 
 namespace Euphoria.ContentBuilder.Items;
 
-public struct DDSContent : IContentItem
+public struct CopyContent : IContentItem
 {
     public string Name { get; set; }
     
     public string Path { get; set; }
-    
-    public Format Format { get; set; }
-    
-    public bool GenerateMips { get; set; }
-
-    public DDSContent()
-    {
-        Format = Format.R8G8B8A8_UNorm;
-        GenerateMips = true;
-    }
     
     public ValidateResult Validate()
     {
@@ -30,5 +19,5 @@ public struct DDSContent : IContentItem
         return ValidateResult.Success;
     }
 
-    public static string ItemType => "dds";
+    public static string ItemType => "copy";
 }
