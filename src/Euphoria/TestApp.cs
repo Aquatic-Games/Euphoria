@@ -19,6 +19,8 @@ public class TestApp : Application
     {
         base.Initialize();
 
+        DDS dds = DDS.FromFile("Content/testdds.dds");
+
         _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
         _texture2 = Graphics.CreateTexture(new Bitmap(File.ReadAllBytes("Content/testdds.bin"), new Size<int>(512, 512), Format.R8G8B8A8_UNorm));
     }

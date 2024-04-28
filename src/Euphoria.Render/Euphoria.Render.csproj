@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,6 +16,10 @@
       <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Utilities\" />
     </ItemGroup>
 
 </Project>
