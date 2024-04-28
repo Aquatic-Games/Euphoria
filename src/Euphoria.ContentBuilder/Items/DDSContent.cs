@@ -9,10 +9,13 @@ public struct DDSContent : IContentItem
     public string Path { get; set; }
     
     public Format Format { get; set; }
+    
+    public bool GenerateMips { get; set; }
 
     public DDSContent()
     {
         Format = Format.R8G8B8A8_UNorm;
+        GenerateMips = true;
     }
     
     public bool Validate()
