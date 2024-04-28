@@ -20,9 +20,10 @@ public class TestApp : Application
         base.Initialize();
 
         DDS dds = DDS.FromFile("Content/testdds.dds");
+        //DDS dds = DDS.FromFile(@"C:\Users\ollie\Pictures\awesomeface.dds");
 
         _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
-        _texture2 = Graphics.CreateTexture(new Bitmap(File.ReadAllBytes("Content/testdds.bin"), new Size<int>(512, 512), Format.R8G8B8A8_UNorm));
+        _texture2 = Graphics.CreateTexture(dds.ImageData[0]);
     }
 
     public override void Update(float dt)

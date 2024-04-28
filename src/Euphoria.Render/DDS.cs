@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Euphoria.Render.Utilities;
+using grabs.Graphics;
+using u4.Math;
 
 namespace Euphoria.Render;
 
@@ -17,6 +20,7 @@ public class DDS
     public DDS(DDSHeader header, DDSHeaderDXT10? headerDxt10, Bitmap[] data)
     {
         Header = header;
+        HeaderDxt10 = headerDxt10;
         ImageData = data;
     }
 
@@ -44,11 +48,73 @@ public class DDS
             headerDxt10 = Unsafe.As<byte, DDSHeaderDXT10>(ref headerDxt10Bytes[0]);
         }
 
-        Bitmap[] bitmaps = new Bitmap[header.MipMapCount == 0 ? 1 : header.MipMapCount];
-        
-        
+        Format format;
+        if ((header.PixelFormat.Flags & PixelFormatFlags.FourCC) == PixelFormatFlags.FourCC)
+        {
+            format = header.PixelFormat.FourCC switch
+            {
+                KnownFourCC.DXT1 => Format.BC1_UNorm,
+                KnownFourCC.DXT3 => Format.BC2_UNorm,
+                KnownFourCC.DXT5 => Format.BC3_UNorm,
+                KnownFourCC.DX10 => Utils.DxgiFormatToGrabsFormat(headerDxt10.Value.DxgiFormat),
+                _ => throw new NotSupportedException()
+            };
+        }
+        else
+        {
+            uint rBitmask = header.PixelFormat.RBitMask;
+            uint gBitmask = header.PixelFormat.GBitMask;
+            uint bBitmask = header.PixelFormat.BBitMask;
+            uint aBitmask = header.PixelFormat.ABitMask;
+            uint rgbBitCount = header.PixelFormat.RGBBitCount;
 
-        return new DDS(header, headerDxt10, null);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            bool IsBitmask(uint r, uint g, uint b, uint a)
+                => rBitmask == r && gBitmask == g && bBitmask == b && aBitmask == a;
+
+            switch (rgbBitCount)
+            {
+                case 32:
+                {
+                    if (IsBitmask(0xFF, 0xFF00, 0xFF0000, 0xFF000000))
+                        format = Format.R8G8B8A8_UNorm;
+                    else
+                        throw new NotImplementedException();
+
+                    break;
+                }
+                
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        bool isCompressed = format is >= Format.BC1_UNorm and <= Format.BC7_UNorm_SRGB;
+
+        uint totalSize;
+        if (isCompressed)
+            totalSize = header.PitchOrLinearSize;
+        else
+            totalSize = header.PitchOrLinearSize * header.Height;
+
+        uint numMips = header.MipMapCount == 0 ? 1 : header.MipMapCount;
+        
+        Bitmap[] bitmaps = new Bitmap[numMips];
+
+        int width = (int) header.Width;
+        int height = (int) header.Height;
+        
+        for (int i = 0; i < numMips; i++)
+        {
+            bitmaps[i] = new Bitmap(reader.ReadBytes((int) totalSize), new Size<int>(width, height), format);
+
+            width = int.Max(1, width / 2);
+            height = int.Max(1, height / 2);
+
+            totalSize /= 4;
+        }
+
+        return new DDS(header, headerDxt10, bitmaps);
     }
     
     public unsafe struct DDSHeader
@@ -83,7 +149,7 @@ public class DDS
 
     public struct DDSHeaderDXT10
     {
-        public uint DxgiFormat;
+        public DxgiFormat DxgiFormat;
         public ResourceDimension ResourceDimension;
         public MiscFlags MiscFlag;
         public uint ArraySize;

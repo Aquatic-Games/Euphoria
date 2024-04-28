@@ -18,8 +18,4 @@
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Utilities\" />
-    </ItemGroup>
-
 </Project>
