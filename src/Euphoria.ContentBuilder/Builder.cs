@@ -19,7 +19,7 @@ public class Builder : IDisposable
         _info = info;
         
         Logger.Info("Validating items.");
-        foreach (IContentItem item in _info.Items)
+        foreach (IContentItemBase item in _info.Items)
         {
             ValidateResult result = item.Validate();
             if (!result.Succeeded)

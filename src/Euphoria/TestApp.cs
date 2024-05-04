@@ -22,7 +22,7 @@ public class TestApp : Application
         DDS dds = DDS.FromFile("Content/testdds.dds");
         //DDS dds = DDS.FromFile(@"C:\Users\ollie\Pictures\awesomeface.dds");
 
-        _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
+        _texture = Graphics.CreateTexture(new Bitmap("Content/agames.png"));
         _texture2 = Graphics.CreateTexture(dds.ImageData[0]);
     }
 
