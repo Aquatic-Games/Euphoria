@@ -52,7 +52,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         Format format = item.Format;
         Logger.Trace($"format: {format}");
         
-        bool isCompressed = format is >= Format.BC1_UNorm and <= Format.BC7_UNorm_SRGB;
+        bool isCompressed = format.IsCompressed();
         Logger.Trace($"isCompressed: {isCompressed}");
         
         bool genMips = item.GenerateMips;
@@ -158,15 +158,10 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         for (int i = 0; i < numMips; i++)
         {
             // TODO: I'd like to work out why I have to do *this* in particular for compressed textures.
+            // uint.Max(1, (width + 3) >> 2) * uint.Max(1, (height + 3) >> 2) * format.BitsPerPixel() * 2
             // Something in my math or understanding is wrong here.
             // But this works so it'll do for the moment. (From MS docs)
-            uint size;
-            if (isCompressed)
-                size = uint.Max(1, (width + 3) >> 2) * uint.Max(1, (height + 3) >> 2) * format.BitsPerPixel() * 2;
-            else
-                size = GrabsUtils.CalculatePitch(format, width) * height;
-            
-            texData[i] = new byte[size];
+            texData[i] = new byte[GraphicsUtils.CalculateTextureSizeInBytes(format, width, height)];
 
             fixed (byte* pData = texData[i])
             {
@@ -214,7 +209,7 @@ public unsafe class DDSProcessor : ContentProcessor<DDSContent>
         if (isCompressed)
             writer.Write(texData[0].Length);
         else
-            writer.Write(GrabsUtils.CalculatePitch(format, (uint) result.Width));
+            writer.Write(GraphicsUtils.CalculatePitch(format, (uint) result.Width));
 
         writer.Write(0); // dwDepth
         writer.Write(numMips); // dwMipMapCount;

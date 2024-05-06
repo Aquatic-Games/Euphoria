@@ -89,7 +89,7 @@ public class DDS
             }
         }
 
-        bool isCompressed = format is >= Format.BC1_UNorm and <= Format.BC7_UNorm_SRGB;
+        bool isCompressed = format.IsCompressed();
 
         uint totalSize;
         if (isCompressed)
