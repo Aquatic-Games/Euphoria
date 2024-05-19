@@ -6,6 +6,7 @@ using Euphoria.Render.Renderers;
 using grabs.Graphics;
 using u4.Core;
 using u4.Math;
+using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render;
 
@@ -120,6 +121,14 @@ public sealed class Graphics : IDisposable
 
         return new Texture(texture, bitmap.Size);
     }
+
+    public Renderable CreateRenderable(Mesh mesh)
+    {
+        Buffer vertexBuffer = Device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
+        Buffer indexBuffer = Device.CreateBuffer(BufferType.Index, mesh.Indices);
+
+        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length);
+    }
     
     public void Present()
     {
@@ -140,7 +149,7 @@ public sealed class Graphics : IDisposable
 
     public void Dispose()
     {
-        // TODO Renderer3D?.Dispose();
+        Renderer3D?.Dispose();
         Renderer2D?.Dispose();
         TextureBatcher.Dispose();
         
