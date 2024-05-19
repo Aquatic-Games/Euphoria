@@ -66,10 +66,10 @@ public sealed class Graphics : IDisposable
         Logger.Debug($"EnumerateAdapters:\n    {string.Join('\n', adapters).Replace("\n", "\n    ")}");
         Logger.Info($"Using adapter {currentAdapter.Name}");
         
-        Device = Instance.CreateDevice(adapter);
+        Device = Instance.CreateDevice(surface, adapter);
 
-        _swapchain = Device.CreateSwapchain(surface,
-            new SwapchainDescription((uint) size.Width, (uint) size.Height, presentMode: PresentMode.VerticalSync));
+        _swapchain = Device.CreateSwapchain(new SwapchainDescription((uint) size.Width, (uint) size.Height,
+            presentMode: PresentMode.VerticalSync));
         _swapchainTexture = _swapchain.GetSwapchainTexture();
 
         _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));

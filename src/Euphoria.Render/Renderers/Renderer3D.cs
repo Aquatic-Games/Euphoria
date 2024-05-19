@@ -1,6 +1,13 @@
-﻿namespace Euphoria.Render.Renderers;
+﻿using System;
 
-public class Renderer3D
+namespace Euphoria.Render.Renderers;
+
+public class Renderer3D : IDisposable
 {
-    
+    public CameraInfo Camera;
+
+    public void Dispose()
+    {
+        
+    }
 }
