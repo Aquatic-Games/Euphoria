@@ -24,6 +24,19 @@ public class Entity : IDisposable
         _hasInitialized = false;
     }
 
+    public bool TryAddComponent(Component component)
+    {
+        return _components.TryAdd(component.GetType(), component);
+    }
+
+    public void AddComponent(Component component)
+    {
+        if (!TryAddComponent(component))
+            throw new Exception($"A component with type {component.GetType()} has already been added to the entity.");
+    }
+    
+    
+
     public virtual void Initialize()
     {
         foreach ((_, Component component) in _components)
