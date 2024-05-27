@@ -4,14 +4,14 @@
     {
       "Type": "dds",
       "Name": "testdds",
-      "Path": "/home/aqua/Pictures/awesomeface.png",
+      "Path": "C:\\Users\\ollie\\Pictures\\awesomeface.png",
       "Format": "BC3_UNorm",
       "GenerateMips": true
     },
     {
       "Type": "copy",
       "Name": "agames",
-      "Path": "/home/aqua/Pictures/aquaticgamessmall.png"
+      "Path": "C:\\Users\\ollie\\Pictures\\aquaticgamessmall.png"
     }
   ]
 }
