@@ -7,4 +7,12 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Euphoria.Audio\Euphoria.Audio.csproj" />
+      <ProjectReference Include="..\..\src\Euphoria.Core\Euphoria.Core.csproj" />
+      <ProjectReference Include="..\..\src\Euphoria.Engine\Euphoria.Engine.csproj" />
+      <ProjectReference Include="..\..\src\Euphoria.Math\Euphoria.Math.csproj" />
+      <ProjectReference Include="..\..\src\Euphoria.Render\Euphoria.Render.csproj" />
+    </ItemGroup>
+
 </Project>
