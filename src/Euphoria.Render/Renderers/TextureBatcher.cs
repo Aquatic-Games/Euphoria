@@ -31,6 +31,9 @@ public sealed class TextureBatcher : IDisposable
 
     private Pipeline _pipeline;
 
+    private DescriptorSet _transformSet;
+    private DescriptorSet _textureSet;
+
     private List<DrawQueueItem> _drawQueue;
 
     public TextureBatcher(Device device, string shaderLocation)
@@ -43,6 +46,14 @@ public sealed class TextureBatcher : IDisposable
         _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, MaxIndices * sizeof(uint), true));
 
         _transformBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
+
+        DescriptorLayout transformLayout = device.CreateDescriptorLayout(
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
+                ShaderStage.Vertex)));
+
+        DescriptorLayout textureLayout = device.CreateDescriptorLayout(
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
+                ShaderStage.Pixel)));
         
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
             File.ReadAllBytes(Path.Combine(shaderLocation, "Texture_v.spv")), "Vertex");
@@ -54,10 +65,17 @@ public sealed class TextureBatcher : IDisposable
             new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
             new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
             new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
-        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise));
+        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, textureLayout]));
         
         vTexModule.Dispose();
         pTexModule.Dispose();
+
+        _transformSet =
+            device.CreateDescriptorSet(transformLayout, new DescriptorSetDescription(buffer: _transformBuffer));
+        _textureSet = device.CreateDescriptorSet(textureLayout);
+        
+        textureLayout.Dispose();
+        transformLayout.Dispose();
 
         _drawQueue = new List<DrawQueueItem>();
     }
@@ -171,8 +189,8 @@ public sealed class TextureBatcher : IDisposable
         cl.SetVertexBuffer(0, _vertexBuffer, Vertex.SizeInBytes, 0);
         cl.SetIndexBuffer(_indexBuffer, Format.R32_UInt);
         
-        cl.SetConstantBuffer(0, _transformBuffer);
-        cl.SetTexture(1, texture.GTexture);
+        cl.SetDescriptorSet(0, _transformSet);
+        cl.SetDescriptorSet(1, _textureSet);
         
         cl.DrawIndexed(drawCount * NumIndices);
     }

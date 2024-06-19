@@ -17,13 +17,13 @@ struct PSOutput
     float4 Color: SV_Target0;
 };
 
-cbuffer CameraMatrices : register(b0)
+cbuffer CameraMatrices : register(b0, space0)
 {
     float4x4 Projection;
 }
 
-Texture2D Texture  : register(t1);
-SamplerState State : register(s1);
+Texture2D Texture  : register(t1, space1);
+SamplerState State : register(s1, space1);
 
 VSOutput Vertex(const in VSInput input)
 {
