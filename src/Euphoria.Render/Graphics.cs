@@ -110,14 +110,14 @@ public sealed class Graphics : IDisposable
     {
         GrabsTexture texture =
             Device.CreateTexture(
-                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 1, bitmap.Format,
+                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
                     TextureUsage.ShaderResource), new ReadOnlySpan<byte>(bitmap.Data));
         
         // TODO: Mipmaps queue to be done in present.
-        /*CommandList.Begin();
+        CommandList.Begin();
         CommandList.GenerateMipmaps(texture);
         CommandList.End();
-        Device.ExecuteCommandList(CommandList);*/
+        Device.ExecuteCommandList(CommandList);
 
         return new Texture(texture, bitmap.Size);
     }
@@ -135,10 +135,10 @@ public sealed class Graphics : IDisposable
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         
-        Renderer2D.DispatchRender(CommandList, _swapchainBuffer);
+        Renderer2D.DispatchRender(Device, CommandList, _swapchainBuffer);
         
         CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
-        TextureBatcher.DispatchDrawQueue(CommandList, _size);
+        TextureBatcher.DispatchDrawQueue(Device, CommandList, _size);
         CommandList.EndRenderPass();
         
         CommandList.End();

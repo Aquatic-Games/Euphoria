@@ -32,9 +32,11 @@ public sealed class TextureBatcher : IDisposable
     private Pipeline _pipeline;
 
     private DescriptorSet _transformSet;
-    private DescriptorSet _textureSet;
+    private DescriptorLayout _textureLayout;
 
     private List<DrawQueueItem> _drawQueue;
+
+    private Dictionary<Texture, DescriptorSet> _textureSetCache;
 
     public TextureBatcher(Device device, string shaderLocation)
     {
@@ -51,7 +53,7 @@ public sealed class TextureBatcher : IDisposable
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
 
-        DescriptorLayout textureLayout = device.CreateDescriptorLayout(
+        _textureLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
         
@@ -65,19 +67,18 @@ public sealed class TextureBatcher : IDisposable
             new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
             new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
             new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
-        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, textureLayout]));
+        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, _textureLayout]));
         
         vTexModule.Dispose();
         pTexModule.Dispose();
 
         _transformSet =
             device.CreateDescriptorSet(transformLayout, new DescriptorSetDescription(buffer: _transformBuffer));
-        _textureSet = device.CreateDescriptorSet(textureLayout);
         
-        textureLayout.Dispose();
         transformLayout.Dispose();
 
         _drawQueue = new List<DrawQueueItem>();
+        _textureSetCache = new Dictionary<Texture, DescriptorSet>();
     }
 
     public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint, float sortIndex = 0)
@@ -122,7 +123,7 @@ public sealed class TextureBatcher : IDisposable
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
     }
 
-    public void DispatchDrawQueue(CommandList cl, Size<int> viewportSize, Matrix4x4? transform = null, SortMode sortMode = SortMode.Ignore)
+    public void DispatchDrawQueue(Device device, CommandList cl, Size<int> viewportSize, Matrix4x4? transform = null, SortMode sortMode = SortMode.Ignore)
     {
         Matrix4x4 cTransform = transform ??
                                Matrix4x4.CreateOrthographicOffCenter(0, viewportSize.Width, viewportSize.Height, 0, -1, 1);
@@ -144,7 +145,7 @@ public sealed class TextureBatcher : IDisposable
         {
             if (item.Texture != currentTexture || currentDraw >= MaxBatchSize)
             {
-                FlushVertices(cl, currentDraw, currentTexture);
+                FlushVertices(cl, currentDraw, GetDescriptorSetForTexture(device, currentTexture));
                 currentDraw = 0;
             }
 
@@ -168,13 +169,13 @@ public sealed class TextureBatcher : IDisposable
             currentDraw++;
         }
         
-        FlushVertices(cl, currentDraw, currentTexture);
+        FlushVertices(cl, currentDraw, GetDescriptorSetForTexture(device, currentTexture));
         
         // TODO: Probably should NOT clear the draw queue here, not sure.
         _drawQueue.Clear();
     }
 
-    private void FlushVertices(CommandList cl, uint drawCount, Texture texture)
+    private void FlushVertices(CommandList cl, uint drawCount, DescriptorSet textureSet)
     {
         if (drawCount == 0)
             return;
@@ -190,9 +191,26 @@ public sealed class TextureBatcher : IDisposable
         cl.SetIndexBuffer(_indexBuffer, Format.R32_UInt);
         
         cl.SetDescriptorSet(0, _transformSet);
-        cl.SetDescriptorSet(1, _textureSet);
+        cl.SetDescriptorSet(1, textureSet);
         
         cl.DrawIndexed(drawCount * NumIndices);
+    }
+
+    private DescriptorSet GetDescriptorSetForTexture(Device device, Texture texture)
+    {
+        // TODO: I'm not sure I like the way this is implemented. Will be interesting to see perf once Vulkan is implemented.
+        if (texture == null)
+            return null;
+        
+        if (!_textureSetCache.TryGetValue(texture, out DescriptorSet textureSet))
+        {
+            textureSet = device.CreateDescriptorSet(_textureLayout,
+                new DescriptorSetDescription(texture: texture.GTexture));
+
+            _textureSetCache.Add(texture, textureSet);
+        }
+
+        return textureSet;
     }
     
     public void Dispose()
