@@ -90,14 +90,14 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Only3D:
                 Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D(Device, size);
+                Renderer3D = new Renderer3D(Device, size, ShaderLoader);
                 break;
             case RenderType.Both:
                 Logger.Trace("Creating 2D renderer.");
                 Renderer2D = new Renderer2D(Device, size, ShaderLoader);
                 
                 Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D(Device, size);
+                Renderer3D = new Renderer3D(Device, size, ShaderLoader);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

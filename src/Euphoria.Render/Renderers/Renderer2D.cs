@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
 using u4.Math;
 

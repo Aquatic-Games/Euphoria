@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Euphoria.Render.Renderers;
+namespace Euphoria.Render.Renderers.Structs;
 
 public struct CameraInfo
 {
