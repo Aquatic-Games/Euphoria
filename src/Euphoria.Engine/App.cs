@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 using System.Reflection;
 using Euphoria.Render;
@@ -42,15 +43,38 @@ public static class App
         string releaseConfigName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration ?? "";
         Window.EngineTitle = $" v{options.AppVersion} {releaseConfigName.ToUpper()} - {options.Api}";
 
-        // TODO: This is temporary. The graphics system should have integration with the content manager.
-        const string shaderLocation = "Content/Shaders";
+        // TODO: This is temporary. This should be integrated into the content system.
+        ShaderLoader loader = new ShaderLoader((shader, stage) =>
+        {
+            const string shaderLocation = "Content/Shaders";
+            string[] splitShader = shader.Split('/');
+            string path = Path.Combine(shaderLocation, Path.Combine(splitShader));
+
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    path += "_v.spv";
+                    break;
+                case ShaderStage.Pixel:
+                    path += "_p.spv";
+                    break;
+                case ShaderStage.Compute:
+                    path += "_c.spv";
+                    break;
+                case ShaderStage.All:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(stage), stage, null);
+            }
+
+            return File.ReadAllBytes(path);
+        });
         
         switch (options.Api)
         {
             case GraphicsApi.D3D11:
                 Logger.Trace("Creating D3D11 graphics.");
                 Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels,
-                    options.GraphicsOptions, shaderLocation);
+                    options.GraphicsOptions, loader);
                 break;
             
             case GraphicsApi.OpenGL:
@@ -59,7 +83,7 @@ public static class App
                 
                 Logger.Trace("Creating GL graphics.");
                 Graphics = new Graphics(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
-                    Window.SizeInPixels, options.GraphicsOptions, shaderLocation);
+                    Window.SizeInPixels, options.GraphicsOptions, loader);
                 break;
             
             default:

@@ -22,7 +22,7 @@ public sealed class Graphics : IDisposable
     internal readonly Device Device;
     internal readonly CommandList CommandList;
 
-    internal readonly string ShaderLocation;
+    internal readonly ShaderLoader ShaderLoader;
 
     public readonly TextureBatcher TextureBatcher;
 
@@ -53,13 +53,11 @@ public sealed class Graphics : IDisposable
         }
     }
 
-    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, string shaderLocation, Adapter? adapter = null)
+    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, ShaderLoader loader, Adapter? adapter = null)
     {
         Instance = instance;
-
         _size = size;
-
-        ShaderLocation = shaderLocation;
+        ShaderLoader = loader;
 
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
@@ -78,7 +76,7 @@ public sealed class Graphics : IDisposable
         CommandList = Device.CreateCommandList();
         
         Logger.Trace("Creating texture renderer.");
-        TextureBatcher = new TextureBatcher(Device, ShaderLocation);
+        TextureBatcher = new TextureBatcher(Device, ShaderLoader);
         
         Logger.Debug($"Render type: {options.RenderType}");
 
@@ -88,18 +86,18 @@ public sealed class Graphics : IDisposable
                 break;
             case RenderType.Only2D:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size, ShaderLocation);
+                Renderer2D = new Renderer2D(Device, size, ShaderLoader);
                 break;
             case RenderType.Only3D:
                 Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D();
+                Renderer3D = new Renderer3D(Device, size);
                 break;
             case RenderType.Both:
                 Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size, ShaderLocation);
+                Renderer2D = new Renderer2D(Device, size, ShaderLoader);
                 
                 Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D();
+                Renderer3D = new Renderer3D(Device, size);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -135,7 +133,7 @@ public sealed class Graphics : IDisposable
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         
-        Renderer2D.DispatchRender(Device, CommandList, _swapchainBuffer);
+        Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
         CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
         TextureBatcher.DispatchDrawQueue(Device, CommandList, _size);

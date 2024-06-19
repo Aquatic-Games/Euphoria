@@ -38,7 +38,7 @@ public sealed class TextureBatcher : IDisposable
 
     private Dictionary<Texture, DescriptorSet> _textureSetCache;
 
-    public TextureBatcher(Device device, string shaderLocation)
+    public TextureBatcher(Device device, ShaderLoader loader)
     {
         _vertices = new Vertex[MaxVertices];
         _indices = new uint[MaxIndices];
@@ -56,11 +56,11 @@ public sealed class TextureBatcher : IDisposable
         _textureLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
-        
+
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
-            File.ReadAllBytes(Path.Combine(shaderLocation, "Texture_v.spv")), "Vertex");
+            loader.LoadSpirvShader("Texture", ShaderStage.Vertex), "Vertex");
         ShaderModule pTexModule = device.CreateShaderModule(ShaderStage.Pixel,
-            File.ReadAllBytes(Path.Combine(shaderLocation, "Texture_p.spv")), "Pixel");
+            loader.LoadSpirvShader("Texture", ShaderStage.Pixel), "Pixel");
 
         _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
         {
