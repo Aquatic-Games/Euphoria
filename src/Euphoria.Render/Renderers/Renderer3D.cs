@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
 using u4.Math;
+using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render.Renderers;
 
 public class Renderer3D : IDisposable
 {
+    private readonly Device _device;
+    
     private readonly Framebuffer _gBuffer;
     private readonly GrabsTexture _albedoTexture;
     private readonly GrabsTexture _positionTexture;
@@ -20,6 +23,8 @@ public class Renderer3D : IDisposable
 
     public Renderer3D(Device device, Size<int> size, ShaderLoader loader)
     {
+        _device = device;
+        
         TextureDescription textureDesc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1,
             Format.R32G32B32A32_Float, TextureUsage.Framebuffer | TextureUsage.ShaderResource);
 
@@ -33,6 +38,21 @@ public class Renderer3D : IDisposable
         _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
 
         _opaques = new List<TransformedRenderable>();
+
+        ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
+            loader.LoadSpirvShader("GBuffer", ShaderStage.Vertex), "Vertex");
+        ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
+            loader.LoadSpirvShader("GBuffer", ShaderStage.Pixel), "Pixel");
+        
+        
+    }
+    
+    public Renderable CreateRenderable(Mesh mesh)
+    {
+        Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
+        Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices);
+
+        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length);
     }
 
     public void Dispose()

@@ -119,14 +119,6 @@ public sealed class Graphics : IDisposable
 
         return new Texture(texture, bitmap.Size);
     }
-
-    public Renderable CreateRenderable(Mesh mesh)
-    {
-        Buffer vertexBuffer = Device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
-        Buffer indexBuffer = Device.CreateBuffer(BufferType.Index, mesh.Indices);
-
-        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length);
-    }
     
     public void Present()
     {
