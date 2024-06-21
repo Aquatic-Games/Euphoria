@@ -5,33 +5,23 @@ namespace Euphoria.Render;
 
 public sealed class Material : IDisposable
 {
-    private Graphics _graphics;
     private Texture _albedo;
 
-    internal DescriptorSet DescriptorSet;
-    internal Pipeline Pipeline;
+    internal readonly Pipeline Pipeline;
+    internal readonly DescriptorSet MatDescriptor;
 
-    public Texture Albedo
+    public Texture Albedo => _albedo;
+
+    public Material(Texture albedo, Pipeline pipeline, DescriptorSet matDescriptor)
     {
-        get => _albedo;
-        set
-        {
-            _albedo = value;
-            UpdateDescriptor();
-        }
-    }
-    
-    internal Material(Graphics graphics, Texture albedo)
-    {
-        _graphics = graphics;
         _albedo = albedo;
 
-        Device device = graphics.Device;
-        DescriptorSet = device.CreateDescriptorSet()
+        Pipeline = pipeline;
+        MatDescriptor = matDescriptor;
     }
 
-    private void UpdateDescriptor()
+    public void Dispose()
     {
-        
+        MatDescriptor.Dispose();
     }
 }
