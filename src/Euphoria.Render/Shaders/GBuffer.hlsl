@@ -1,4 +1,7 @@
-﻿struct VSInput
+﻿#pragma vertex Vertex
+#pragma pixel Pixel
+
+struct VSInput
 {
     float3 Position: POSITION0;
     float2 TexCoord: TEXCOORD0;

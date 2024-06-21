@@ -18,4 +18,14 @@
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ClCompile Include="Shaders\GBuffer.hlsl" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="Shaders\Texture.hlsl">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

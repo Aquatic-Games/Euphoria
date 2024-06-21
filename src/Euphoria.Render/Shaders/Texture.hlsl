@@ -1,3 +1,6 @@
+#pragma vertex Vertex
+#pragma pixel Pixel
+
 struct VSInput
 {
     float2 Position: POSITION0;
