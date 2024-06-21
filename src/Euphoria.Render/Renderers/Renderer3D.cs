@@ -26,7 +26,7 @@ public class Renderer3D : IDisposable
     
     public CameraInfo Camera;
 
-    public Renderer3D(Device device, Size<int> size, ShaderLoader loader)
+    public Renderer3D(Device device, Size<int> size)
     {
         _device = device;
         _opaques = new List<TransformedRenderable>();
@@ -37,16 +37,17 @@ public class Renderer3D : IDisposable
         _albedoTexture = device.CreateTexture(textureDesc);
         _positionTexture = device.CreateTexture(textureDesc);
 
+        // TODO GRABS doesn't allow a TextureUsage of Framebuffer if creating a depth texture, D3D11 crashes - perhaps this should be fixed?
         textureDesc.Format = Format.D32_Float;
-        textureDesc.Usage = TextureUsage.Framebuffer;
+        textureDesc.Usage = TextureUsage.None;
         _depthTexture = device.CreateTexture(textureDesc);
 
         _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
 
         ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
-            loader.LoadSpirvShader("GBuffer", ShaderStage.Vertex), "Vertex");
+            ShaderLoader.LoadSpirvShader("GBuffer", ShaderStage.Vertex), "Vertex");
         ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
-            loader.LoadSpirvShader("GBuffer", ShaderStage.Pixel), "Pixel");
+            ShaderLoader.LoadSpirvShader("GBuffer", ShaderStage.Pixel), "Pixel");
 
         _cameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
