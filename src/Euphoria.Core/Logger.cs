@@ -18,7 +18,7 @@ public static class Logger
     {
         _builder.Clear();
 
-        _builder.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff "));
+        _builder.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff "));
 
         _builder.Append(type switch
         {

@@ -2,21 +2,46 @@
 using System.IO;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
-const bool deleteFiles = true;
+
+bool deleteFiles = true;
 
 Console.WriteLine("hlsl2spv");
 Console.WriteLine("Aquatic Games 2024");
 
-string currentDir = Environment.CurrentDirectory;
+Console.WriteLine($"Command line arguments: [{string.Join(", ", args)}]");
+
+string inDirectory = Environment.CurrentDirectory;
+
+for (int i = 0; i < args.Length; i++)
+{
+    string arg = args[i];
+
+    if (arg.StartsWith('-'))
+    {
+        switch (arg)
+        {
+            case "--no-delete":
+                deleteFiles = false;
+                break;
+            
+            default:
+                throw new Exception($"Unrecognized argument \"{arg}\"");
+        }
+    }
+    else if (Directory.Exists(arg))
+        inDirectory = arg;
+    else
+        throw new Exception($"Unrecognized argument \"{arg}\"");
+}
 
 Console.WriteLine($"Delete files: {(deleteFiles ? "ON" : "OFF")}");
-Console.WriteLine($"Directory: {currentDir}");
+Console.WriteLine($"Directory: {inDirectory}");
 
 if (deleteFiles)
 {
     Console.WriteLine("Deleting files.");
 
-    foreach (string file in Directory.GetFiles(currentDir, "*.spv", SearchOption.AllDirectories))
+    foreach (string file in Directory.GetFiles(inDirectory, "*.spv", SearchOption.AllDirectories))
     {
         Console.WriteLine($"Deleting {file}");
         File.Delete(file);
@@ -25,7 +50,7 @@ if (deleteFiles)
 
 Console.WriteLine("Compiling shaders.");
 
-foreach (string file in Directory.GetFiles(currentDir, "*.hlsl", SearchOption.AllDirectories))
+foreach (string file in Directory.GetFiles(inDirectory, "*.hlsl", SearchOption.AllDirectories))
 {
     Console.WriteLine($"Compiling {file}: ");
     
