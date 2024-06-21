@@ -29,6 +29,7 @@ public class Renderer3D : IDisposable
     private readonly Pipeline _defaultPipeline;
     
     private readonly Pipeline _passPipeline;
+    private readonly Pipeline _compositePipeline;
     
     private Buffer _cameraInfoBuffer;
     private DescriptorSet _cameraInfoSet;
@@ -37,6 +38,7 @@ public class Renderer3D : IDisposable
     private DescriptorSet _drawInfoSet;
 
     private DescriptorSet _passInputSet;
+    private DescriptorSet _compositeSet;
     
     public CameraInfo Camera;
 
@@ -116,6 +118,21 @@ public class Renderer3D : IDisposable
         _passInputSet = device.CreateDescriptorSet(passInputLayout,
             new DescriptorSetDescription(texture: _albedoTexture),
             new DescriptorSetDescription(texture: _positionTexture));
+
+        using ShaderModule compositePixel = device.CreateShaderModule(ShaderStage.Pixel,
+            ShaderLoader.LoadSpirvShader("Render/Composite", ShaderStage.Pixel), "PSMain");
+
+        using DescriptorLayout compositeLayout = device.CreateDescriptorLayout(
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
+                ShaderStage.Pixel)));
+
+        PipelineDescription compositePipelineDesc = new PipelineDescription(passVertex, compositePixel, null,
+            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, [compositeLayout]);
+
+        _compositePipeline = device.CreatePipeline(compositePipelineDesc);
+
+        _compositeSet =
+            device.CreateDescriptorSet(compositeLayout, new DescriptorSetDescription(texture: _passTexture));
     }
 
     public void Draw(Renderable renderable, in Matrix4x4 world)
@@ -164,7 +181,10 @@ public class Renderer3D : IDisposable
         RenderPassDescription compositePassDesc = new RenderPassDescription(swapchainBuffer, new Vector4(0, 0, 0, 1));
         cl.BeginRenderPass(compositePassDesc);
         
+        cl.SetPipeline(_compositePipeline);
+        cl.SetDescriptorSet(0, _compositeSet);
         
+        cl.Draw(6);
         
         cl.EndRenderPass();
         

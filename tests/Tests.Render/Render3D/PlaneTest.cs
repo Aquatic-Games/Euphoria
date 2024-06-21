@@ -68,10 +68,12 @@ public class PlaneTest : TestBase
             for (int y = -1; y < 2; y++)
             {
                 Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_rotation, _rotation * 0.75f, _rotation * 1.1f) * Matrix4x4.CreateTranslation(x, y, 0);
-
                 Graphics.Renderer3D.Draw(_renderable, world);
             }
         }
+        
+        /*Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_rotation, _rotation * 0.75f, _rotation * 1.1f) * Matrix4x4.CreateTranslation(0, 1, 0);
+        Graphics.Renderer3D.Draw(_renderable, world);*/
         
         Graphics.TextureBatcher.Draw(_debugTexture, new Vector2(0, 0), Color.White);
     }

@@ -24,6 +24,7 @@
     
     <ItemGroup>
       <ClCompile Include="Shaders\QuadDraw.hlsl" />
+      <ClCompile Include="Shaders\Render\Composite.hlsl" />
     </ItemGroup>
 
 </Project>
