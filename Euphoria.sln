@@ -26,9 +26,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Graphics.GL43", "lib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.ContentBuilder", "src\Euphoria.ContentBuilder\Euphoria.ContentBuilder.csproj", "{A4020B22-B2F3-4459-BFCE-42EE81A1CAAD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "epcon", "epcon", "{66F635BF-637A-4C08-ABA3-8C3F17A195EC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{66F635BF-637A-4C08-ABA3-8C3F17A195EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "epcon", "epcon\epcon\epcon.csproj", "{873F6F92-81B9-418E-9FE8-69C87B2B4832}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "epcon", "tools\epcon\epcon.csproj", "{873F6F92-81B9-418E-9FE8-69C87B2B4832}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Core", "lib\grabs\src\grabs.Core\grabs.Core.csproj", "{05CCE150-7A88-462D-AF9D-AB0FD609E242}"
 EndProject
@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Render", "tests\Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Engine", "tests\Tests.Engine\Tests.Engine.csproj", "{A9865EB7-B40F-4C53-9B06-63B3FD99A319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hlsl2spv", "epcon\hlsl2spv\hlsl2spv.csproj", "{F7E2BDC4-CFBA-4C40-90D7-8473C59D9652}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hlsl2spv", "tools\hlsl2spv\hlsl2spv.csproj", "{F7E2BDC4-CFBA-4C40-90D7-8473C59D9652}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Math", "tests\Tests.Math\Tests.Math.csproj", "{2AE2A73D-2B0E-4103-B00C-7B782F2922A5}"
 EndProject
