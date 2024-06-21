@@ -2,8 +2,6 @@
 using System.IO;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
-
-const bool debug = true;
 const bool deleteFiles = true;
 
 Console.WriteLine("hlsl2spv");
@@ -12,7 +10,6 @@ Console.WriteLine("Aquatic Games 2024");
 string currentDir = Environment.CurrentDirectory;
 
 Console.WriteLine($"Delete files: {(deleteFiles ? "ON" : "OFF")}");
-Console.WriteLine($"Debug: {(debug ? "ON" : "OFF")}");
 Console.WriteLine($"Directory: {currentDir}");
 
 if (deleteFiles)
@@ -36,37 +33,37 @@ foreach (string file in Directory.GetFiles(currentDir, "*.hlsl", SearchOption.Al
 
     string vertexEntryPoint = null;
     string pixelEntryPoint = null;
+    bool debug = false;
     
     // Preprocess shader, get the entry points of various shader types. Can be expanded later.
-    int location = 0;
-    while ((location = shader.IndexOf("#pragma", location, StringComparison.Ordinal)) != -1)
+    foreach (string line in shader.Split('\n'))
     {
-        location = shader.IndexOf(' ', location) + 1;
-        int nextLocation = shader.IndexOf(' ', location);
+        if (!line.StartsWith("#pragma"))
+            continue;
         
-        string pragmaType = shader[location..nextLocation].Trim();
+        string[] splitLine = line.Trim().Split(' ');
 
-        switch (pragmaType)
+        switch (splitLine[1])
         {
             case "vertex":
             {
-                location = shader.IndexOf(' ', nextLocation) + 1;
-                nextLocation = shader.IndexOf('\n', location);
-
-                vertexEntryPoint = shader[location..nextLocation].Trim();
+                vertexEntryPoint = splitLine[2];
                 break;
             }
             
             case "pixel":
             {
-                location = shader.IndexOf(' ', nextLocation) + 1;
-                nextLocation = shader.IndexOf('\n', location);
-
-                pixelEntryPoint = shader[location..nextLocation].Trim();
+                pixelEntryPoint = splitLine[2];
                 break;
             }
+            
+            case "debug":
+                debug = true;
+                break;
         }
     }
+    
+    Console.WriteLine(debug);
 
     if (vertexEntryPoint == null && pixelEntryPoint == null)
         throw new Exception($"{file}: Shader must include AT LEAST one entry point, or must be .hlsli file.");
@@ -91,3 +88,5 @@ foreach (string file in Directory.GetFiles(currentDir, "*.hlsl", SearchOption.Al
         Console.WriteLine("Done.");
     }
 }
+
+Console.WriteLine("Compilation successful.");

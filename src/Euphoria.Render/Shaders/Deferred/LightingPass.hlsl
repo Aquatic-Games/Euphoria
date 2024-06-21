@@ -1,5 +1,6 @@
 ﻿#pragma vertex Vertex
 #pragma pixel Pixel
+#pragma debug
 
 struct VSOutput
 {
