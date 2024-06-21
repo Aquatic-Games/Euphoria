@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grabs.Core", "lib\grabs\src
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EAB883F8-795D-4DFE-8C7E-5B3FC7B138E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Graphics", "tests\Tests.Graphics\Tests.Graphics.csproj", "{940727A4-E1A1-4740-A666-F8166AB7336F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Render", "tests\Tests.Render\Tests.Render.csproj", "{940727A4-E1A1-4740-A666-F8166AB7336F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Engine", "tests\Tests.Engine\Tests.Engine.csproj", "{A9865EB7-B40F-4C53-9B06-63B3FD99A319}"
 EndProject
