@@ -10,11 +10,14 @@ public sealed class Renderable : IDisposable
 
     internal readonly uint NumElements;
 
-    internal Renderable(Buffer vertexBuffer, Buffer indexBuffer, uint numElements)
+    public Material Material;
+
+    internal Renderable(Buffer vertexBuffer, Buffer indexBuffer, uint numElements, Material material)
     {
         VertexBuffer = vertexBuffer;
         IndexBuffer = indexBuffer;
         NumElements = numElements;
+        Material = material;
     }
     
     public void Dispose()

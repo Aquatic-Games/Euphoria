@@ -78,8 +78,9 @@ public sealed class Graphics : IDisposable
         Logger.Debug($"Render type: {options.RenderType}");
         // TODO: Implement render type, and 2D renderer, which is currently disabled to aid development of the 3D renderer.
         Logger.Warn("Currently the render type is being IGNORED. This will be implemented in a later version.");
-
-        TextureBatcher = new TextureBatcher(Device);
+        
+        Logger.Trace("Creating 3D renderer.");
+        Renderer3D = new Renderer3D(Device, size);
 
         /*switch (options.RenderType)
         {
@@ -128,6 +129,8 @@ public sealed class Graphics : IDisposable
     {
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
+        
+        Renderer3D.Render(CommandList);
         
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         

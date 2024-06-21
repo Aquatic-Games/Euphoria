@@ -19,4 +19,6 @@ public struct Vertex
         Color = color;
         Normal = normal;
     }
+
+    public const uint SizeInBytes = 48;
 }

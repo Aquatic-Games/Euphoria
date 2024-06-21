@@ -167,7 +167,7 @@ public sealed class TextureBatcher : IDisposable
             currentDraw++;
         }
         
-        FlushVertices(cl, currentDraw, currentTexture!.DescriptorSet);
+        FlushVertices(cl, currentDraw, currentTexture?.DescriptorSet);
         
         // TODO: Probably should NOT clear the draw queue here, not sure.
         _drawQueue.Clear();

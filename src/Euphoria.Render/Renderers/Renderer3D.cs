@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
 using u4.Math;
@@ -17,10 +18,14 @@ public class Renderer3D : IDisposable
     private readonly GrabsTexture _positionTexture;
     
     private readonly GrabsTexture _depthTexture;
-
-    private readonly DescriptorLayout _cameraInfoLayout;
-    private readonly DescriptorLayout _drawInfoLayout;
+    
     private readonly DescriptorLayout _materialInfoLayout;
+    
+    private Buffer _cameraInfoBuffer;
+    private DescriptorSet _cameraInfoSet;
+    
+    private Buffer _drawInfoBuffer;
+    private DescriptorSet _drawInfoSet;
     
     private readonly Pipeline _defaultPipeline;
     
@@ -49,10 +54,10 @@ public class Renderer3D : IDisposable
         ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("GBuffer", ShaderStage.Pixel), "Pixel");
 
-        _cameraInfoLayout = device.CreateDescriptorLayout(
+        DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
-        _drawInfoLayout = device.CreateDescriptorLayout(
+        DescriptorLayout drawInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
         _materialInfoLayout = device.CreateDescriptorLayout(
@@ -63,18 +68,66 @@ public class Renderer3D : IDisposable
             [
                 new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex),
                 new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex)
-            ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullCounterClockwise,
-            [_cameraInfoLayout, _drawInfoLayout, _materialInfoLayout]);
+            ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullNone,
+            [cameraInfoLayout, drawInfoLayout, _materialInfoLayout]);
 
         _defaultPipeline = device.CreatePipeline(defaultPipelineDesc);
+
+        _cameraInfoBuffer = device.CreateBuffer(BufferType.Constant, Camera, true);
+        _cameraInfoSet =
+            device.CreateDescriptorSet(cameraInfoLayout, new DescriptorSetDescription(buffer: _cameraInfoBuffer));
+        
+        _drawInfoBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
+        _drawInfoSet =
+            device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
+        
+        drawInfoLayout.Dispose();
+        cameraInfoLayout.Dispose();
+    }
+
+    public void Draw(Renderable renderable, in Matrix4x4 world)
+    {
+        _opaques.Add(new TransformedRenderable(renderable, world));
+    }
+
+    internal void Render(CommandList cl)
+    {
+        cl.UpdateBuffer(_cameraInfoBuffer, 0, Camera);
+        cl.SetDescriptorSet(0, _cameraInfoSet);
+        
+        RenderPassDescription gBufferPassDesc = new RenderPassDescription(_gBuffer, Vector4.Zero);
+        cl.BeginRenderPass(gBufferPassDesc);
+
+        foreach (TransformedRenderable tRenderable in _opaques)
+        {
+            Renderable renderable = tRenderable.Renderable;
+            Material material = renderable.Material;
+            
+            cl.UpdateBuffer(_drawInfoBuffer, 0, tRenderable.Transform);
+            cl.SetDescriptorSet(1, _drawInfoSet);
+            cl.SetDescriptorSet(2, material.MatDescriptor);
+            
+            cl.SetPipeline(material.Pipeline);
+            
+            cl.SetVertexBuffer(0, renderable.VertexBuffer, Vertex.SizeInBytes, 0);
+            cl.SetIndexBuffer(renderable.IndexBuffer, Format.R32_UInt);
+            
+            // TODO: Draw non-indexed.
+            cl.DrawIndexed(renderable.NumElements);
+        }
+        
+        cl.EndRenderPass();
+        
+        // TODO: Don't clear here, have a "NewFrame" method or something. Would allow support for multiple cameras.
+        _opaques.Clear();
     }
     
-    public Renderable CreateRenderable(Mesh mesh)
+    public Renderable CreateRenderable(Mesh mesh, Material material)
     {
         Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
         Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices);
 
-        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length);
+        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material);
     }
 
     public Material CreateMaterial(in MaterialDescription description)
@@ -90,8 +143,6 @@ public class Renderer3D : IDisposable
         _defaultPipeline.Dispose();
         
         _materialInfoLayout.Dispose();
-        _drawInfoLayout.Dispose();
-        _cameraInfoLayout.Dispose();
         
         _gBuffer.Dispose();
         _depthTexture.Dispose();
