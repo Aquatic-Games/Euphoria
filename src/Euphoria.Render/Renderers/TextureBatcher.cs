@@ -21,22 +21,21 @@ public sealed class TextureBatcher : IDisposable
     private const uint MaxVertices = NumVertices * MaxBatchSize;
     private const uint MaxIndices = NumIndices * MaxBatchSize;
 
-    private Vertex[] _vertices;
-    private uint[] _indices;
+    private readonly Vertex[] _vertices;
+    private readonly uint[] _indices;
     
-    private Buffer _vertexBuffer;
-    private Buffer _indexBuffer;
+    private readonly Buffer _vertexBuffer;
+    private readonly Buffer _indexBuffer;
 
-    private Buffer _transformBuffer;
+    private readonly Buffer _transformBuffer;
 
-    private Pipeline _pipeline;
+    private readonly Pipeline _pipeline;
 
-    private DescriptorSet _transformSet;
-    private DescriptorLayout _textureLayout;
+    private readonly DescriptorSet _transformSet;
 
-    private List<DrawQueueItem> _drawQueue;
-
-    private Dictionary<Texture, DescriptorSet> _textureSetCache;
+    private readonly List<DrawQueueItem> _drawQueue;
+    
+    internal readonly DescriptorLayout TextureDescriptorLayout;
 
     public TextureBatcher(Device device)
     {
@@ -53,7 +52,7 @@ public sealed class TextureBatcher : IDisposable
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
 
-        _textureLayout = device.CreateDescriptorLayout(
+        TextureDescriptorLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
 
@@ -67,7 +66,7 @@ public sealed class TextureBatcher : IDisposable
             new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
             new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
             new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
-        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, _textureLayout]));
+        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, TextureDescriptorLayout]));
         
         vTexModule.Dispose();
         pTexModule.Dispose();
@@ -78,7 +77,6 @@ public sealed class TextureBatcher : IDisposable
         transformLayout.Dispose();
 
         _drawQueue = new List<DrawQueueItem>();
-        _textureSetCache = new Dictionary<Texture, DescriptorSet>();
     }
 
     public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint, float sortIndex = 0)
@@ -123,7 +121,7 @@ public sealed class TextureBatcher : IDisposable
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
     }
 
-    public void DispatchDrawQueue(Device device, CommandList cl, Size<int> viewportSize, Matrix4x4? transform = null, SortMode sortMode = SortMode.Ignore)
+    public void DispatchDrawQueue(CommandList cl, Size<int> viewportSize, Matrix4x4? transform = null, SortMode sortMode = SortMode.Ignore)
     {
         Matrix4x4 cTransform = transform ??
                                Matrix4x4.CreateOrthographicOffCenter(0, viewportSize.Width, viewportSize.Height, 0, -1, 1);
@@ -145,7 +143,7 @@ public sealed class TextureBatcher : IDisposable
         {
             if (item.Texture != currentTexture || currentDraw >= MaxBatchSize)
             {
-                FlushVertices(cl, currentDraw, GetDescriptorSetForTexture(device, currentTexture));
+                FlushVertices(cl, currentDraw, currentTexture?.DescriptorSet);
                 currentDraw = 0;
             }
 
@@ -169,7 +167,7 @@ public sealed class TextureBatcher : IDisposable
             currentDraw++;
         }
         
-        FlushVertices(cl, currentDraw, GetDescriptorSetForTexture(device, currentTexture));
+        FlushVertices(cl, currentDraw, currentTexture!.DescriptorSet);
         
         // TODO: Probably should NOT clear the draw queue here, not sure.
         _drawQueue.Clear();
@@ -194,23 +192,6 @@ public sealed class TextureBatcher : IDisposable
         cl.SetDescriptorSet(1, textureSet);
         
         cl.DrawIndexed(drawCount * NumIndices);
-    }
-
-    private DescriptorSet GetDescriptorSetForTexture(Device device, Texture texture)
-    {
-        // TODO: I'm not sure I like the way this is implemented. Will be interesting to see perf once Vulkan is implemented.
-        if (texture == null)
-            return null;
-        
-        if (!_textureSetCache.TryGetValue(texture, out DescriptorSet textureSet))
-        {
-            textureSet = device.CreateDescriptorSet(_textureLayout,
-                new DescriptorSetDescription(texture: texture.GTexture));
-
-            _textureSetCache.Add(texture, textureSet);
-        }
-
-        return textureSet;
     }
     
     public void Dispose()

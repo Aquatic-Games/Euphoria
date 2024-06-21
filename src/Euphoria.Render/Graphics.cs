@@ -111,6 +111,9 @@ public sealed class Graphics : IDisposable
             Device.CreateTexture(
                 TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
                     TextureUsage.ShaderResource), new ReadOnlySpan<byte>(bitmap.Data));
+
+        DescriptorSet descriptorSet = Device.CreateDescriptorSet(TextureBatcher.TextureDescriptorLayout,
+            new DescriptorSetDescription(texture: texture));
         
         // TODO: Mipmaps queue to be done in present.
         CommandList.Begin();
@@ -118,7 +121,7 @@ public sealed class Graphics : IDisposable
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
 
-        return new Texture(texture, bitmap.Size);
+        return new Texture(texture, descriptorSet, bitmap.Size);
     }
     
     public void Present()
@@ -129,7 +132,7 @@ public sealed class Graphics : IDisposable
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
         CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Clear));
-        TextureBatcher.DispatchDrawQueue(Device, CommandList, _size);
+        TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
         CommandList.End();

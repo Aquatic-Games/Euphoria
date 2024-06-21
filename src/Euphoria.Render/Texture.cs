@@ -1,4 +1,5 @@
 ﻿using System;
+using grabs.Graphics;
 using u4.Math;
 
 namespace Euphoria.Render;
@@ -6,12 +7,14 @@ namespace Euphoria.Render;
 public class Texture : IDisposable
 {
     internal readonly GrabsTexture GTexture;
+    internal readonly DescriptorSet DescriptorSet;
 
     public readonly Size<int> Size;
 
-    internal Texture(GrabsTexture gTexture, Size<int> size)
+    internal Texture(GrabsTexture gTexture, DescriptorSet descriptorSet, Size<int> size)
     {
         GTexture = gTexture;
+        DescriptorSet = descriptorSet;
         Size = size;
     }
 

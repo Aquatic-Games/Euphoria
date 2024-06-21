@@ -57,7 +57,7 @@ public sealed class Renderer2D : IDisposable
     internal void DispatchRender(Device device, CommandList cl, Framebuffer drawBuffer)
     {
         cl.BeginRenderPass(new RenderPassDescription(drawBuffer, new Vector4(0, 0, 0, 1)));
-        _batcher.DispatchDrawQueue(device, cl, _size, Camera.Projection * Camera.View, TextureBatcher.SortMode.LowestFirst);
+        _batcher.DispatchDrawQueue(cl, _size, Camera.Projection * Camera.View, TextureBatcher.SortMode.LowestFirst);
         cl.EndRenderPass();
     }
     
