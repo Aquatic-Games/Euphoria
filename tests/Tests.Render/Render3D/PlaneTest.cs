@@ -12,6 +12,8 @@ public class PlaneTest : TestBase
     private Material _material;
     private Renderable _renderable;
 
+    private float _rotation;
+
     protected override void Initialize()
     {
         base.Initialize();
@@ -49,13 +51,17 @@ public class PlaneTest : TestBase
         
         Renderer3D renderer = Graphics.Renderer3D;
         renderer.Camera = new CameraInfo(projection, view);
+
+        _rotation += dt;
     }
 
     protected override void Draw()
     {
         base.Draw();
+
+        Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_rotation, _rotation * 0.75f, _rotation * 1.1f);
         
-        Graphics.Renderer3D.Draw(_renderable, Matrix4x4.Identity);
+        Graphics.Renderer3D.Draw(_renderable, world);
     }
 
     public PlaneTest() : base("3D Renderer Cube Test") { }

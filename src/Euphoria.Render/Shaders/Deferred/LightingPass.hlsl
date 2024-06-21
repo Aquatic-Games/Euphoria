@@ -29,10 +29,10 @@ VSOutput Vertex(const in uint vertex: SV_VertexID)
     };
 
     const float2 texCoords[] = {
-        float2(0.0f, 0.0f),
-        float2(1.0f, 0.0f),
+        float2(0.0f, 1.0f),
         float2(1.0f, 1.0f),
-        float2(0.0f, 1.0f)
+        float2(1.0f, 0.0f),
+        float2(0.0f, 0.0f)
     };
 
     const uint indices[] = {
