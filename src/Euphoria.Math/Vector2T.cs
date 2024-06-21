@@ -1,7 +1,10 @@
 ﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Euphoria.Math;
 
+[StructLayout(LayoutKind.Sequential)]
 public struct Vector2T<T> where T : INumber<T>
 {
     public static Vector2T<T> Zero => new Vector2T<T>(T.Zero);
@@ -27,4 +30,30 @@ public struct Vector2T<T> where T : INumber<T>
         X = x;
         Y = y;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator +(in Vector2T<T> left, in Vector2T<T> right)
+        => new Vector2T<T>(left.X + right.X, left.Y + right.Y);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator -(in Vector2T<T> left, in Vector2T<T> right)
+        => new Vector2T<T>(left.X - right.X, left.Y - right.Y);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator *(in Vector2T<T> left, in Vector2T<T> right)
+        => new Vector2T<T>(left.X * right.X, left.Y * right.Y);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator *(in Vector2T<T> left, T right)
+        => new Vector2T<T>(left.X * right, left.Y * right);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator /(in Vector2T<T> left, in Vector2T<T> right)
+        => new Vector2T<T>(left.X / right.X, left.Y / right.Y);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2T<T> operator /(in Vector2T<T> left, T right)
+        => new Vector2T<T>(left.X / right, left.Y / right);
+    
+    
 }
