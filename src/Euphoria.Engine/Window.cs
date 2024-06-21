@@ -1,10 +1,10 @@
 ﻿using System;
+using Euphoria.Math;
 using grabs.Graphics;
 using Silk.NET.SDL;
-using u4.Math;
 using SdlWindow = Silk.NET.SDL.Window;
 
-namespace u4.Engine;
+namespace Euphoria.Engine;
 
 public unsafe class Window : IDisposable
 {

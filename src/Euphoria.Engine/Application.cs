@@ -1,7 +1,7 @@
 ﻿using System;
 using Euphoria.Render;
 
-namespace u4.Engine;
+namespace Euphoria.Engine;
 
 public class Application : IDisposable
 {

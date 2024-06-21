@@ -1,10 +1,10 @@
-﻿using Euphoria.Render;
+﻿using Euphoria.Core;
+using Euphoria.Math;
+using Euphoria.Render;
 using grabs.Graphics;
 using Tests.Render;
 using Tests.Render.Render3D;
 using Tests.Render.TestTextureBatcher;
-using u4.Core;
-using u4.Math;
 
 Logger.AttachConsole();
 

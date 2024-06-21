@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Euphoria.Math;
 using Euphoria.Render.Utilities;
 using grabs.Graphics;
-using u4.Math;
 
 namespace Euphoria.Render;
 

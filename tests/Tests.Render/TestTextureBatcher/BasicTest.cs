@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
+using Euphoria.Math;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
-using u4.Math;
 
 namespace Tests.Render.TestTextureBatcher;
 

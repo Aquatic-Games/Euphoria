@@ -1,3 +1,3 @@
-﻿namespace u4.Audio;
+﻿namespace Euphoria.Audio;
 
 public class Class1 { }

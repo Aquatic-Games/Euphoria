@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Euphoria.Math;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
-using u4.Math;
 using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render.Renderers;

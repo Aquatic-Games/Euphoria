@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using u4.Core;
-using u4.Engine.Entities;
+using Euphoria.Core;
+using Euphoria.Engine.Entities;
 
-namespace u4.Engine.Scenes;
+namespace Euphoria.Engine.Scenes;
 
 public abstract class Scene : IDisposable
 {

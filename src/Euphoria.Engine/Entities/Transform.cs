@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace u4.Engine.Entities;
+namespace Euphoria.Engine.Entities;
 
 public struct Transform
 {

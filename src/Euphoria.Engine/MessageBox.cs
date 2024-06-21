@@ -1,7 +1,7 @@
 using System;
 using Silk.NET.SDL;
 
-namespace u4.Engine;
+namespace Euphoria.Engine;
 
 public static class MessageBox
 {

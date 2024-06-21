@@ -1,10 +1,10 @@
 ﻿using System;
+using Euphoria.Math;
 using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
 using grabs.Graphics.GL43;
 using Silk.NET.SDL;
-using u4.Math;
 using Surface = grabs.Graphics.Surface;
 
 namespace Tests.Render;

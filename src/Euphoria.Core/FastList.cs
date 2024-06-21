@@ -1,4 +1,4 @@
-﻿namespace u4.Core;
+﻿namespace Euphoria.Core;
 
 public class FastList<T>
 {

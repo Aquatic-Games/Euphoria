@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Euphoria.Math;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
-using u4.Math;
 using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render.Renderers;
@@ -111,7 +111,7 @@ public class Renderer3D : IDisposable
             );
 
         PipelineDescription passPipelineDesc = new PipelineDescription(passVertex, passPixel, null,
-            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, [passInputLayout]);
+            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [passInputLayout]);
 
         _passPipeline = device.CreatePipeline(passPipelineDesc);
 
@@ -127,7 +127,7 @@ public class Renderer3D : IDisposable
                 ShaderStage.Pixel)));
 
         PipelineDescription compositePipelineDesc = new PipelineDescription(passVertex, compositePixel, null,
-            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, [compositeLayout]);
+            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [compositeLayout]);
 
         _compositePipeline = device.CreatePipeline(compositePipelineDesc);
 

@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
+using Euphoria.Math;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
 using Euphoria.Render.Renderers.Structs;
-using u4.Math;
 
 namespace Tests.Render.Render3D;
 

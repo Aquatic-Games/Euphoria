@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Numerics;
+using Euphoria.Math;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
-using u4.Math;
 
 namespace Euphoria.Render.Renderers;
 

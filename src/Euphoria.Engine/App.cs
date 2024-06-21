@@ -1,17 +1,14 @@
 ﻿using System;
-using System.IO;
-using System.Numerics;
 using System.Reflection;
+using Euphoria.Core;
+using Euphoria.Engine.Exceptions;
 using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
 using grabs.Graphics.GL43;
-using u4.Core;
-using u4.Engine.Exceptions;
 using Mutex = System.Threading.Mutex;
-using Texture = Euphoria.Render.Texture;
 
-namespace u4.Engine;
+namespace Euphoria.Engine;
 
 public static class App
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace u4.Engine.Exceptions;
+namespace Euphoria.Engine.Exceptions;
 
 public class MultipleInstanceException : Exception
 {

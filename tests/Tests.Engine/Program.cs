@@ -1,5 +1,5 @@
 ﻿using System;
-using u4.Core;
+using Euphoria.Core;
 
 FastList<int> numbers = new FastList<int>();
 numbers.Add(1);

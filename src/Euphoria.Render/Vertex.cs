@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
-using u4.Math;
+using Euphoria.Math;
 
 namespace Euphoria.Render;
 

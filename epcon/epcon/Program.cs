@@ -6,8 +6,8 @@ using System.Reflection;
 using epcon;
 using Euphoria.ContentBuilder;
 using Euphoria.ContentBuilder.Items;
+using Euphoria.Core;
 using Newtonsoft.Json;
-using u4.Core;
 
 Logger.AttachConsole();
 

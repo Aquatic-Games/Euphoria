@@ -2,9 +2,10 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace u4.Core;
+namespace Euphoria.Core;
 
 public static class Logger
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace u4.Engine.Entities.Components;
+namespace Euphoria.Engine.Entities.Components;
 
 public abstract class Component : IDisposable
 {

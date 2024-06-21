@@ -1,9 +1,9 @@
 ﻿using System;
+using Euphoria.Math;
 using Euphoria.Render;
 using grabs.Graphics;
-using u4.Math;
 
-namespace u4.Engine;
+namespace Euphoria.Engine;
 
 public struct LaunchOptions
 {

@@ -1,4 +1,4 @@
-﻿namespace u4.Math;
+﻿namespace Euphoria.Math;
 
 public struct Size<T>
 {

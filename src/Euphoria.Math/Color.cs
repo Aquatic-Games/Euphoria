@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace u4.Math;
+namespace Euphoria.Math;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Color

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using u4.Engine.Entities.Components;
+using Euphoria.Engine.Entities.Components;
 
-namespace u4.Engine.Entities;
+namespace Euphoria.Engine.Entities;
 
 public class Entity : IDisposable
 {

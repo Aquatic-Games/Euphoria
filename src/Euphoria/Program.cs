@@ -1,4 +1,4 @@
-﻿using u4.Core;
+﻿using Euphoria.Core;
 
 Logger.AttachConsole();
 
