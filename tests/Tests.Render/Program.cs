@@ -1,5 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Euphoria.Render;
+using Tests.Render;
+using Tests.Render.TestTextureBatcher;
+using u4.Math;
 
-using System;
+Size<int> size = new Size<int>(1280, 720);
+GraphicsOptions options = GraphicsOptions.Default;
 
-Console.WriteLine("Hello, World!");
+using TestBase test = new BasicTest();
+test.Run(size, options);

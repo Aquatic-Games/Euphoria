@@ -24,7 +24,7 @@ public sealed class Graphics : IDisposable
 
     public readonly TextureBatcher TextureBatcher;
 
-    public readonly Renderer2D Renderer2D;
+    //public readonly Renderer2D Renderer2D;
     public readonly Renderer3D Renderer3D;
 
     public VSyncMode VSyncMode
@@ -76,8 +76,12 @@ public sealed class Graphics : IDisposable
         TextureBatcher = new TextureBatcher(Device);
         
         Logger.Debug($"Render type: {options.RenderType}");
+        // TODO: Implement render type, and 2D renderer, which is currently disabled to aid development of the 3D renderer.
+        Logger.Warn("Currently the render type is being IGNORED. This will be implemented in a later version.");
 
-        switch (options.RenderType)
+        TextureBatcher = new TextureBatcher(Device);
+
+        /*switch (options.RenderType)
         {
             case RenderType.None:
                 break;
@@ -92,13 +96,13 @@ public sealed class Graphics : IDisposable
             case RenderType.Both:
                 Logger.Trace("Creating 2D renderer.");
                 Renderer2D = new Renderer2D(Device, size);
-                
+
                 Logger.Trace("Creating 3D renderer.");
                 Renderer3D = new Renderer3D(Device, size);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
-        }
+        }*/
     }
 
     public Texture CreateTexture(Bitmap bitmap)
@@ -122,9 +126,9 @@ public sealed class Graphics : IDisposable
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         
-        Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
+        //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
-        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
+        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Clear));
         TextureBatcher.DispatchDrawQueue(Device, CommandList, _size);
         CommandList.EndRenderPass();
         
@@ -137,7 +141,7 @@ public sealed class Graphics : IDisposable
     public void Dispose()
     {
         Renderer3D?.Dispose();
-        Renderer2D?.Dispose();
+        //Renderer2D?.Dispose();
         TextureBatcher.Dispose();
         
         CommandList.Dispose();

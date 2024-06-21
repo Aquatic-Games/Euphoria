@@ -12,6 +12,7 @@ public abstract unsafe class TestBase : IDisposable
 {
     private Sdl _sdl;
     private string _title;
+    private bool _alive;
 
     private Window* _window;
 
@@ -21,6 +22,12 @@ public abstract unsafe class TestBase : IDisposable
     {
         _title = title;
     }
+
+    protected virtual void Initialize() { }
+
+    protected virtual void Update(float dt) { }
+
+    protected virtual void Draw() { }
 
     public void Run(Size<int> size, GraphicsOptions options)
     {
@@ -45,6 +52,36 @@ public abstract unsafe class TestBase : IDisposable
         Surface surface = new D3D11Surface(sysWmInfo.Info.Win.Hwnd);
 
         Graphics = new Graphics(instance, surface, size, options);
+
+        Initialize();
+        
+        _alive = true;
+        while (_alive)
+        {
+            Event winEvent;
+            while (_sdl.PollEvent(&winEvent) != 0)
+            {
+                switch ((EventType) winEvent.Type)
+                {
+                    case EventType.Windowevent:
+                    {
+                        switch ((WindowEventID) winEvent.Window.Event)
+                        {
+                            case WindowEventID.Close:
+                                _alive = false;
+                                break;
+                        }
+
+                        break;
+                    }
+                }
+            }
+            
+            Update(1 / 60.0f);
+            Draw();
+            
+            Graphics.Present();
+        }
     }
 
     public void Dispose()
