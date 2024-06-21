@@ -21,8 +21,13 @@ public static class App
 
     public static void Run(in LaunchOptions options, Application application = null)
     {
-        Logger.Info($"{options.AppName} v{options.AppVersion}");
-        Logger.Info("Starting up.");
+        Logger.Debug("    #####  #   #  #####  #   #  #####  #####  #####  #####");
+        Logger.Info ("   #      #   #  #   #  #   #  #   #  #   #    #    #   #       =---------------------=");
+        Logger.Warn ("  #####  #   #  #####  #####  #   #  # ###    #    #####        | Euphoria Engine 0.1 |");
+        Logger.Error(" #      #   #  #      #   #  #   #  #  #     #    #   #         |  Aquatic Games 2024 |");
+        Logger.Fatal("#####  #####  #      #   #  #####  #   #  #####  #   #          =---------------------=");
+        
+        Logger.Info($"Application: {options.AppName} v{options.AppVersion}");
 
         // EE = Euphoria Engine
         using Mutex lockMut = new Mutex(true, $"Global\\EE-{options.AppName}", out bool createdNew);

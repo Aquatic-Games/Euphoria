@@ -27,5 +27,12 @@ public class BasicTest : TestBase
         batcher.Draw(_texture, new Vector2(300), Color.White);
     }
 
+    public override void Dispose()
+    {
+        _texture.Dispose();
+        
+        base.Dispose();
+    }
+
     public BasicTest() : base("Texture Batcher Basic Test") { }
 }

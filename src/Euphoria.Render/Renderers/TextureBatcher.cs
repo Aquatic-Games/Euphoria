@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Euphoria.Core;
 using Euphoria.Math;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
@@ -42,12 +43,16 @@ public sealed class TextureBatcher : IDisposable
         _vertices = new Vertex[MaxVertices];
         _indices = new uint[MaxIndices];
 
+        Logger.Trace("Creating buffers.");
+        
         _vertexBuffer =
             device.CreateBuffer(new BufferDescription(BufferType.Vertex, MaxVertices * Vertex.SizeInBytes, true));
         _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, MaxIndices * sizeof(uint), true));
 
         _transformBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
 
+        Logger.Trace("Creating descriptor layouts.");
+        
         DescriptorLayout transformLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
@@ -56,11 +61,15 @@ public sealed class TextureBatcher : IDisposable
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
 
+        Logger.Trace("Loading shader.");
+        
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
             ShaderLoader.LoadSpirvShader("Render/Texture", ShaderStage.Vertex), "VSMain");
         ShaderModule pTexModule = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Render/Texture", ShaderStage.Pixel), "PSMain");
-
+        
+        Logger.Trace("Creating pipeline.");
+        
         _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
         {
             new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
@@ -71,6 +80,8 @@ public sealed class TextureBatcher : IDisposable
         vTexModule.Dispose();
         pTexModule.Dispose();
 
+        Logger.Trace("Creating descriptors.");
+        
         _transformSet =
             device.CreateDescriptorSet(transformLayout, new DescriptorSetDescription(buffer: _transformBuffer));
         

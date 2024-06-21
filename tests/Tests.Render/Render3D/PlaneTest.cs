@@ -78,5 +78,16 @@ public class PlaneTest : TestBase
         Graphics.TextureBatcher.Draw(_debugTexture, new Vector2(0, 0), Color.White);
     }
 
+    public override void Dispose()
+    {
+        _debugTexture.Dispose();
+        
+        _renderable.Dispose();
+        _material.Dispose();
+        _texture.Dispose();
+        
+        base.Dispose();
+    }
+
     public PlaneTest() : base("3D Renderer Plane Test") { }
 }

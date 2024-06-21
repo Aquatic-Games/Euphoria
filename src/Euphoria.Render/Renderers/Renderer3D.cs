@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
@@ -56,16 +57,22 @@ public class Renderer3D : IDisposable
         
         textureDesc.Format = Format.R32G32B32A32_Float;
         textureDesc.Usage = TextureUsage.Framebuffer | TextureUsage.ShaderResource;
+        
+        Logger.Trace("Creating GBuffer.");
 
         _albedoTexture = device.CreateTexture(textureDesc);
         _positionTexture = device.CreateTexture(textureDesc);
         _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
 
+        Logger.Trace("Loading GBuffer shaders.");
+        
         using ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
             ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Vertex), "VSMain");
         using ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Pixel), "PSMain");
 
+        Logger.Trace("Creating GBuffer layouts.");
+        
         using DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
@@ -76,6 +83,8 @@ public class Renderer3D : IDisposable
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
 
+        Logger.Trace("Creating default material pipelines.");
+        
         PipelineDescription defaultPipelineDesc = new PipelineDescription(gBufferVertex, gBufferPixel,
             [
                 new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex),
@@ -87,6 +96,8 @@ public class Renderer3D : IDisposable
 
         _defaultPipeline = device.CreatePipeline(defaultPipelineDesc);
 
+        Logger.Trace("Creating GBuffer buffers.");
+        
         _cameraInfoBuffer = device.CreateBuffer(BufferType.Constant, Camera, true);
         _cameraInfoSet =
             device.CreateDescriptorSet(cameraInfoLayout, new DescriptorSetDescription(buffer: _cameraInfoBuffer));
@@ -95,14 +106,20 @@ public class Renderer3D : IDisposable
         _drawInfoSet =
             device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
         
+        Logger.Trace("Creating pass buffer.");
+        
         _passTexture = device.CreateTexture(textureDesc);
         _passBuffer = device.CreateFramebuffer([_passTexture], _depthTexture);
 
+        Logger.Trace("Loading pass shaders.");
+        
         using ShaderModule passVertex = device.CreateShaderModule(ShaderStage.Vertex,
             ShaderLoader.LoadSpirvShader("QuadDraw", ShaderStage.Vertex), "VSMain");
         using ShaderModule passPixel = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Pixel), "PSMain");
 
+        Logger.Trace("Creating pass layout.");
+        
         using DescriptorLayout passInputLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
                 new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel), // Albedo
@@ -110,27 +127,39 @@ public class Renderer3D : IDisposable
                 )
             );
 
+        Logger.Trace("Creating pass pipeline.");
+        
         PipelineDescription passPipelineDesc = new PipelineDescription(passVertex, passPixel, null,
             DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [passInputLayout]);
 
         _passPipeline = device.CreatePipeline(passPipelineDesc);
 
+        Logger.Trace("Creating pass descriptors.");
+        
         _passInputSet = device.CreateDescriptorSet(passInputLayout,
             new DescriptorSetDescription(texture: _albedoTexture),
             new DescriptorSetDescription(texture: _positionTexture));
 
+        Logger.Trace("Loading composite shaders.");
+        
         using ShaderModule compositePixel = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Render/Composite", ShaderStage.Pixel), "PSMain");
 
+        Logger.Trace("Creating composite layout.");
+        
         using DescriptorLayout compositeLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
 
+        Logger.Trace("Creating composite pipeline.");
+        
         PipelineDescription compositePipelineDesc = new PipelineDescription(passVertex, compositePixel, null,
             DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [compositeLayout]);
 
         _compositePipeline = device.CreatePipeline(compositePipelineDesc);
 
+        Logger.Trace("Creating composite descriptors.");
+        
         _compositeSet =
             device.CreateDescriptorSet(compositeLayout, new DescriptorSetDescription(texture: _passTexture));
     }
@@ -210,13 +239,21 @@ public class Renderer3D : IDisposable
 
     public void Dispose()
     {
+        _compositeSet.Dispose();
+        _compositePipeline.Dispose();
+        _passInputSet.Dispose();
+        _passPipeline.Dispose();
+        _passBuffer.Dispose();
+        _passTexture.Dispose();
+        _drawInfoSet.Dispose();
+        _drawInfoBuffer.Dispose();
+        _cameraInfoSet.Dispose();
+        _cameraInfoBuffer.Dispose();
         _defaultPipeline.Dispose();
-        
         _materialInfoLayout.Dispose();
-        
         _gBuffer.Dispose();
-        _depthTexture.Dispose();
         _positionTexture.Dispose();
         _albedoTexture.Dispose();
+        _depthTexture.Dispose();
     }
 }

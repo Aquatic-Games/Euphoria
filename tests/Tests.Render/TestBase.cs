@@ -128,7 +128,7 @@ public abstract unsafe class TestBase : IDisposable
         }
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Graphics.Dispose();
         

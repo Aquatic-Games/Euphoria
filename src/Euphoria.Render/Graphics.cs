@@ -62,14 +62,19 @@ public sealed class Graphics : IDisposable
         Logger.Debug($"EnumerateAdapters:\n    {string.Join('\n', adapters).Replace("\n", "\n    ")}");
         Logger.Info($"Using adapter {currentAdapter.Name}");
         
+        Logger.Trace("Creating device.");
         Device = Instance.CreateDevice(surface, adapter);
 
+        Logger.Trace("Creating swapchain.");
         _swapchain = Device.CreateSwapchain(new SwapchainDescription((uint) size.Width, (uint) size.Height,
             presentMode: PresentMode.VerticalSync));
+        
         _swapchainTexture = _swapchain.GetSwapchainTexture();
 
+        Logger.Trace("Creating swapchain buffer.");
         _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
 
+        Logger.Trace("Creating main command list.");
         CommandList = Device.CreateCommandList();
         
         Logger.Trace("Creating texture renderer.");

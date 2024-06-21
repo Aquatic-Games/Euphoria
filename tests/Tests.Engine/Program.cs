@@ -1,12 +1,9 @@
 ﻿using System;
 using Euphoria.Core;
+using Euphoria.Engine;
 
-FastList<int> numbers = new FastList<int>();
-numbers.Add(1);
-numbers.Add(2);
-numbers.Add(3);
-numbers.Add(4);
-numbers.Add(5);
+Logger.AttachConsole();
 
-Console.WriteLine(numbers.Array.Length);
-Console.WriteLine(numbers.Length);
+LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1));
+
+App.Run(options);
