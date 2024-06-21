@@ -20,6 +20,7 @@ public class Texture : IDisposable
 
     public void Dispose()
     {
+        DescriptorSet.Dispose();
         GTexture.Dispose();
     }
 }

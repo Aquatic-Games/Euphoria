@@ -80,7 +80,7 @@ public sealed class Graphics : IDisposable
         Logger.Warn("Currently the render type is being IGNORED. This will be implemented in a later version.");
         
         Logger.Trace("Creating 3D renderer.");
-        Renderer3D = new Renderer3D(Device, size);
+        Renderer3D = new Renderer3D(Device, size, TextureBatcher.TextureDescriptorLayout);
 
         /*switch (options.RenderType)
         {
@@ -130,11 +130,11 @@ public sealed class Graphics : IDisposable
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         
-        Renderer3D.Render(CommandList);
+        Renderer3D.Render(CommandList, _swapchainBuffer, TextureBatcher);
         
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
-        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Clear));
+        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         

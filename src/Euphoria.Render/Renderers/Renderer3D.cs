@@ -11,53 +11,64 @@ namespace Euphoria.Render.Renderers;
 public class Renderer3D : IDisposable
 {
     private readonly Device _device;
-    private readonly List<TransformedRenderable> _opaques;
+    private Size<int> _size;
     
-    private readonly Framebuffer _gBuffer;
-    private readonly GrabsTexture _albedoTexture;
-    private readonly GrabsTexture _positionTexture;
+    private readonly List<TransformedRenderable> _opaques;
     
     private readonly GrabsTexture _depthTexture;
     
+    private readonly GrabsTexture _albedoTexture;
+    private readonly GrabsTexture _positionTexture;
+    private readonly Framebuffer _gBuffer;
+
+    private readonly GrabsTexture _passTexture;
+    private readonly Framebuffer _passBuffer;
+    private readonly Texture _passDrawTexture; // TODO: This is temporary - the renderer should not use the texture batcher to draw, as it will be faster to draw directly using a shader.
+    
     private readonly DescriptorLayout _materialInfoLayout;
+    
+    private readonly Pipeline _defaultPipeline;
+    
+    private readonly Pipeline _passPipeline;
     
     private Buffer _cameraInfoBuffer;
     private DescriptorSet _cameraInfoSet;
     
     private Buffer _drawInfoBuffer;
     private DescriptorSet _drawInfoSet;
-    
-    private readonly Pipeline _defaultPipeline;
+
+    private DescriptorSet _passInputSet;
     
     public CameraInfo Camera;
 
-    public Renderer3D(Device device, Size<int> size)
+    public Renderer3D(Device device, Size<int> size, DescriptorLayout batcherLayout)
     {
         _device = device;
+        _size = size;
         _opaques = new List<TransformedRenderable>();
         
         TextureDescription textureDesc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1,
-            Format.R32G32B32A32_Float, TextureUsage.Framebuffer | TextureUsage.ShaderResource);
+            Format.D32_Float, TextureUsage.None);
+        
+        // TODO GRABS doesn't allow a TextureUsage of Framebuffer if creating a depth texture, D3D11 crashes - perhaps this should be fixed?
+        _depthTexture = device.CreateTexture(textureDesc);
+        
+        textureDesc.Format = Format.R32G32B32A32_Float;
+        textureDesc.Usage = TextureUsage.Framebuffer | TextureUsage.ShaderResource;
 
         _albedoTexture = device.CreateTexture(textureDesc);
         _positionTexture = device.CreateTexture(textureDesc);
-
-        // TODO GRABS doesn't allow a TextureUsage of Framebuffer if creating a depth texture, D3D11 crashes - perhaps this should be fixed?
-        textureDesc.Format = Format.D32_Float;
-        textureDesc.Usage = TextureUsage.None;
-        _depthTexture = device.CreateTexture(textureDesc);
-
         _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
 
-        ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
-            ShaderLoader.LoadSpirvShader("GBuffer", ShaderStage.Vertex), "Vertex");
-        ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
-            ShaderLoader.LoadSpirvShader("GBuffer", ShaderStage.Pixel), "Pixel");
+        using ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
+            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Vertex), "Vertex");
+        using ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
+            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Pixel), "Pixel");
 
-        DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
+        using DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
-        DescriptorLayout drawInfoLayout = device.CreateDescriptorLayout(
+        using DescriptorLayout drawInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
         _materialInfoLayout = device.CreateDescriptorLayout(
@@ -81,8 +92,32 @@ public class Renderer3D : IDisposable
         _drawInfoSet =
             device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
         
-        drawInfoLayout.Dispose();
-        cameraInfoLayout.Dispose();
+        _passTexture = device.CreateTexture(textureDesc);
+        _passBuffer = device.CreateFramebuffer([_passTexture], _depthTexture);
+
+        _passDrawTexture = new Texture(_passTexture,
+            device.CreateDescriptorSet(batcherLayout, new DescriptorSetDescription(texture: _passTexture)), _size);
+
+        using ShaderModule passVertex = device.CreateShaderModule(ShaderStage.Vertex,
+            ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Vertex), "Vertex");
+        using ShaderModule passPixel = device.CreateShaderModule(ShaderStage.Pixel,
+            ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Pixel), "Pixel");
+
+        using DescriptorLayout passInputLayout = device.CreateDescriptorLayout(
+            new DescriptorLayoutDescription(
+                new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel), // Albedo
+                new DescriptorBindingDescription(1, DescriptorType.Texture, ShaderStage.Pixel) // Position
+                )
+            );
+
+        PipelineDescription passPipelineDesc = new PipelineDescription(passVertex, passPixel, null,
+            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, [passInputLayout]);
+
+        _passPipeline = device.CreatePipeline(passPipelineDesc);
+
+        _passInputSet = device.CreateDescriptorSet(passInputLayout,
+            new DescriptorSetDescription(texture: _albedoTexture),
+            new DescriptorSetDescription(texture: _positionTexture));
     }
 
     public void Draw(Renderable renderable, in Matrix4x4 world)
@@ -90,7 +125,7 @@ public class Renderer3D : IDisposable
         _opaques.Add(new TransformedRenderable(renderable, world));
     }
 
-    internal void Render(CommandList cl)
+    internal void Render(CommandList cl, Framebuffer swapchainBuffer, TextureBatcher batcher)
     {
         cl.UpdateBuffer(_cameraInfoBuffer, 0, Camera);
         cl.SetDescriptorSet(0, _cameraInfoSet);
@@ -115,6 +150,24 @@ public class Renderer3D : IDisposable
             // TODO: Draw non-indexed.
             cl.DrawIndexed(renderable.NumElements);
         }
+        
+        cl.EndRenderPass();
+
+        RenderPassDescription lightingPassDesc = new RenderPassDescription(_passBuffer, new Vector4(1.0f, 0.5f, 0.25f, 1.0f));
+        cl.BeginRenderPass(lightingPassDesc);
+        
+        cl.SetDescriptorSet(0, _passInputSet);
+        cl.SetPipeline(_passPipeline);
+        
+        cl.Draw(6);
+        
+        cl.EndRenderPass();
+
+        RenderPassDescription compositePassDesc = new RenderPassDescription(swapchainBuffer, new Vector4(0, 0, 0, 1));
+        cl.BeginRenderPass(compositePassDesc);
+        
+        batcher.Draw(_passDrawTexture, Vector2.Zero, Color.White);
+        batcher.DispatchDrawQueue(cl, _size);
         
         cl.EndRenderPass();
         
