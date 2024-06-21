@@ -5,6 +5,8 @@ struct VSInput
 {
     float3 Position: POSITION0;
     float2 TexCoord: TEXCOORD0;
+    float4 Color:    COLOR0;
+    float3 Normal:   NORMAL0;
 };
 
 struct VSOutput
@@ -12,6 +14,7 @@ struct VSOutput
     float4 Position:   SV_Position;
     float3 WorldSpace: POSITION0;
     float2 TexCoord:   TEXCOORD0;
+    float3 Color:      COLOR0;
 };
 
 struct PSOutput
@@ -43,6 +46,7 @@ VSOutput Vertex(const in VSInput input)
     output.Position = mul(Projection, mul(View, worldSpace));
     output.WorldSpace = worldSpace.xyz;
     output.TexCoord = input.TexCoord;
+    output.Color = input.Color.rgb;
 
     return output;
 }
@@ -52,7 +56,7 @@ PSOutput Pixel(const in VSOutput input)
     PSOutput output;
 
     float4 albedo = Albedo.Sample(Sampler, input.TexCoord);
-    output.Albedo = float4(albedo.rgb, 1.0);
+    output.Albedo = float4(albedo.rgb * input.Color, 1.0);
 
     output.Position = float4(input.WorldSpace, 1.0);
     

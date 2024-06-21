@@ -23,10 +23,10 @@ public class PlaneTest : TestBase
 
         Vertex[] vertices =
         [
-            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 0), Color.White, Vector3.Zero),
-            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 1), Color.White, Vector3.Zero),
-            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 1), Color.White, Vector3.Zero),
-            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 0), Color.White, Vector3.Zero)
+            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 1), new Color(1.0f, 0.0f, 0.0f), Vector3.Zero),
+            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 0), new Color(0.0f, 1.0f, 0.0f), Vector3.Zero),
+            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 0), new Color(0.0f, 0.0f, 1.0f), Vector3.Zero),
+            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 1), new Color(0.0f, 0.0f, 0.0f), Vector3.Zero)
         ];
 
         uint[] indices =
@@ -47,7 +47,7 @@ public class PlaneTest : TestBase
         Matrix4x4 projection =
             Matrix4x4.CreatePerspectiveFieldOfView(float.DegreesToRadians(45), 1280 / 720.0f, 0.1f, 100.0f);
 
-        Matrix4x4 view = Matrix4x4.CreateLookAt(new Vector3(0, 0, -3), Vector3.Zero, Vector3.UnitY);
+        Matrix4x4 view = Matrix4x4.CreateLookAt(new Vector3(0, 0, 3), Vector3.Zero, Vector3.UnitY);
         
         Renderer3D renderer = Graphics.Renderer3D;
         renderer.Camera = new CameraInfo(projection, view);
@@ -59,10 +59,16 @@ public class PlaneTest : TestBase
     {
         base.Draw();
 
-        Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_rotation, _rotation * 0.75f, _rotation * 1.1f);
-        
-        Graphics.Renderer3D.Draw(_renderable, world);
+        for (int x = -1; x < 2; x++)
+        {
+            for (int y = -1; y < 2; y++)
+            {
+                Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_rotation, _rotation * 0.75f, _rotation * 1.1f) * Matrix4x4.CreateTranslation(x, y, 0);
+
+                Graphics.Renderer3D.Draw(_renderable, world);
+            }
+        }
     }
 
-    public PlaneTest() : base("3D Renderer Cube Test") { }
+    public PlaneTest() : base("3D Renderer Plane Test") { }
 }

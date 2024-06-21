@@ -78,7 +78,9 @@ public class Renderer3D : IDisposable
         PipelineDescription defaultPipelineDesc = new PipelineDescription(gBufferVertex, gBufferPixel,
             [
                 new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex),
-                new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex)
+                new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex),
+                new InputLayoutDescription(Format.R32G32B32A32_Float, 20, 0, InputType.PerVertex),
+                new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex)
             ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullNone,
             [cameraInfoLayout, drawInfoLayout, _materialInfoLayout]);
 
