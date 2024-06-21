@@ -21,5 +21,9 @@
     <ItemGroup>
         <EmbeddedResource Include="Shaders\**\*.spv" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <ClCompile Include="Shaders\QuadDraw.hlsl" />
+    </ItemGroup>
 
 </Project>

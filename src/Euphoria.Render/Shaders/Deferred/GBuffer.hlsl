@@ -1,5 +1,5 @@
-﻿#pragma vertex Vertex
-#pragma pixel Pixel
+﻿#pragma vertex VSMain
+#pragma pixel PSMain
 #pragma debug
 
 struct VSInput
@@ -38,7 +38,7 @@ cbuffer DrawInfo : register(b0, space1)
 SamplerState Sampler : register(s0, space2);
 Texture2D Albedo : register(t0, space2);
 
-VSOutput Vertex(const in VSInput input)
+VSOutput VSMain(const in VSInput input)
 {
     VSOutput output;
 
@@ -52,7 +52,7 @@ VSOutput Vertex(const in VSInput input)
     return output;
 }
 
-PSOutput Pixel(const in VSOutput input)
+PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 

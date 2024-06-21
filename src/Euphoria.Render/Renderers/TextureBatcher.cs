@@ -57,9 +57,9 @@ public sealed class TextureBatcher : IDisposable
                 ShaderStage.Pixel)));
 
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
-            ShaderLoader.LoadSpirvShader("Texture", ShaderStage.Vertex), "Vertex");
+            ShaderLoader.LoadSpirvShader("Texture", ShaderStage.Vertex), "VSMain");
         ShaderModule pTexModule = device.CreateShaderModule(ShaderStage.Pixel,
-            ShaderLoader.LoadSpirvShader("Texture", ShaderStage.Pixel), "Pixel");
+            ShaderLoader.LoadSpirvShader("Texture", ShaderStage.Pixel), "PSMain");
 
         _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
         {

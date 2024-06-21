@@ -12,6 +12,8 @@ public class PlaneTest : TestBase
     private Material _material;
     private Renderable _renderable;
 
+    private Texture _debugTexture;
+
     private float _rotation;
 
     protected override void Initialize()
@@ -37,6 +39,8 @@ public class PlaneTest : TestBase
 
         Mesh mesh = new Mesh(vertices, indices);
         _renderable = Graphics.Renderer3D.CreateRenderable(mesh, _material);
+
+        _debugTexture = Graphics.CreateTexture(new Bitmap("Content/DEBUG.png"));
     }
 
     protected override void Update(float dt)
@@ -68,6 +72,8 @@ public class PlaneTest : TestBase
                 Graphics.Renderer3D.Draw(_renderable, world);
             }
         }
+        
+        Graphics.TextureBatcher.Draw(_debugTexture, new Vector2(0, 0), Color.White);
     }
 
     public PlaneTest() : base("3D Renderer Plane Test") { }

@@ -23,7 +23,6 @@ public class Renderer3D : IDisposable
 
     private readonly GrabsTexture _passTexture;
     private readonly Framebuffer _passBuffer;
-    private readonly Texture _passDrawTexture; // TODO: This is temporary - the renderer should not use the texture batcher to draw, as it will be faster to draw directly using a shader.
     
     private readonly DescriptorLayout _materialInfoLayout;
     
@@ -41,7 +40,7 @@ public class Renderer3D : IDisposable
     
     public CameraInfo Camera;
 
-    public Renderer3D(Device device, Size<int> size, DescriptorLayout batcherLayout)
+    public Renderer3D(Device device, Size<int> size)
     {
         _device = device;
         _size = size;
@@ -61,9 +60,9 @@ public class Renderer3D : IDisposable
         _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
 
         using ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
-            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Vertex), "Vertex");
+            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Vertex), "VSMain");
         using ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
-            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Pixel), "Pixel");
+            ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Pixel), "PSMain");
 
         using DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
@@ -97,13 +96,10 @@ public class Renderer3D : IDisposable
         _passTexture = device.CreateTexture(textureDesc);
         _passBuffer = device.CreateFramebuffer([_passTexture], _depthTexture);
 
-        _passDrawTexture = new Texture(_passTexture,
-            device.CreateDescriptorSet(batcherLayout, new DescriptorSetDescription(texture: _passTexture)), _size);
-
         using ShaderModule passVertex = device.CreateShaderModule(ShaderStage.Vertex,
-            ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Vertex), "Vertex");
+            ShaderLoader.LoadSpirvShader("QuadDraw", ShaderStage.Vertex), "VSMain");
         using ShaderModule passPixel = device.CreateShaderModule(ShaderStage.Pixel,
-            ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Pixel), "Pixel");
+            ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Pixel), "PSMain");
 
         using DescriptorLayout passInputLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
@@ -127,7 +123,7 @@ public class Renderer3D : IDisposable
         _opaques.Add(new TransformedRenderable(renderable, world));
     }
 
-    internal void Render(CommandList cl, Framebuffer swapchainBuffer, TextureBatcher batcher)
+    internal void Render(CommandList cl, Framebuffer swapchainBuffer)
     {
         cl.UpdateBuffer(_cameraInfoBuffer, 0, Camera);
         cl.SetDescriptorSet(0, _cameraInfoSet);
@@ -168,8 +164,7 @@ public class Renderer3D : IDisposable
         RenderPassDescription compositePassDesc = new RenderPassDescription(swapchainBuffer, new Vector4(0, 0, 0, 1));
         cl.BeginRenderPass(compositePassDesc);
         
-        batcher.Draw(_passDrawTexture, Vector2.Zero, Color.White);
-        batcher.DispatchDrawQueue(cl, _size);
+        
         
         cl.EndRenderPass();
         

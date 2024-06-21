@@ -1,5 +1,5 @@
-#pragma vertex Vertex
-#pragma pixel Pixel
+#pragma vertex VSMain
+#pragma pixel PSMain
 #pragma debug
 
 struct VSInput
@@ -29,7 +29,7 @@ cbuffer CameraMatrices : register(b0, space0)
 Texture2D Texture  : register(t1, space1);
 SamplerState State : register(s1, space1);
 
-VSOutput Vertex(const in VSInput input)
+VSOutput VSMain(const in VSInput input)
 {
     VSOutput output;
 
@@ -40,7 +40,7 @@ VSOutput Vertex(const in VSInput input)
     return output;
 }
 
-PSOutput Pixel(const in VSOutput input)
+PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 

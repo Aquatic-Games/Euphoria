@@ -75,7 +75,7 @@ foreach (string file in Directory.GetFiles(currentDir, "*.hlsl", SearchOption.Al
     if (vertexEntryPoint != null)
     {
         Console.Write("    Vertex... ");
-        byte[] result = Compiler.CompileToSpirV(shader, vertexEntryPoint, ShaderStage.Vertex, debug);
+        byte[] result = Compiler.CompileToSpirV(shader, vertexEntryPoint, ShaderStage.Vertex, debug, [fileDir]);
         File.WriteAllBytes(outFileName + "_v.spv", result);
         Console.WriteLine("Done.");
     }
@@ -83,7 +83,7 @@ foreach (string file in Directory.GetFiles(currentDir, "*.hlsl", SearchOption.Al
     if (pixelEntryPoint != null)
     {
         Console.Write("    Pixel... ");
-        byte[] result = Compiler.CompileToSpirV(shader, pixelEntryPoint, ShaderStage.Pixel, debug);
+        byte[] result = Compiler.CompileToSpirV(shader, pixelEntryPoint, ShaderStage.Pixel, debug, [fileDir]);
         File.WriteAllBytes(outFileName + "_p.spv", result);
         Console.WriteLine("Done.");
     }
