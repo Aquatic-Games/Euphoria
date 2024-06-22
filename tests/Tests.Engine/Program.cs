@@ -1,9 +1,16 @@
 ﻿using System;
 using Euphoria.Core;
 using Euphoria.Engine;
+using grabs.Graphics;
+using Tests.Engine;
 
 Logger.AttachConsole();
 
-LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1));
+GraphicsApi api = App.ShowGraphicsApiSelector();
 
-App.Run(options);
+LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
+{
+    Api = api
+};
+
+App.Run(options, new TestApp());

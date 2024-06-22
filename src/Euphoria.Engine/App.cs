@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using Euphoria.Core;
 using Euphoria.Engine.Exceptions;
 using Euphoria.Render;
@@ -33,7 +35,10 @@ public static class App
         using Mutex lockMut = new Mutex(true, $"Global\\EE-{options.AppName}", out bool createdNew);
 
         if (!createdNew)
+        {
+            MessageBox.Show(MessageBox.Type.Error, options.AppName, $"An instance of {options.AppName} is already running.");
             throw new MultipleInstanceException(options.AppName);
+        }
 
         Application = application ?? new Application();
 
@@ -84,5 +89,88 @@ public static class App
         
         Graphics.Dispose();
         Window.Dispose();
+    }
+
+    public static GraphicsApi ShowGraphicsApiSelector(bool exitOnCancel = true)
+    {
+        List<MessageBox.Button> buttons = new List<MessageBox.Button>();
+        StringBuilder message = new StringBuilder("Select graphics API:\n");
+
+        if (IsGraphicsApiSupported(GraphicsApi.D3D11))
+        {
+            buttons.Add(new MessageBox.Button("DirectX 11", (int) GraphicsApi.D3D11));
+            message.AppendLine("- DirectX 11: Recommended for most systems.");
+        }
+        
+        if (IsGraphicsApiSupported(GraphicsApi.Vulkan))
+        {
+            buttons.Add(new MessageBox.Button("Vulkan", (int) GraphicsApi.Vulkan));
+            message.AppendLine("- Vulkan: Experimental. May produce better FPS but may be less stable.");
+        }
+        
+        if (IsGraphicsApiSupported(GraphicsApi.OpenGL))
+        {
+            buttons.Add(new MessageBox.Button("OpenGL", (int) GraphicsApi.OpenGL));
+            message.AppendLine("- OpenGL: Legacy. Use if no other options work.");
+        }
+        
+        buttons.Add(new MessageBox.Button("Auto", int.MaxValue));
+        message.Append("Press auto if you don't know which one to pick.");
+        
+        buttons.Add(new MessageBox.Button("Cancel", -1));
+
+        int value = MessageBox.Show(MessageBox.Type.None, "Select API", message.ToString(), buttons.ToArray());
+        
+        if (value == -1 && exitOnCancel)
+            Environment.Exit(0);
+        else if (value == int.MaxValue)
+            value = (int) PickBestGraphicsApi();
+
+        return (GraphicsApi) value;
+    }
+
+    public static GraphicsApi PickBestGraphicsApi()
+    {
+        if (IsGraphicsApiSupported(GraphicsApi.D3D11))
+            return GraphicsApi.D3D11;
+
+        if (IsGraphicsApiSupported(GraphicsApi.OpenGL))
+            return GraphicsApi.OpenGL;
+
+        if (IsGraphicsApiSupported(GraphicsApi.OpenGLES))
+            return GraphicsApi.OpenGLES;
+
+        throw new Exception("No Graphics API is supported.");
+    }
+
+    public static bool IsGraphicsApiSupported(GraphicsApi api)
+    {
+        switch (api)
+        {
+            case GraphicsApi.D3D11:
+                if (OperatingSystem.IsWindows())
+                    return true;
+
+                break;
+                
+            case GraphicsApi.OpenGL:
+                if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
+                    return true;
+
+                break;
+                
+            case GraphicsApi.OpenGLES: // OpenGL ES is also not currently supported.
+                //if (!OperatingSystem.IsMacOS())
+                //    return true;
+
+                break;
+            
+            case GraphicsApi.Vulkan: // Vulkan is not supported right now.
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(api), api, null);
+        }
+
+        return false;
     }
 }

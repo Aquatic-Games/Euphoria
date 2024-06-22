@@ -28,10 +28,7 @@ public struct LaunchOptions
         WindowTitle = appName;
         WindowSize = new Size<int>(1280, 720);
 
-        if (OperatingSystem.IsWindows())
-            Api = GraphicsApi.D3D11;
-        else
-            Api = GraphicsApi.OpenGL;
+        Api = App.PickBestGraphicsApi();
         
         GraphicsOptions = GraphicsOptions.Default;
     }
