@@ -21,14 +21,27 @@ public static class App
 
     public static bool IsRunning;
 
+    static App()
+    {
+        ConsoleColor currentColor = Console.ForegroundColor;
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("    #####  #   #  #####  #   #  #####  #####  #####  #####");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("   #      #   #  #   #  #   #  #   #  #   #    #    #   #       =---------------------=");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("  #####  #   #  #####  #####  #   #  # ###    #    #####        | Euphoria Engine 0.1 |");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(" #      #   #  #      #   #  #   #  #  #     #    #   #         |  Aquatic Games 2024 |");
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine("#####  #####  #      #   #  #####  #   #  #####  #   #          =---------------------=");
+
+        Console.ForegroundColor = currentColor;
+    }
+
     public static void Run(in LaunchOptions options, Application application = null)
     {
-        Logger.Debug("    #####  #   #  #####  #   #  #####  #####  #####  #####");
-        Logger.Info ("   #      #   #  #   #  #   #  #   #  #   #    #    #   #       =---------------------=");
-        Logger.Warn ("  #####  #   #  #####  #####  #   #  # ###    #    #####        | Euphoria Engine 0.1 |");
-        Logger.Error(" #      #   #  #      #   #  #   #  #  #     #    #   #         |  Aquatic Games 2024 |");
-        Logger.Fatal("#####  #####  #      #   #  #####  #   #  #####  #   #          =---------------------=");
-        
+        Logger.Debug("Starting application.");
         Logger.Info($"Application: {options.AppName} v{options.AppVersion}");
 
         // EE = Euphoria Engine
@@ -93,6 +106,8 @@ public static class App
 
     public static GraphicsApi ShowGraphicsApiSelector(bool exitOnCancel = true)
     {
+        Logger.Debug("Showing graphics API selection window.");
+        
         List<MessageBox.Button> buttons = new List<MessageBox.Button>();
         StringBuilder message = new StringBuilder("Select graphics API:\n");
 

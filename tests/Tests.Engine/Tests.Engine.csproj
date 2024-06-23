@@ -13,6 +13,7 @@
       <ProjectReference Include="..\..\src\Euphoria.Engine\Euphoria.Engine.csproj" />
       <ProjectReference Include="..\..\src\Euphoria.Math\Euphoria.Math.csproj" />
       <ProjectReference Include="..\..\src\Euphoria.Render\Euphoria.Render.csproj" />
+      <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
     </ItemGroup>
 
 </Project>

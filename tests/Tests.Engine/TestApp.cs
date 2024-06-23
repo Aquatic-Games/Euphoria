@@ -14,7 +14,7 @@ public class TestApp : Application
     {
         base.Initialize();
 
-        _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"));
+        _texture = Graphics.CreateTexture(new Bitmap("Content/awesomeface.png"));
     }
 
     public override void Draw()

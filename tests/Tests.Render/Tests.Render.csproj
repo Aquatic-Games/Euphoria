@@ -12,16 +12,11 @@
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.D3D11\grabs.Graphics.D3D11.csproj" />
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.GL43\grabs.Graphics.GL43.csproj" />
       <ProjectReference Include="..\..\src\Euphoria.Render\Euphoria.Render.csproj" />
+      <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Silk.NET.SDL" Version="2.21.0" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <Content Include="Content\**\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
 </Project>
