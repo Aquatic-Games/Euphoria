@@ -116,7 +116,7 @@ public sealed class Graphics : IDisposable
         GrabsTexture texture =
             Device.CreateTexture(
                 TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
-                    TextureUsage.ShaderResource | TextureUsage.GenerateMips), new ReadOnlySpan<byte>(bitmap.Data));
+                    TextureUsage.ShaderResource | TextureUsage.GenerateMips), bitmap.Data);
 
         DescriptorSet descriptorSet = Device.CreateDescriptorSet(TextureBatcher.TextureDescriptorLayout,
             new DescriptorSetDescription(texture: texture));
