@@ -9,7 +9,11 @@ namespace Euphoria.Engine;
 public unsafe class Window : IDisposable
 {
     public event OnCloseRequested CloseRequested = delegate { };
-    
+
+    public event OnKeyDown KeyDown = delegate { };
+
+    public event OnKeyUp KeyUp = delegate { };
+
     private Sdl _sdl;
     private SdlWindow* _window;
     private void* _glContext;
@@ -129,6 +133,23 @@ public unsafe class Window : IDisposable
 
                     break;
                 }
+
+                case EventType.Keydown:
+                {
+                    KeyboardEvent keyboard = winEvent.Key;
+
+                    if (keyboard.Repeat == 0)
+                        KeyDown(SdlKeycodeToEuphoriaKey((uint) keyboard.Keysym.Sym));
+                    
+                    break;
+                }
+
+                case EventType.Keyup:
+                {
+                    KeyboardEvent keyboard = winEvent.Key;
+                    KeyUp(SdlKeycodeToEuphoriaKey((uint) keyboard.Keysym.Sym));
+                    break;
+                }
             }
         }
     }
@@ -153,6 +174,152 @@ public unsafe class Window : IDisposable
         _sdl.Quit();
         _sdl.Dispose();
     }
+
+    // Again copied straight from Pie source.
+    private static Key SdlKeycodeToEuphoriaKey(uint keycode)
+    {
+        const uint scancodeMask = 1 << 30;
+        
+        return keycode switch
+        {
+            '\r' => Key.Return,
+            '\x1B' => Key.Escape,
+            '\b' => Key.Backspace,
+            '\t' => Key.Tab,
+            ' ' => Key.Space,
+            '#' => Key.Hash,
+            '\'' => Key.Apostrophe,
+            ',' => Key.Comma,
+            '-' => Key.Minus,
+            '.' => Key.Period,
+            '/' => Key.ForwardSlash,
+            '0' => Key.Num0,
+            '1' => Key.Num1,
+            '2' => Key.Num2,
+            '3' => Key.Num3,
+            '4' => Key.Num4,
+            '5' => Key.Num5,
+            '6' => Key.Num6,
+            '7' => Key.Num7,
+            '8' => Key.Num8,
+            '9' => Key.Num9,
+            ';' => Key.Semicolon,
+            '=' => Key.Equals,
+            
+            '[' => Key.LeftBracket,
+            ']' => Key.RightBracket,
+            '\\' => Key.Backslash,
+            
+            '`' => Key.Backquote,
+            
+            'a' => Key.A,
+            'b' => Key.B,
+            'c' => Key.C,
+            'd' => Key.D,
+            'e' => Key.E,
+            'f' => Key.F,
+            'g' => Key.G,
+            'h' => Key.H,
+            'i' => Key.I,
+            'j' => Key.J,
+            'k' => Key.K,
+            'l' => Key.L,
+            'm' => Key.M,
+            'n' => Key.N,
+            'o' => Key.O,
+            'p' => Key.P,
+            'q' => Key.Q,
+            'r' => Key.R,
+            's' => Key.S,
+            't' => Key.T,
+            'u' => Key.U,
+            'v' => Key.V,
+            'w' => Key.W,
+            'x' => Key.X,
+            'y' => Key.Y,
+            'z' => Key.Z,
+            
+            '\x7F' => Key.Delete,
+            
+            57 | scancodeMask => Key.CapsLock,
+            
+            58 | scancodeMask => Key.F1,
+            59 | scancodeMask => Key.F2,
+            60 | scancodeMask => Key.F3,
+            61 | scancodeMask => Key.F4,
+            62 | scancodeMask => Key.F5,
+            63 | scancodeMask => Key.F6,
+            64 | scancodeMask => Key.F7,
+            65 | scancodeMask => Key.F8,
+            66 | scancodeMask => Key.F9,
+            67 | scancodeMask => Key.F10,
+            68 | scancodeMask => Key.F11,
+            69 | scancodeMask => Key.F12,
+            104 | scancodeMask => Key.F13,
+            105 | scancodeMask => Key.F14,
+            106 | scancodeMask => Key.F15,
+            107 | scancodeMask => Key.F16,
+            108 | scancodeMask => Key.F17,
+            109 | scancodeMask => Key.F18,
+            110 | scancodeMask => Key.F19,
+            111 | scancodeMask => Key.F20,
+            112 | scancodeMask => Key.F21,
+            113 | scancodeMask => Key.F22,
+            114 | scancodeMask => Key.F23,
+            115 | scancodeMask => Key.F24,
+            
+            70 | scancodeMask => Key.PrintScreen,
+            71 | scancodeMask => Key.ScrollLock,
+            72 | scancodeMask => Key.Pause,
+            73 | scancodeMask => Key.Insert,
+            
+            74 | scancodeMask => Key.Home,
+            75 | scancodeMask => Key.PageUp,
+            77 | scancodeMask => Key.End,
+            78 | scancodeMask => Key.PageDown,
+            79 | scancodeMask => Key.Right,
+            80 | scancodeMask => Key.Left,
+            81 | scancodeMask => Key.Down,
+            82 | scancodeMask => Key.Up,
+            
+            83 | scancodeMask => Key.NumLock,
+            84 | scancodeMask => Key.KeypadDivide,
+            85 | scancodeMask => Key.KeypadMultiply,
+            86 | scancodeMask => Key.KeypadSubtract,
+            87 | scancodeMask => Key.KeypadAdd,
+            88 | scancodeMask => Key.KeypadEnter,
+            
+            89 | scancodeMask => Key.Keypad1,
+            90 | scancodeMask => Key.Keypad2,
+            91 | scancodeMask => Key.Keypad3,
+            92 | scancodeMask => Key.Keypad4,
+            93 | scancodeMask => Key.Keypad5,
+            94 | scancodeMask => Key.Keypad6,
+            95 | scancodeMask => Key.Keypad7,
+            96 | scancodeMask => Key.Keypad8,
+            97 | scancodeMask => Key.Keypad9,
+            98 | scancodeMask => Key.Keypad0,
+            99 | scancodeMask => Key.KeypadDecimal,
+            
+            101 | scancodeMask => Key.Menu,
+            103 | scancodeMask => Key.KeypadEqual,
+
+            224 | scancodeMask => Key.LeftControl,
+            225 | scancodeMask => Key.LeftShift,
+            226 | scancodeMask => Key.LeftAlt,
+            227 | scancodeMask => Key.LeftSuper,
+            228 | scancodeMask => Key.RightControl,
+            229 | scancodeMask => Key.RightShift,
+            230 | scancodeMask => Key.RightAlt,
+            231 | scancodeMask => Key.RightSuper,
+
+            _ => Key.Unknown
+        };
+    }
     
     public delegate void OnCloseRequested();
+
+    public delegate void OnKeyDown(Key key);
+
+    public delegate void OnKeyUp(Key key);
 }

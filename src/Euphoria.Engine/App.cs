@@ -87,6 +87,9 @@ public static class App
         Logger.Debug("Initializing metrics system.");
         Metrics.Initialize();
         
+        Logger.Debug("Initializing input system.");
+        Input.Initialize(Window);
+        
         Logger.Debug("Initializing user code.");
         Application.Initialize();
 
@@ -95,6 +98,7 @@ public static class App
         IsRunning = true;
         while (IsRunning)
         {
+            Input.Update();
             Window.ProcessEvents();
             
             Metrics.Update();

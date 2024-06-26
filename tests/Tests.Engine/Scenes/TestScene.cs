@@ -32,7 +32,7 @@ public class TestScene : Scene
 
     public override void Update(float dt)
     {
-        Console.WriteLine(dt);
+        //Console.WriteLine(dt);
         
         base.Update(dt);
     }

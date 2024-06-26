@@ -1,4 +1,6 @@
-﻿using Euphoria.Engine.Entities.Components;
+﻿using System;
+using Euphoria.Engine;
+using Euphoria.Engine.Entities.Components;
 
 namespace Tests.Engine.Components;
 
@@ -8,7 +10,18 @@ public class MoveComponent : Component
     {
         base.Update(dt);
 
-        // TODO: Probably should add input...
-        Transform.Position.X += 50 * dt;
+        float speed = 50 * dt;
+
+        if (Input.IsKeyDown(Key.Up))
+            Transform.Position.Y -= speed;
+        if (Input.IsKeyDown(Key.Down))
+            Transform.Position.Y += speed;
+        if (Input.IsKeyDown(Key.Left))
+            Transform.Position.X -= speed;
+        if (Input.IsKeyDown(Key.Right))
+            Transform.Position.X += speed;
+        
+        if (Input.IsKeyPressed(Key.Space))
+            Console.WriteLine("Press!");
     }
 }
