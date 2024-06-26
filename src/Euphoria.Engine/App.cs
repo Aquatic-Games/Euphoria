@@ -84,6 +84,9 @@ public static class App
                 throw new ArgumentOutOfRangeException();
         }
         
+        Logger.Debug("Initializing metrics system.");
+        Metrics.Initialize();
+        
         Logger.Debug("Initializing user code.");
         Application.Initialize();
 
@@ -94,7 +97,9 @@ public static class App
         {
             Window.ProcessEvents();
             
-            Application.Update(1f / 60f);
+            Metrics.Update();
+            
+            Application.Update((float) Metrics.TimeSinceLastFrame);
             Application.Draw();
             
             Graphics.Present();

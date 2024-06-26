@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities;
 using Euphoria.Engine.Scenes;
@@ -27,6 +28,13 @@ public class TestScene : Scene
         //AddEntity(entity);
         
         base.Initialize();
+    }
+
+    public override void Update(float dt)
+    {
+        Console.WriteLine(dt);
+        
+        base.Update(dt);
     }
 
     public override void Draw()
