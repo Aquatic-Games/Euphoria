@@ -14,6 +14,8 @@ public class Entity : IDisposable
 
     public Transform Transform;
 
+    public Entity(string name) : this(name, new Transform()) { }
+
     public Entity(string name, Transform transform)
     {
         Name = name;
