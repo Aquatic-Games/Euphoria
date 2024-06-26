@@ -1,35 +1,44 @@
 ﻿using System.Numerics;
 using Euphoria.Engine;
+using Euphoria.Engine.Scenes;
 using Euphoria.Math;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
+using Tests.Engine.Scenes;
 
 namespace Tests.Engine;
 
 public class TestApp : Application
 {
-    private Texture _texture;
+    private Scene _scene;
     
     public override void Initialize()
     {
         base.Initialize();
 
-        _texture = Graphics.CreateTexture(new Bitmap("Content/awesomeface.png"));
+        _scene = new TestScene();
+        
+        _scene.Initialize();
+    }
+
+    public override void Update(float dt)
+    {
+        base.Update(dt);
+        
+        _scene.Update(dt);
     }
 
     public override void Draw()
     {
         base.Draw();
-
-        TextureBatcher batcher = Graphics.TextureBatcher;
         
-        batcher.Draw(_texture, new Vector2(0, 0), Color.White);
+        _scene.Draw();
     }
 
     public override void Dispose()
     {
         base.Dispose();
         
-        _texture.Dispose();
+        _scene.Dispose();
     }
 }

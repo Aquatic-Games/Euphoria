@@ -67,6 +67,10 @@ public class Entity : IDisposable
         foreach (Component component in _components)
             component.Draw();
     }
-    
-    public virtual void Dispose() { }
+
+    public virtual void Dispose()
+    {
+        foreach (Component component in _components)
+            component.Dispose();
+    }
 }
