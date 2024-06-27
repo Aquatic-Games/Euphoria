@@ -69,7 +69,7 @@ public sealed class Graphics : IDisposable
 
         Logger.Trace("Creating swapchain.");
         _swapchain = Device.CreateSwapchain(new SwapchainDescription((uint) size.Width, (uint) size.Height,
-            presentMode: PresentMode.VerticalSync));
+            presentMode: PresentMode.VerticalSync, bufferCount: 2));
         
         _swapchainTexture = _swapchain.GetSwapchainTexture();
 

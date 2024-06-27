@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities.Components;
 
@@ -23,5 +24,14 @@ public class MoveComponent : Component
         
         if (Input.IsKeyPressed(Key.Space))
             Console.WriteLine("Press!");
+
+        // TODO: Look into GRABS D3D11 input lag. Something to do with frame latency.
+        if (Input.IsMouseButtonDown(MouseButton.Left))
+            Transform.Position = new Vector3(Input.MousePosition, 0);
+        if (Input.IsMouseButtonDown(MouseButton.Right))
+            Transform.Position += new Vector3(Input.MouseDelta, 0);
+        
+        if (Input.IsMouseButtonPressed(MouseButton.Middle))
+            Transform.Position = Vector3.Zero;
     }
 }

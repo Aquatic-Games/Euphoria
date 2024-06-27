@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Euphoria.Math;
 using grabs.Graphics;
 using Silk.NET.SDL;
@@ -13,6 +14,12 @@ public unsafe class Window : IDisposable
     public event OnKeyDown KeyDown = delegate { };
 
     public event OnKeyUp KeyUp = delegate { };
+
+    public event OnMouseButtonDown MouseButtonDown = delegate { };
+
+    public event OnMouseButtonUp MouseButtonUp = delegate { };
+
+    public event OnMouseMove MouseMove = delegate { };
 
     private Sdl _sdl;
     private SdlWindow* _window;
@@ -148,6 +155,27 @@ public unsafe class Window : IDisposable
                 {
                     KeyboardEvent keyboard = winEvent.Key;
                     KeyUp(SdlKeycodeToEuphoriaKey((uint) keyboard.Keysym.Sym));
+                    break;
+                }
+
+                case EventType.Mousebuttondown:
+                {
+                    MouseButtonEvent button = winEvent.Button;
+                    MouseButtonDown((MouseButton) button.Button);
+                    break;
+                }
+
+                case EventType.Mousebuttonup:
+                {
+                    MouseButtonEvent button = winEvent.Button;
+                    MouseButtonUp((MouseButton) button.Button);
+                    break;
+                }
+
+                case EventType.Mousemotion:
+                {
+                    MouseMotionEvent motion = winEvent.Motion;
+                    MouseMove(new Vector2(motion.X, motion.Y), new Vector2(motion.Xrel, motion.Yrel));
                     break;
                 }
             }
@@ -322,4 +350,10 @@ public unsafe class Window : IDisposable
     public delegate void OnKeyDown(Key key);
 
     public delegate void OnKeyUp(Key key);
+
+    public delegate void OnMouseButtonDown(MouseButton button);
+
+    public delegate void OnMouseButtonUp(MouseButton button);
+
+    public delegate void OnMouseMove(Vector2 position, Vector2 delta);
 }
