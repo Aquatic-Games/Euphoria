@@ -22,6 +22,8 @@ public sealed class Graphics : IDisposable
     internal readonly Device Device;
     internal readonly CommandList CommandList;
 
+    public GraphicsApi Api => Instance.Api;
+
     public readonly TextureBatcher TextureBatcher;
 
     //public readonly Renderer2D Renderer2D;

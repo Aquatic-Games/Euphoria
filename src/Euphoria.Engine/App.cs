@@ -14,12 +14,32 @@ namespace Euphoria.Engine;
 
 public static class App
 {
-    public static Application Application;
+    private static double _targetDelta;
+    private static int _targetFps;
     
-    public static Window Window;
-    public static Graphics Graphics;
+    public static string Name { get; private set; }
+    public static Version Version { get; private set; }
+    public static string ReleaseConfig { get; private set; }
+    
+    public static bool IsRunning { get; private set; }
 
-    public static bool IsRunning;
+    public static int TargetFramesPerSecond
+    {
+        get => _targetFps;
+        set
+        {
+            _targetFps = value;
+            if (_targetFps == 0)
+                _targetDelta = 0;
+            else
+                _targetDelta = 1.0 / _targetFps;
+        }
+    }
+    
+    public static Application Application { get; private set; }
+    
+    public static Window Window { get; private set; }
+    public static Graphics Graphics { get; private set; }
 
     static App()
     {
@@ -41,8 +61,12 @@ public static class App
 
     public static void Run(in LaunchOptions options, Application application = null)
     {
+        Name = options.AppName;
+        Version = options.AppVersion;
+        ReleaseConfig = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration.ToUpper() ?? "";
+        
         Logger.Debug("Starting application.");
-        Logger.Info($"Application: {options.AppName} v{options.AppVersion}");
+        Logger.Info($"Application: {options.AppName} v{options.AppVersion}, release config: {ReleaseConfig}");
 
         // EE = Euphoria Engine
         using Mutex lockMut = new Mutex(true, $"Global\\EE-{options.AppName}", out bool createdNew);
@@ -60,8 +84,6 @@ public static class App
         Window.CloseRequested += () => IsRunning = false;
 
         Logger.Debug($"Selected API: {options.Api}");
-        string releaseConfigName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration ?? "";
-        Window.EngineTitle = $" v{options.AppVersion} {releaseConfigName.ToUpper()} - {options.Api}";
         
         switch (options.Api)
         {
@@ -84,8 +106,10 @@ public static class App
                 throw new ArgumentOutOfRangeException();
         }
         
+        SetEngineTitle(0);
+        
         Logger.Debug("Initializing metrics system.");
-        Metrics.Initialize();
+        Metrics.Initialize(SetEngineTitle);
         
         Logger.Debug("Initializing input system.");
         Input.Initialize(Window);
@@ -98,10 +122,11 @@ public static class App
         IsRunning = true;
         while (IsRunning)
         {
+            if (Metrics.Update(_targetDelta))
+                continue;
+            
             Input.Update();
             Window.ProcessEvents();
-            
-            Metrics.Update();
             
             Application.Update((float) Metrics.TimeSinceLastFrame);
             Application.Draw();
@@ -111,6 +136,11 @@ public static class App
         
         Graphics.Dispose();
         Window.Dispose();
+    }
+
+    public static void Close()
+    {
+        IsRunning = false;
     }
 
     public static GraphicsApi ShowGraphicsApiSelector(bool exitOnCancel = true)
@@ -196,5 +226,10 @@ public static class App
         }
 
         return false;
+    }
+
+    private static void SetEngineTitle(int fps)
+    {
+        Window.EngineTitle = $" v{Version} {ReleaseConfig} | {Graphics.Api} | {fps} FPS";
     }
 }

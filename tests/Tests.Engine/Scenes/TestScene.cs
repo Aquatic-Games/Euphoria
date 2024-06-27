@@ -15,6 +15,7 @@ public class TestScene : Scene
     
     public override void Initialize()
     {
+        App.TargetFramesPerSecond = 0;
         Graphics graphics = App.Graphics;
 
         _texture = graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
@@ -28,13 +29,6 @@ public class TestScene : Scene
         //AddEntity(entity);
         
         base.Initialize();
-    }
-
-    public override void Update(float dt)
-    {
-        //Console.WriteLine(dt);
-        
-        base.Update(dt);
     }
 
     public override void Draw()
