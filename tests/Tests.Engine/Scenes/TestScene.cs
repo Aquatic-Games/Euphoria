@@ -36,7 +36,7 @@ public class TestScene : Scene
         base.Update(dt);
         
         if (Input.IsKeyPressed(Key.P))
-            SceneManager.LoadAndSwitchScene(new OtherScene());
+            SceneManager.LoadAndSwitchScene(new Scene3D());
     }
 
     public override void Draw()
