@@ -3,6 +3,7 @@ using Euphoria.Core;
 using Euphoria.Engine;
 using grabs.Graphics;
 using Tests.Engine;
+using Tests.Engine.Scenes;
 
 Logger.AttachConsole();
 
@@ -13,4 +14,4 @@ LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
     Api = api
 };
 
-App.Run(options, new TestApp());
+App.Run(options, new TestScene());

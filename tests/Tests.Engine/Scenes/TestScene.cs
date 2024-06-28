@@ -31,6 +31,14 @@ public class TestScene : Scene
         base.Initialize();
     }
 
+    public override void Update(float dt)
+    {
+        base.Update(dt);
+        
+        if (Input.IsKeyPressed(Key.P))
+            SceneManager.LoadAndSwitchScene(new OtherScene());
+    }
+
     public override void Draw()
     {
         Graphics graphics = App.Graphics;

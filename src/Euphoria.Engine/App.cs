@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Euphoria.Core;
 using Euphoria.Engine.Exceptions;
+using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
@@ -59,7 +60,7 @@ public static class App
         Console.ForegroundColor = currentColor;
     }
 
-    public static void Run(in LaunchOptions options, Application application = null)
+    public static void Run(in LaunchOptions options, Scene initialScene, Application application = null)
     {
         Name = options.AppName;
         Version = options.AppVersion;
@@ -115,7 +116,7 @@ public static class App
         Input.Initialize(Window);
         
         Logger.Debug("Initializing user code.");
-        Application.Initialize();
+        Application.Initialize(initialScene);
 
         Logger.Trace("Entering main loop.");
         
@@ -134,6 +135,7 @@ public static class App
             Graphics.Present();
         }
         
+        Application.Dispose();
         Graphics.Dispose();
         Window.Dispose();
     }

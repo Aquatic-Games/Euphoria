@@ -12,9 +12,9 @@ public class TestApp : Application
 {
     private Scene _scene;
     
-    public override void Initialize()
+    public override void Initialize(Scene initialScene)
     {
-        base.Initialize();
+        base.Initialize(initialScene);
 
         _scene = new TestScene();
         

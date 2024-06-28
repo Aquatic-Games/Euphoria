@@ -1,18 +1,28 @@
 ﻿using System;
+using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 
 namespace Euphoria.Engine;
 
 public class Application : IDisposable
 {
-    public Window Window => App.Window;
-    public Graphics Graphics => App.Graphics;
-    
-    public virtual void Initialize() { }
+    public virtual void Initialize(Scene initialScene)
+    {
+        SceneManager.Initialize(initialScene);
+    }
 
-    public virtual void Update(float dt) { }
+    public virtual void Update(float dt)
+    {
+        SceneManager.Update(dt);
+    }
 
-    public virtual void Draw() { }
+    public virtual void Draw()
+    {
+        SceneManager.Draw();
+    }
 
-    public virtual void Dispose() { }
+    public virtual void Dispose()
+    {
+        SceneManager.Unload();
+    }
 }
