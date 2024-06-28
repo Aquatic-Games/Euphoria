@@ -197,7 +197,7 @@ public class Renderer3D : IDisposable
         
         cl.EndRenderPass();
 
-        RenderPassDescription lightingPassDesc = new RenderPassDescription(_passBuffer, new Vector4(1.0f, 0.5f, 0.25f, 1.0f));
+        RenderPassDescription lightingPassDesc = new RenderPassDescription(_passBuffer, new Vector4(0, 0, 0, 1));
         cl.BeginRenderPass(lightingPassDesc);
         
         cl.SetDescriptorSet(0, _passInputSet);

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Euphoria.Core;
 using Euphoria.Engine.Entities;
+using Euphoria.Math;
+using Euphoria.Render.Renderers.Structs;
 
 namespace Euphoria.Engine.Scenes;
 
@@ -14,10 +16,23 @@ public abstract class Scene : IDisposable
     private Dictionary<string, Entity> _entityPointers;
     private bool _hasInitialized;
 
+    public Camera Camera
+    {
+        get
+        {
+            if (!TryGetEntity("Camera", out Camera camera))
+                throw new Exception("A camera was not found in the scene. Scenes must have at least one camera.");
+
+            return camera;
+        }
+    }
+
     public Scene()
     {
         _entities = new List<Entity>();
         _entityPointers = new Dictionary<string, Entity>();
+
+        AddEntity(new Camera("Camera", new Transform(), 75));
     }
 
     public bool TryAddEntity(Entity entity)
@@ -42,6 +57,35 @@ public abstract class Scene : IDisposable
             entity.Initialize();
     }
 
+    public bool TryGetEntity(string name, out Entity entity)
+    {
+        return _entityPointers.TryGetValue(name, out entity);
+    }
+
+    public bool TryGetEntity<T>(string name, out T entity) where T : Entity
+    {
+        entity = null;
+        
+        if (!TryGetEntity(name, out Entity ent))
+            return false;
+
+        entity = (T) ent;
+        return true;
+    }
+
+    public Entity GetEntity(string name)
+    {
+        if (!TryGetEntity(name, out Entity entity))
+            throw new Exception($"Entity with name \"{name}\" was not found in the scene.");
+
+        return entity;
+    }
+
+    public T GetEntity<T>(string name) where T : Entity
+    {
+        return (T) GetEntity(name);
+    }
+    
     public virtual void Initialize()
     {
         if (_hasInitialized)
@@ -61,6 +105,9 @@ public abstract class Scene : IDisposable
 
     public virtual void Draw()
     {
+        Camera camera = Camera;
+        App.Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
+        
         foreach (Entity entity in _entities)
             entity.Draw();
     }
