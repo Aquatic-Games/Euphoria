@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ImGui.NET" Version="1.90.8.1" />
       <PackageReference Include="StbImageSharp" Version="2.27.13" />
     </ItemGroup>
 
@@ -23,6 +24,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ClCompile Include="Shaders\ImGui.hlsl" />
       <ClCompile Include="Shaders\QuadDraw.hlsl" />
       <ClCompile Include="Shaders\Render\Composite.hlsl" />
     </ItemGroup>

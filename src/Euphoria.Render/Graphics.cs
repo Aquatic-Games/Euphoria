@@ -28,6 +28,8 @@ public sealed class Graphics : IDisposable
 
     //public readonly Renderer2D Renderer2D;
     public readonly Renderer3D Renderer3D;
+    
+    public readonly ImGuiRenderer ImGuiRenderer;
 
     public VSyncMode VSyncMode
     {
@@ -88,6 +90,9 @@ public sealed class Graphics : IDisposable
         
         Logger.Trace("Creating 3D renderer.");
         Renderer3D = new Renderer3D(Device, size);
+        
+        Logger.Trace("Creating IMGUI renderer.");
+        ImGuiRenderer = new ImGuiRenderer(Device);
 
         /*switch (options.RenderType)
         {
