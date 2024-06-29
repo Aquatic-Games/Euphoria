@@ -146,9 +146,12 @@ public sealed class Graphics : IDisposable
         
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
+        // TODO: UI Renderer instead of texture batcher.
         CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
+        
+        ImGuiRenderer.Render(Device, CommandList, _swapchainBuffer);
         
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
@@ -158,6 +161,7 @@ public sealed class Graphics : IDisposable
 
     public void Dispose()
     {
+        ImGuiRenderer.Dispose();
         Renderer3D?.Dispose();
         //Renderer2D?.Dispose();
         TextureBatcher.Dispose();

@@ -14,4 +14,4 @@ LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
     Api = api
 };
 
-App.Run(options, new TestScene());
+App.Run(options, new TestScene(), new TestApp());
