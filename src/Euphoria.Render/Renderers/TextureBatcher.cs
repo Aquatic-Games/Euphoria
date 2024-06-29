@@ -69,13 +69,14 @@ public sealed class TextureBatcher : IDisposable
             ShaderLoader.LoadSpirvShader("Render/Texture", ShaderStage.Pixel), "PSMain");
         
         Logger.Trace("Creating pipeline.");
-        
+
         _pipeline = device.CreatePipeline(new PipelineDescription(vTexModule, pTexModule, new[]
-        {
-            new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
-            new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
-            new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
-        }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, [transformLayout, TextureDescriptorLayout]));
+            {
+                new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
+                new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
+                new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
+            }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, BlendDescription.NonPremultiplied,
+            [transformLayout, TextureDescriptorLayout]));
         
         vTexModule.Dispose();
         pTexModule.Dispose();

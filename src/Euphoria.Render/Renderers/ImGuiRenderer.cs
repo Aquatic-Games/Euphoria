@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Numerics;
 using grabs.Graphics;
 using ImGuiNET;
@@ -43,9 +44,9 @@ public class ImGuiRenderer : IDisposable
 
         InputLayoutDescription[] inputLayout =
         [
-            new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex),
-            new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex),
-            new InputLayoutDescription(Format.R8G8B8A8_UNorm, 16, 0, InputType.PerVertex)
+            new InputLayoutDescription(Format.R32G32_Float, 0, 0, InputType.PerVertex), // Position
+            new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
+            new InputLayoutDescription(Format.R8G8B8A8_UNorm, 16, 0, InputType.PerVertex) // Color
         ];
 
         using DescriptorLayout projectionLayout = device.CreateDescriptorLayout(new DescriptorLayoutDescription(
@@ -55,7 +56,8 @@ public class ImGuiRenderer : IDisposable
             new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel)));
 
         PipelineDescription pipelineDesc = new PipelineDescription(vertexModule, pixelModule, inputLayout,
-            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, [projectionLayout, textureLayout]);
+            DepthStencilDescription.Disabled, RasterizerDescription.CullNone, BlendDescription.NonPremultiplied,
+            [projectionLayout, textureLayout]);
 
         _pipeline = device.CreatePipeline(pipelineDesc);
 
@@ -137,14 +139,18 @@ public class ImGuiRenderer : IDisposable
 
         cl.SetViewport(new Viewport(0, 0, (uint) drawData.DisplaySize.X, (uint) drawData.DisplaySize.Y));
         
+        // TODO: IMPORTANT!!! In GRABS, setting the pipeline AFTER the vertex/index buffer causes it to fail,
+        // as the VAO bind overwrites the currently bound Vertex and Index buffers.
+        cl.SetPipeline(_pipeline);
+        
         cl.SetVertexBuffer(0, _vertexBuffer, (uint) sizeof(ImDrawVert), 0);
         cl.SetIndexBuffer(_indexBuffer, Format.R16_UInt);
         
-        cl.SetPipeline(_pipeline);
         cl.SetDescriptorSet(0, _projectionSet);
 
         vertexOffset = 0;
         indexOffset = 0;
+        Vector2 clipOff = drawData.DisplayPos;
         for (int i = 0; i < drawData.CmdListsCount; i++)
         {
             ImDrawListPtr cmdList = drawData.CmdLists[i];
@@ -159,9 +165,16 @@ public class ImGuiRenderer : IDisposable
 
                 if (drawCmd.TextureId != 0)
                     throw new NotImplementedException("Multiple textures are not supported right now.");
+
+                Vector2 clipMin = new Vector2(drawCmd.ClipRect.X - clipOff.X, drawCmd.ClipRect.Y - clipOff.Y);
+                Vector2 clipMax = new Vector2(drawCmd.ClipRect.Z - clipOff.X, drawCmd.ClipRect.W - clipOff.Y);
+                
+                if (clipMax.X <= clipMin.X || clipMax.Y <= clipMin.Y)
+                    continue;
+
+                cl.SetScissor(new Rectangle((int) clipMin.X, (int) clipMin.Y, (int) clipMax.X, (int) clipMax.Y));
                 
                 cl.SetDescriptorSet(1, _textureSet);
-
                 cl.DrawIndexed(drawCmd.ElemCount, drawCmd.IdxOffset + indexOffset,
                     (int) (drawCmd.VtxOffset + vertexOffset));
             }

@@ -91,7 +91,7 @@ public class Renderer3D : IDisposable
                 new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex),
                 new InputLayoutDescription(Format.R32G32B32A32_Float, 20, 0, InputType.PerVertex),
                 new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex)
-            ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullNone,
+            ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullNone, BlendDescription.Disabled,
             [cameraInfoLayout, drawInfoLayout, _materialInfoLayout]);
 
         _defaultPipeline = device.CreatePipeline(defaultPipelineDesc);
@@ -128,9 +128,10 @@ public class Renderer3D : IDisposable
             );
 
         Logger.Trace("Creating pass pipeline.");
-        
+
         PipelineDescription passPipelineDesc = new PipelineDescription(passVertex, passPixel, null,
-            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [passInputLayout]);
+            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, BlendDescription.Disabled,
+            [passInputLayout]);
 
         _passPipeline = device.CreatePipeline(passPipelineDesc);
 
@@ -152,9 +153,10 @@ public class Renderer3D : IDisposable
                 ShaderStage.Pixel)));
 
         Logger.Trace("Creating composite pipeline.");
-        
+
         PipelineDescription compositePipelineDesc = new PipelineDescription(passVertex, compositePixel, null,
-            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, [compositeLayout]);
+            DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, BlendDescription.Disabled,
+            [compositeLayout]);
 
         _compositePipeline = device.CreatePipeline(compositePipelineDesc);
 

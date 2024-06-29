@@ -1,6 +1,7 @@
 ﻿global using GrabsTexture = grabs.Graphics.Texture;
 
 using System;
+using System.Drawing;
 using System.Numerics;
 using Euphoria.Core;
 using Euphoria.Math;
@@ -141,6 +142,7 @@ public sealed class Graphics : IDisposable
     {
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
+        CommandList.SetScissor(new Rectangle(0, 0, _size.Width, _size.Height));
         
         Renderer3D.Render(CommandList, _swapchainBuffer);
         
