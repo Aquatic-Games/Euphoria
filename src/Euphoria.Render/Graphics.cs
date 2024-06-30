@@ -14,18 +14,21 @@ namespace Euphoria.Render;
 public sealed class Graphics : IDisposable
 {
     private readonly Swapchain _swapchain;
-    private readonly GrabsTexture _swapchainTexture;
-    private readonly Framebuffer _swapchainBuffer;
+    private GrabsTexture _swapchainTexture;
 
     private Size<int> _size;
     
     internal readonly Instance Instance;
     internal readonly Device Device;
     internal readonly CommandList CommandList;
+    
+    internal Framebuffer SwapchainFramebuffer;
 
     internal ItemIdCollection<Texture> Textures;
 
     public GraphicsApi Api => Instance.Api;
+
+    public Size<int> Size => _size;
 
     public readonly TextureBatcher TextureBatcher;
 
@@ -81,7 +84,7 @@ public sealed class Graphics : IDisposable
         _swapchainTexture = _swapchain.GetSwapchainTexture();
 
         Logger.Trace("Creating swapchain buffer.");
-        _swapchainBuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
+        SwapchainFramebuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
 
         Logger.Trace("Creating main command list.");
         CommandList = Device.CreateCommandList();
@@ -97,7 +100,7 @@ public sealed class Graphics : IDisposable
         Renderer3D = new Renderer3D(Device, size);
         
         Logger.Trace("Creating IMGUI renderer.");
-        ImGuiRenderer = new ImGuiRenderer(Device);
+        ImGuiRenderer = new ImGuiRenderer(Device, size);
 
         /*switch (options.RenderType)
         {
@@ -152,21 +155,43 @@ public sealed class Graphics : IDisposable
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         CommandList.SetScissor(new Rectangle(0, 0, _size.Width, _size.Height));
         
-        Renderer3D.Render(CommandList, _swapchainBuffer);
+        Renderer3D.Render(CommandList, SwapchainFramebuffer, _size);
         
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
         // TODO: UI Renderer instead of texture batcher.
-        CommandList.BeginRenderPass(new RenderPassDescription(_swapchainBuffer, Vector4.Zero, LoadOp.Load));
+        CommandList.BeginRenderPass(new RenderPassDescription(SwapchainFramebuffer, Vector4.Zero, LoadOp.Load));
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
-        ImGuiRenderer.Render(CommandList, _swapchainBuffer, Textures);
+        ImGuiRenderer.Render(CommandList, SwapchainFramebuffer, Textures);
         
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
         
         _swapchain.Present();
+    }
+
+    public void Resize(in Size<int> size)
+    {
+        _size = size;
+        
+        Logger.Debug($"Graphics resize requested to {size}");
+        
+        Logger.Trace("Disposing old resources.");
+        SwapchainFramebuffer.Dispose();
+        _swapchainTexture.Dispose();
+        
+        Logger.Trace("Resizing swapchain.");
+        _swapchain.Resize((uint) size.Width, (uint) size.Height);
+        
+        Logger.Trace("Creating new resources.");
+        _swapchainTexture = _swapchain.GetSwapchainTexture();
+        SwapchainFramebuffer = Device.CreateFramebuffer(_swapchainTexture);
+        
+        Logger.Trace("Resizing renderers.");
+        Renderer3D.Resize(size);
+        ImGuiRenderer.Resize(size);
     }
 
     public void Dispose()
@@ -177,7 +202,7 @@ public sealed class Graphics : IDisposable
         TextureBatcher.Dispose();
         
         CommandList.Dispose();
-        _swapchainBuffer.Dispose();
+        SwapchainFramebuffer.Dispose();
         _swapchainTexture.Dispose();
         _swapchain.Dispose();
         Device.Dispose();

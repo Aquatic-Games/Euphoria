@@ -11,6 +11,8 @@ public unsafe class Window : IDisposable
 {
     public event OnCloseRequested CloseRequested = delegate { };
 
+    public event OnResized Resized = delegate { };
+
     public event OnKeyDown KeyDown = delegate { };
 
     public event OnKeyUp KeyUp = delegate { };
@@ -81,6 +83,9 @@ public unsafe class Window : IDisposable
             throw new Exception($"Failed to initialize SDL: {_sdl.GetErrorS()}");
 
         WindowFlags flags = WindowFlags.Shown;
+
+        if (options.Resizable)
+            flags |= WindowFlags.Resizable;
         
         switch (options.Api)
         {
@@ -141,10 +146,16 @@ public unsafe class Window : IDisposable
             {
                 case EventType.Windowevent:
                 {
-                    switch ((WindowEventID) winEvent.Window.Event)
+                    WindowEvent window = winEvent.Window;
+                    
+                    switch ((WindowEventID) window.Event)
                     {
                         case WindowEventID.Close:
                             CloseRequested();
+                            break;
+
+                        case WindowEventID.Resized:
+                            Resized(new Size<int>(window.Data1, window.Data2));
                             break;
                     }
 
@@ -371,6 +382,8 @@ public unsafe class Window : IDisposable
     }
     
     public delegate void OnCloseRequested();
+
+    public delegate void OnResized(Size<int> newSize);
 
     public delegate void OnKeyDown(Key key);
 

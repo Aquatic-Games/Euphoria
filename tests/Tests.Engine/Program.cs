@@ -11,6 +11,7 @@ GraphicsApi api = App.ShowGraphicsApiSelector();
 
 LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
 {
+    Resizable = true,
     Api = api
 };
 

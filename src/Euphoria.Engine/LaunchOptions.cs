@@ -13,8 +13,9 @@ public struct LaunchOptions
     
     public string WindowTitle;
     
-    // TODO: Euphoria.Math.Size<T>
     public Size<int> WindowSize;
+
+    public bool Resizable;
 
     public GraphicsApi Api;
 
@@ -27,6 +28,7 @@ public struct LaunchOptions
 
         WindowTitle = appName;
         WindowSize = new Size<int>(1280, 720);
+        Resizable = false;
 
         Api = App.PickBestGraphicsApi();
         

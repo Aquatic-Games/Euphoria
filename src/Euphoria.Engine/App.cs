@@ -82,7 +82,6 @@ public static class App
 
         Logger.Trace("Creating window.");
         Window = new Window(options);
-        Window.CloseRequested += () => IsRunning = false;
 
         Logger.Debug($"Selected API: {options.Api}");
         
@@ -106,6 +105,9 @@ public static class App
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
+        Window.CloseRequested += () => IsRunning = false;
+        Window.Resized += size => Graphics.Resize(size); 
         
         SetEngineTitle(0);
         

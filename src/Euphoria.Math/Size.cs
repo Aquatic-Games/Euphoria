@@ -17,4 +17,9 @@ public struct Size<T>
         Width = wh;
         Height = wh;
     }
+
+    public override string ToString()
+    {
+        return $"{Width}x{Height}";
+    }
 }

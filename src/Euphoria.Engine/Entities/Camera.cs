@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Euphoria.Math;
 
 namespace Euphoria.Engine.Entities;
 
@@ -8,12 +9,13 @@ public class Camera : Entity
     private float _near;
     private float _far;
 
-    // TODO: CRAP!!! DO NOT DO IT LIKE THIS
-    public Matrix4x4 ProjectionMatrix => Matrix4x4.CreatePerspectiveFieldOfView(_fov,
-        App.Window.SizeInPixels.Width / (float) App.Window.SizeInPixels.Height, _near, _far);
+    private Matrix4x4 _projectionMatrix;
+    private Matrix4x4 _viewMatrix;
 
-    public Matrix4x4 ViewMatrix =>
-        Matrix4x4.CreateLookAt(Transform.Position, Transform.Position + Transform.Forward, Transform.Up);
+    // TODO: CRAP!!! DO NOT DO IT LIKE THIS
+    public Matrix4x4 ProjectionMatrix => _projectionMatrix;
+
+    public Matrix4x4 ViewMatrix => _viewMatrix;
 
     public float FieldOfView
     {
@@ -39,5 +41,16 @@ public class Camera : Entity
         _fov = float.DegreesToRadians(fieldOfView);
         _near = near;
         _far = far;
+    }
+
+    public override void Draw()
+    {
+        base.Draw();
+
+        Size<int> size = App.Graphics.Size;
+
+        _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, size.Width / (float) size.Height, _near, _far);
+        
+        _viewMatrix = Matrix4x4.CreateLookAt(Transform.Position, Transform.Position + Transform.Forward, Transform.Up);
     }
 }

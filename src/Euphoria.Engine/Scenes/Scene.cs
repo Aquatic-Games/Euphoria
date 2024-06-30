@@ -105,11 +105,11 @@ public abstract class Scene : IDisposable
 
     public virtual void Draw()
     {
-        Camera camera = Camera;
-        App.Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
-        
         foreach (Entity entity in _entities)
             entity.Draw();
+        
+        Camera camera = Camera;
+        App.Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
     }
 
     public virtual void Dispose()

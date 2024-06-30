@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using Euphoria.Core;
 using Euphoria.Math;
@@ -16,14 +17,14 @@ public class Renderer3D : IDisposable
     
     private readonly List<TransformedRenderable> _opaques;
     
-    private readonly GrabsTexture _depthTexture;
+    private GrabsTexture _depthTexture;
     
-    private readonly GrabsTexture _albedoTexture;
-    private readonly GrabsTexture _positionTexture;
-    private readonly Framebuffer _gBuffer;
+    private GrabsTexture _albedoTexture;
+    private GrabsTexture _positionTexture;
+    private Framebuffer _gBuffer;
 
-    private readonly GrabsTexture _passTexture;
-    private readonly Framebuffer _passBuffer;
+    private GrabsTexture _passTexture;
+    private Framebuffer _passBuffer;
     
     private readonly DescriptorLayout _materialInfoLayout;
     
@@ -49,20 +50,7 @@ public class Renderer3D : IDisposable
         _size = size;
         _opaques = new List<TransformedRenderable>();
         
-        TextureDescription textureDesc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1,
-            Format.D32_Float, TextureUsage.None);
-        
-        // TODO GRABS doesn't allow a TextureUsage of Framebuffer if creating a depth texture, D3D11 crashes - perhaps this should be fixed?
-        _depthTexture = device.CreateTexture(textureDesc);
-        
-        textureDesc.Format = Format.R32G32B32A32_Float;
-        textureDesc.Usage = TextureUsage.Framebuffer | TextureUsage.ShaderResource;
-        
-        Logger.Trace("Creating GBuffer.");
-
-        _albedoTexture = device.CreateTexture(textureDesc);
-        _positionTexture = device.CreateTexture(textureDesc);
-        _gBuffer = device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
+        CreateTextureResources();
 
         Logger.Trace("Loading GBuffer shaders.");
         
@@ -105,11 +93,6 @@ public class Renderer3D : IDisposable
         _drawInfoBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
         _drawInfoSet =
             device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
-        
-        Logger.Trace("Creating pass buffer.");
-        
-        _passTexture = device.CreateTexture(textureDesc);
-        _passBuffer = device.CreateFramebuffer([_passTexture], _depthTexture);
 
         Logger.Trace("Loading pass shaders.");
         
@@ -165,16 +148,35 @@ public class Renderer3D : IDisposable
         _compositeSet =
             device.CreateDescriptorSet(compositeLayout, new DescriptorSetDescription(texture: _passTexture));
     }
+    
+    public Renderable CreateRenderable(Mesh mesh, Material material)
+    {
+        Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
+        Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices);
+
+        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material);
+    }
+
+    public Material CreateMaterial(in MaterialDescription description)
+    {
+        DescriptorSet matDescriptor = _device.CreateDescriptorSet(_materialInfoLayout,
+            new DescriptorSetDescription(texture: description.Albedo.GTexture));
+
+        return new Material(description.Albedo, _defaultPipeline, matDescriptor);
+    }
 
     public void Draw(Renderable renderable, in Matrix4x4 world)
     {
         _opaques.Add(new TransformedRenderable(renderable, world));
     }
 
-    internal void Render(CommandList cl, Framebuffer swapchainBuffer)
+    internal void Render(CommandList cl, Framebuffer swapchainBuffer, Size<int> framebufferSize)
     {
         cl.UpdateBuffer(_cameraInfoBuffer, 0, Camera);
         cl.SetDescriptorSet(0, _cameraInfoSet);
+        
+        cl.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
+        cl.SetScissor(new Rectangle(0, 0, _size.Width, _size.Height));
         
         RenderPassDescription gBufferPassDesc = new RenderPassDescription(_gBuffer, Vector4.Zero);
         cl.BeginRenderPass(gBufferPassDesc);
@@ -209,6 +211,9 @@ public class Renderer3D : IDisposable
         
         cl.EndRenderPass();
 
+        cl.SetViewport(new Viewport(0, 0, (uint) framebufferSize.Width, (uint) framebufferSize.Height));
+        cl.SetScissor(new Rectangle(0, 0, framebufferSize.Width, framebufferSize.Height));
+        
         RenderPassDescription compositePassDesc = new RenderPassDescription(swapchainBuffer, new Vector4(0, 0, 0, 1));
         cl.BeginRenderPass(compositePassDesc);
         
@@ -222,21 +227,63 @@ public class Renderer3D : IDisposable
         // TODO: Don't clear here, have a "NewFrame" method or something. Would allow support for multiple cameras.
         _opaques.Clear();
     }
-    
-    public Renderable CreateRenderable(Mesh mesh, Material material)
-    {
-        Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
-        Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices);
 
-        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material);
+    internal void Resize(in Size<int> size)
+    {
+        Logger.Trace($"Resizing to {size}.");
+        _size = size;
+        
+        DisposeTextureResources();
+        CreateTextureResources();
+        UpdateDescriptorResources();
     }
 
-    public Material CreateMaterial(in MaterialDescription description)
+    private void CreateTextureResources()
     {
-        DescriptorSet matDescriptor = _device.CreateDescriptorSet(_materialInfoLayout,
-            new DescriptorSetDescription(texture: description.Albedo.GTexture));
+        Logger.Trace("Creating texture resources.");
+        
+        TextureDescription textureDesc = TextureDescription.Texture2D((uint) _size.Width, (uint) _size.Height, 1,
+            Format.D32_Float, TextureUsage.None);
+        
+        // TODO GRABS doesn't allow a TextureUsage of Framebuffer if creating a depth texture, D3D11 crashes - perhaps this should be fixed?
+        _depthTexture = _device.CreateTexture(textureDesc);
+        
+        textureDesc.Format = Format.R32G32B32A32_Float;
+        textureDesc.Usage = TextureUsage.Framebuffer | TextureUsage.ShaderResource;
+        
+        Logger.Trace("Creating GBuffer.");
 
-        return new Material(description.Albedo, _defaultPipeline, matDescriptor);
+        _albedoTexture = _device.CreateTexture(textureDesc);
+        _positionTexture = _device.CreateTexture(textureDesc);
+        _gBuffer = _device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
+        
+        Logger.Trace("Creating pass buffer.");
+        
+        _passTexture = _device.CreateTexture(textureDesc);
+        _passBuffer = _device.CreateFramebuffer([_passTexture], _depthTexture);
+    }
+
+    private void UpdateDescriptorResources()
+    {
+        // TODO: Probably can move the initializing in the constructor to here as well - just create the descriptor sets with nothing in them.
+        
+        Logger.Trace("Updating descriptor resources.");
+
+        _device.UpdateDescriptorSet(_passInputSet, new DescriptorSetDescription(texture: _albedoTexture),
+            new DescriptorSetDescription(texture: _positionTexture));
+
+        _device.UpdateDescriptorSet(_compositeSet, new DescriptorSetDescription(texture: _passTexture));
+    }
+
+    private void DisposeTextureResources()
+    {
+        Logger.Trace("Disposing texture resources.");
+        _passBuffer.Dispose();
+        _passTexture.Dispose();
+        _gBuffer.Dispose();
+        _positionTexture.Dispose();
+        _albedoTexture.Dispose();
+        _depthTexture.Dispose();
     }
 
     public void Dispose()
@@ -245,17 +292,12 @@ public class Renderer3D : IDisposable
         _compositePipeline.Dispose();
         _passInputSet.Dispose();
         _passPipeline.Dispose();
-        _passBuffer.Dispose();
-        _passTexture.Dispose();
         _drawInfoSet.Dispose();
         _drawInfoBuffer.Dispose();
         _cameraInfoSet.Dispose();
         _cameraInfoBuffer.Dispose();
         _defaultPipeline.Dispose();
         _materialInfoLayout.Dispose();
-        _gBuffer.Dispose();
-        _positionTexture.Dispose();
-        _albedoTexture.Dispose();
-        _depthTexture.Dispose();
+        DisposeTextureResources();
     }
 }

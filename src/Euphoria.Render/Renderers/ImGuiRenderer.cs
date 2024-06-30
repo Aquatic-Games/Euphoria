@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Euphoria.Core;
+using Euphoria.Math;
 using grabs.Graphics;
 using ImGuiNET;
 using Buffer = grabs.Graphics.Buffer;
@@ -14,6 +15,7 @@ namespace Euphoria.Render.Renderers;
 public class ImGuiRenderer : IDisposable
 {
     private Device _device;
+    private Size<int> _size;
     
     private readonly IntPtr _context;
     
@@ -35,9 +37,10 @@ public class ImGuiRenderer : IDisposable
 
     public IntPtr ImGuiContext => _context;
     
-    public unsafe ImGuiRenderer(Device device)
+    public unsafe ImGuiRenderer(Device device, Size<int> size)
     {
         _device = device;
+        _size = size;
         
         _context = ImGui.CreateContext();
         ImGui.SetCurrentContext(_context);
@@ -79,6 +82,8 @@ public class ImGuiRenderer : IDisposable
         RecreateFontTexture();
 
         ImGuiIOPtr io = ImGui.GetIO();
+        io.DisplaySize = new Vector2(size.Width, size.Height);
+        
         io.Fonts.AddFontDefault();
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
 
@@ -87,7 +92,7 @@ public class ImGuiRenderer : IDisposable
 
     public void AddFont(string path, uint size, string name)
     {
-        ImFontPtr font = ImGui.GetIO().Fonts.AddFontFromFileTTF(path, (float) size);
+        ImFontPtr font = ImGui.GetIO().Fonts.AddFontFromFileTTF(path, size);
         Fonts.Add(name, font);
         RecreateFontTexture();
     }
@@ -95,9 +100,6 @@ public class ImGuiRenderer : IDisposable
     internal unsafe void Render(CommandList cl, Framebuffer framebuffer, ItemIdCollection<Texture> textures)
     {
         ImGui.SetCurrentContext(_context);
-
-        ImGui.GetIO().DisplaySize = new Vector2(1280, 720);
-        ImGui.GetIO().DisplayFramebufferScale = Vector2.One;
         
         ImGui.Render();
         ImDrawDataPtr drawData = ImGui.GetDrawData();
@@ -191,6 +193,12 @@ public class ImGuiRenderer : IDisposable
         }
         
         cl.EndRenderPass();
+    }
+
+    internal void Resize(in Size<int> size)
+    {
+        _size = size;
+        ImGui.GetIO().DisplaySize = new Vector2(size.Width, size.Height);
     }
     
     private unsafe void RecreateFontTexture()
