@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -12,6 +13,8 @@ namespace Euphoria.Render.Renderers;
 
 public class ImGuiRenderer : IDisposable
 {
+    private Device _device;
+    
     private readonly IntPtr _context;
     
     private uint _vBufferSize;
@@ -28,22 +31,26 @@ public class ImGuiRenderer : IDisposable
     private GrabsTexture _imGuiTexture;
     private readonly DescriptorSet _textureSet;
 
+    public readonly Dictionary<string, ImFontPtr> Fonts;
+
     public IntPtr ImGuiContext => _context;
     
     public unsafe ImGuiRenderer(Device device)
     {
+        _device = device;
+        
         _context = ImGui.CreateContext();
         ImGui.SetCurrentContext(_context);
         
         _vBufferSize = 5000;
         _iBufferSize = 10000;
         
-        _vertexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Vertex, (uint) (_vBufferSize * sizeof(ImDrawVert)), true));
-        _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, (uint) (_iBufferSize * sizeof(ImDrawIdx)), true));
+        _vertexBuffer = _device.CreateBuffer(new BufferDescription(BufferType.Vertex, (uint) (_vBufferSize * sizeof(ImDrawVert)), true));
+        _indexBuffer = _device.CreateBuffer(new BufferDescription(BufferType.Index, (uint) (_iBufferSize * sizeof(ImDrawIdx)), true));
         
-        using ShaderModule vertexModule = device.CreateShaderModule(ShaderStage.Vertex,
+        using ShaderModule vertexModule = _device.CreateShaderModule(ShaderStage.Vertex,
             ShaderLoader.LoadSpirvShader("ImGui", ShaderStage.Vertex), "VSMain");
-        using ShaderModule pixelModule = device.CreateShaderModule(ShaderStage.Pixel,
+        using ShaderModule pixelModule = _device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("ImGui", ShaderStage.Pixel), "PSMain");
 
         InputLayoutDescription[] inputLayout =
@@ -53,46 +60,39 @@ public class ImGuiRenderer : IDisposable
             new InputLayoutDescription(Format.R8G8B8A8_UNorm, 16, 0, InputType.PerVertex) // Color
         ];
 
-        using DescriptorLayout projectionLayout = device.CreateDescriptorLayout(new DescriptorLayoutDescription(
+        using DescriptorLayout projectionLayout = _device.CreateDescriptorLayout(new DescriptorLayoutDescription(
             new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer, ShaderStage.Vertex)));
 
-        using DescriptorLayout textureLayout = device.CreateDescriptorLayout(new DescriptorLayoutDescription(
+        using DescriptorLayout textureLayout = _device.CreateDescriptorLayout(new DescriptorLayoutDescription(
             new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel)));
 
         PipelineDescription pipelineDesc = new PipelineDescription(vertexModule, pixelModule, inputLayout,
             DepthStencilDescription.Disabled, RasterizerDescription.CullNone, BlendDescription.NonPremultiplied,
             [projectionLayout, textureLayout]);
 
-        _pipeline = device.CreatePipeline(pipelineDesc);
+        _pipeline = _device.CreatePipeline(pipelineDesc);
 
-        _projectionBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
-        _projectionSet = device.CreateDescriptorSet(projectionLayout, new DescriptorSetDescription(buffer: _projectionBuffer));
+        _projectionBuffer = _device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
+        _projectionSet = _device.CreateDescriptorSet(projectionLayout, new DescriptorSetDescription(buffer: _projectionBuffer));
 
-        _textureSet = device.CreateDescriptorSet(textureLayout);
-        RecreateFontTexture(device);
+        _textureSet = _device.CreateDescriptorSet(textureLayout);
+        RecreateFontTexture();
 
         ImGuiIOPtr io = ImGui.GetIO();
         io.Fonts.AddFontDefault();
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
+
+        Fonts = new Dictionary<string, ImFontPtr>();
     }
 
-    private unsafe void RecreateFontTexture(Device device)
+    public void AddFont(string path, uint size, string name)
     {
-        _imGuiTexture?.Dispose();
-
-        ImGuiIOPtr io = ImGui.GetIO();
-        io.Fonts.GetTexDataAsRGBA32(out IntPtr pixels, out int width, out int height);
-
-        TextureDescription textureDesc = TextureDescription.Texture2D((uint) width, (uint) height, 1,
-            Format.R8G8B8A8_UNorm, TextureUsage.ShaderResource);
-        _imGuiTexture = device.CreateTexture(textureDesc, (void*) pixels);
-        
-        device.UpdateDescriptorSet(_textureSet, new DescriptorSetDescription(texture: _imGuiTexture));
-        
-        io.Fonts.SetTexID(0);
+        ImFontPtr font = ImGui.GetIO().Fonts.AddFontFromFileTTF(path, (float) size);
+        Fonts.Add(name, font);
+        RecreateFontTexture();
     }
 
-    internal unsafe void Render(Device device, CommandList cl, Framebuffer framebuffer, ItemIdCollection<Texture> textures)
+    internal unsafe void Render(CommandList cl, Framebuffer framebuffer, ItemIdCollection<Texture> textures)
     {
         ImGui.SetCurrentContext(_context);
 
@@ -107,7 +107,7 @@ public class ImGuiRenderer : IDisposable
             Logger.Trace("Recreate vertex buffer.");
             _vertexBuffer.Dispose();
             _vBufferSize = (uint) (drawData.TotalVtxCount + 5000);
-            _vertexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Vertex,
+            _vertexBuffer = _device.CreateBuffer(new BufferDescription(BufferType.Vertex,
                 (uint) (_vBufferSize * sizeof(ImDrawVert)), true));
         }
 
@@ -116,14 +116,14 @@ public class ImGuiRenderer : IDisposable
             Logger.Trace("Recreate index buffer.");
             _indexBuffer.Dispose();
             _iBufferSize = (uint) (drawData.TotalIdxCount + 10000);
-            _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, 
+            _indexBuffer = _device.CreateBuffer(new BufferDescription(BufferType.Index, 
                 (uint) (_iBufferSize * sizeof(ImDrawIdx)), true));
         }
 
         uint vertexOffset = 0;
         uint indexOffset = 0;
-        nint vPtr = device.MapBuffer(_vertexBuffer, MapMode.Write);
-        nint iPtr = device.MapBuffer(_indexBuffer, MapMode.Write);
+        nint vPtr = _device.MapBuffer(_vertexBuffer, MapMode.Write);
+        nint iPtr = _device.MapBuffer(_indexBuffer, MapMode.Write);
         for (int i = 0; i < drawData.CmdListsCount; i++)
         {
             ImDrawListPtr cmdList = drawData.CmdLists[i];
@@ -134,8 +134,8 @@ public class ImGuiRenderer : IDisposable
             vertexOffset += (uint) (cmdList.VtxBuffer.Size * sizeof(ImDrawVert));
             indexOffset += (uint) (cmdList.IdxBuffer.Size * sizeof(ImDrawIdx));
         }
-        device.UnmapBuffer(_vertexBuffer);
-        device.UnmapBuffer(_indexBuffer);
+        _device.UnmapBuffer(_vertexBuffer);
+        _device.UnmapBuffer(_indexBuffer);
 
         cl.UpdateBuffer(_projectionBuffer, 0,
             Matrix4x4.CreateOrthographicOffCenter(drawData.DisplayPos.X, drawData.DisplayPos.X + drawData.DisplaySize.X,
@@ -191,6 +191,22 @@ public class ImGuiRenderer : IDisposable
         }
         
         cl.EndRenderPass();
+    }
+    
+    private unsafe void RecreateFontTexture()
+    {
+        _imGuiTexture?.Dispose();
+
+        ImGuiIOPtr io = ImGui.GetIO();
+        io.Fonts.GetTexDataAsRGBA32(out IntPtr pixels, out int width, out int height);
+
+        TextureDescription textureDesc = TextureDescription.Texture2D((uint) width, (uint) height, 1,
+            Format.R8G8B8A8_UNorm, TextureUsage.ShaderResource);
+        _imGuiTexture = _device.CreateTexture(textureDesc, (void*) pixels);
+        
+        _device.UpdateDescriptorSet(_textureSet, new DescriptorSetDescription(texture: _imGuiTexture));
+        
+        io.Fonts.SetTexID(0);
     }
     
     public void Dispose()

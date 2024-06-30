@@ -161,7 +161,7 @@ public sealed class Graphics : IDisposable
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
-        ImGuiRenderer.Render(Device, CommandList, _swapchainBuffer, Textures);
+        ImGuiRenderer.Render(CommandList, _swapchainBuffer, Textures);
         
         CommandList.End();
         Device.ExecuteCommandList(CommandList);

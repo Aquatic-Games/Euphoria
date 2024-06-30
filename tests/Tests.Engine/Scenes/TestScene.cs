@@ -39,7 +39,15 @@ public class TestScene : Scene
         if (Input.IsKeyPressed(Key.P))
             SceneManager.LoadAndSwitchScene(new Scene3D());
 
-        ImGui.Image((IntPtr) _texture.Id, new Vector2(128, 128));
+        ImGui.PushFont(App.Graphics.ImGuiRenderer.Fonts["RussoOne"]);
+        if (ImGui.Begin("Hello"))
+        {
+            ImGui.Image((IntPtr) _texture.Id, new Vector2(128));
+            ImGui.Button("ASDASD");
+            ImGui.End();
+        }
+
+        ImGui.PopFont();
     }
 
     public override void Draw()
