@@ -65,6 +65,12 @@ public unsafe class Window : IDisposable
         }
     }
 
+    public string ClipboardText
+    {
+        get => _sdl.GetClipboardTextS();
+        set => _sdl.SetClipboardText(value);
+    }
+
     public Window(in LaunchOptions options)
     {
         _userTitle = options.WindowTitle;

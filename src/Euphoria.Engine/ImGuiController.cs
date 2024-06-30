@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Euphoria.Render;
 using ImGuiNET;
 
@@ -9,9 +10,14 @@ internal static class ImGuiController
 {
     private static IntPtr _context;
     
-    internal static void Initialize(Graphics graphics, Window window)
+    internal static unsafe void Initialize(Graphics graphics, Window window)
     {
         _context = graphics.ImGuiRenderer.ImGuiContext;
+        ImGui.SetCurrentContext(_context);
+
+        ImGuiIOPtr io = ImGui.GetIO();
+        io.SetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(SetClipboardText);
+        io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(GetClipboardText);
         
         window.MouseMove += OnMouseMove;
         window.MouseButtonDown += OnMouseButtonDown;
@@ -72,6 +78,17 @@ internal static class ImGuiController
     {
         ImGui.SetCurrentContext(_context);
         ImGui.GetIO().AddInputCharacter(c);
+    }
+
+    private static unsafe void SetClipboardText(void* userData, string text)
+    {
+        // TODO: Move clipboard and events away from window
+        App.Window.ClipboardText = text;
+    }
+
+    private static unsafe string GetClipboardText(void* userData)
+    {
+        return App.Window.ClipboardText;
     }
     
     private static ImGuiMouseButton MouseButtonToImGui(MouseButton button)
@@ -198,14 +215,14 @@ internal static class ImGuiController
             Key.KeypadAdd => ImGuiKey.KeypadAdd,
             Key.KeypadEnter => ImGuiKey.KeypadEnter,
             Key.KeypadEqual => ImGuiKey.KeypadEqual,
-            Key.LeftShift => ImGuiKey.LeftShift,
-            Key.LeftControl => ImGuiKey.LeftCtrl,
-            Key.LeftAlt => ImGuiKey.LeftAlt,
-            Key.LeftSuper => ImGuiKey.LeftSuper,
-            Key.RightShift => ImGuiKey.RightShift,
-            Key.RightControl => ImGuiKey.RightCtrl,
-            Key.RightAlt => ImGuiKey.RightAlt,
-            Key.RightSuper => ImGuiKey.RightSuper,
+            Key.LeftShift => ImGuiKey.ModShift,
+            Key.LeftControl => ImGuiKey.ModCtrl,
+            Key.LeftAlt => ImGuiKey.ModAlt,
+            Key.LeftSuper => ImGuiKey.ModSuper,
+            Key.RightShift => ImGuiKey.ModShift,
+            Key.RightControl => ImGuiKey.ModCtrl,
+            Key.RightAlt => ImGuiKey.ModAlt,
+            Key.RightSuper => ImGuiKey.ModSuper,
             Key.Menu => ImGuiKey.Menu,
             _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
         };
