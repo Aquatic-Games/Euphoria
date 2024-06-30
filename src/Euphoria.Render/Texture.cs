@@ -6,15 +6,21 @@ namespace Euphoria.Render;
 
 public class Texture : IDisposable
 {
+    private Graphics _graphics;
+    
     internal readonly GrabsTexture GTexture;
     internal readonly DescriptorSet DescriptorSet;
 
+    public readonly ulong Id;
+    
     public readonly Size<int> Size;
 
-    internal Texture(GrabsTexture gTexture, DescriptorSet descriptorSet, Size<int> size)
+    internal Texture(Graphics graphics, GrabsTexture gTexture, DescriptorSet descriptorSet, ulong id, Size<int> size)
     {
+        _graphics = graphics;
         GTexture = gTexture;
         DescriptorSet = descriptorSet;
+        Id = id;
         Size = size;
     }
 
@@ -22,5 +28,7 @@ public class Texture : IDisposable
     {
         DescriptorSet.Dispose();
         GTexture.Dispose();
+        
+        _graphics.Textures.RemoveItem(Id);
     }
 }

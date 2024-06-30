@@ -92,7 +92,7 @@ public class ImGuiRenderer : IDisposable
         io.Fonts.SetTexID(0);
     }
 
-    internal unsafe void Render(Device device, CommandList cl, Framebuffer framebuffer)
+    internal unsafe void Render(Device device, CommandList cl, Framebuffer framebuffer, ItemIdCollection<Texture> textures)
     {
         ImGui.SetCurrentContext(_context);
 
@@ -169,8 +169,9 @@ public class ImGuiRenderer : IDisposable
                 if (drawCmd.UserCallback != IntPtr.Zero)
                     continue;
 
+                DescriptorSet texSet = _textureSet;
                 if (drawCmd.TextureId != 0)
-                    throw new NotImplementedException("Multiple textures are not supported right now.");
+                    texSet = textures[(ulong) drawCmd.TextureId].DescriptorSet;
 
                 Vector2 clipMin = new Vector2(drawCmd.ClipRect.X - clipOff.X, drawCmd.ClipRect.Y - clipOff.Y);
                 Vector2 clipMax = new Vector2(drawCmd.ClipRect.Z - clipOff.X, drawCmd.ClipRect.W - clipOff.Y);
@@ -180,7 +181,7 @@ public class ImGuiRenderer : IDisposable
 
                 cl.SetScissor(new Rectangle((int) clipMin.X, (int) clipMin.Y, (int) clipMax.X - (int) clipMin.X, (int) clipMax.Y - (int) clipMin.Y));
                 
-                cl.SetDescriptorSet(1, _textureSet);
+                cl.SetDescriptorSet(1, texSet);
                 cl.DrawIndexed(drawCmd.ElemCount, drawCmd.IdxOffset + indexOffset,
                     (int) (drawCmd.VtxOffset + vertexOffset));
             }

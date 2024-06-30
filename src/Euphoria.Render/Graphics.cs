@@ -23,6 +23,8 @@ public sealed class Graphics : IDisposable
     internal readonly Device Device;
     internal readonly CommandList CommandList;
 
+    internal ItemIdCollection<Texture> Textures;
+
     public GraphicsApi Api => Instance.Api;
 
     public readonly TextureBatcher TextureBatcher;
@@ -60,6 +62,8 @@ public sealed class Graphics : IDisposable
     {
         Instance = instance;
         _size = size;
+
+        Textures = new ItemIdCollection<Texture>();
 
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
@@ -135,7 +139,11 @@ public sealed class Graphics : IDisposable
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
 
-        return new Texture(texture, descriptorSet, bitmap.Size);
+        ulong id = Textures.NextId;
+        Texture tex = new Texture(this, texture, descriptorSet, id, bitmap.Size);
+        Textures.AddItem(tex);
+
+        return tex;
     }
     
     public void Present()
@@ -153,7 +161,7 @@ public sealed class Graphics : IDisposable
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
-        ImGuiRenderer.Render(Device, CommandList, _swapchainBuffer);
+        ImGuiRenderer.Render(Device, CommandList, _swapchainBuffer, Textures);
         
         CommandList.End();
         Device.ExecuteCommandList(CommandList);

@@ -11,7 +11,5 @@ public class TestApp : Application
         
         if (Input.IsKeyPressed(Key.Escape))
             App.Close();
-
-        ImGui.ShowStyleEditor();
     }
 }

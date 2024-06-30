@@ -5,6 +5,7 @@ using Euphoria.Engine.Entities;
 using Euphoria.Engine.Scenes;
 using Euphoria.Math;
 using Euphoria.Render;
+using ImGuiNET;
 using Tests.Engine.Components;
 
 namespace Tests.Engine.Scenes;
@@ -37,6 +38,8 @@ public class TestScene : Scene
         
         if (Input.IsKeyPressed(Key.P))
             SceneManager.LoadAndSwitchScene(new Scene3D());
+
+        ImGui.Image((IntPtr) _texture.Id, new Vector2(128, 128));
     }
 
     public override void Draw()
