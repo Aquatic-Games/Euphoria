@@ -34,6 +34,8 @@ public struct Color
         A = (packedRgba & 0xFF) / (float) byte.MaxValue;
     }
     
+    // TODO: HSV
+    
     /// <summary>
     /// AliceBlue has an RGBA value of #F0F8FFFF (240, 248, 255, 255)
     /// </summary>

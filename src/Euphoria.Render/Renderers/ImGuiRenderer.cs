@@ -210,7 +210,7 @@ public class ImGuiRenderer : IDisposable
 
         TextureDescription textureDesc = TextureDescription.Texture2D((uint) width, (uint) height, 1,
             Format.R8G8B8A8_UNorm, TextureUsage.ShaderResource);
-        _imGuiTexture = _device.CreateTexture(textureDesc, (void*) pixels);
+        _imGuiTexture = _device.CreateTexture(textureDesc, (void**) &pixels);
         
         _device.UpdateDescriptorSet(_textureSet, new DescriptorSetDescription(texture: _imGuiTexture));
         
