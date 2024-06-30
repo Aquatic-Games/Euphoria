@@ -114,6 +114,8 @@ public static class App
         
         Logger.Debug("Initializing input system.");
         Input.Initialize(Window);
+
+        ImGuiController.Initialize(Graphics, Window);
         
         Logger.Debug("Initializing user code.");
         Application.Initialize(initialScene);
@@ -128,8 +130,12 @@ public static class App
             
             Input.Update();
             Window.ProcessEvents();
+
+            float dt = (float) Metrics.TimeSinceLastFrame;
             
-            Application.Update((float) Metrics.TimeSinceLastFrame);
+            ImGuiController.Update(dt);
+            
+            Application.Update(dt);
             Application.Draw();
             
             Graphics.Present();

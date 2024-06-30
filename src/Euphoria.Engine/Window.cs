@@ -21,6 +21,10 @@ public unsafe class Window : IDisposable
 
     public event OnMouseMove MouseMove = delegate { };
 
+    public event OnMouseScroll MouseScroll = delegate { };
+
+    public event OnTextInput TextInput = delegate { };
+
     private Sdl _sdl;
     private SdlWindow* _window;
     private void* _glContext;
@@ -176,6 +180,21 @@ public unsafe class Window : IDisposable
                 {
                     MouseMotionEvent motion = winEvent.Motion;
                     MouseMove(new Vector2(motion.X, motion.Y), new Vector2(motion.Xrel, motion.Yrel));
+                    break;
+                }
+
+                case EventType.Mousewheel:
+                {
+                    MouseWheelEvent wheel = winEvent.Wheel;
+                    MouseScroll(new Vector2(wheel.X, wheel.Y));
+                    break;
+                }
+
+                case EventType.Textinput:
+                {
+                    TextInputEvent input = winEvent.Text;
+                    for (int i = 0; input.Text[i] != 0; i++)
+                        TextInput((char) input.Text[i]);
                     break;
                 }
             }
@@ -356,4 +375,8 @@ public unsafe class Window : IDisposable
     public delegate void OnMouseButtonUp(MouseButton button);
 
     public delegate void OnMouseMove(Vector2 position, Vector2 delta);
+
+    public delegate void OnMouseScroll(Vector2 scroll);
+
+    public delegate void OnTextInput(char c);
 }

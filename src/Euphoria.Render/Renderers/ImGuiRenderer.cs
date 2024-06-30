@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using Euphoria.Core;
 using grabs.Graphics;
 using ImGuiNET;
 using Buffer = grabs.Graphics.Buffer;
@@ -25,6 +27,8 @@ public class ImGuiRenderer : IDisposable
 
     private GrabsTexture _imGuiTexture;
     private readonly DescriptorSet _textureSet;
+
+    public IntPtr ImGuiContext => _context;
     
     public unsafe ImGuiRenderer(Device device)
     {
@@ -92,18 +96,15 @@ public class ImGuiRenderer : IDisposable
     {
         ImGui.SetCurrentContext(_context);
 
-        ImGui.NewFrame();
-
         ImGui.GetIO().DisplaySize = new Vector2(1280, 720);
         ImGui.GetIO().DisplayFramebufferScale = Vector2.One;
-        
-        ImGui.ShowDemoWindow();
         
         ImGui.Render();
         ImDrawDataPtr drawData = ImGui.GetDrawData();
 
         if (drawData.TotalVtxCount >= _vBufferSize)
         {
+            Logger.Trace("Recreate vertex buffer.");
             _vertexBuffer.Dispose();
             _vBufferSize = (uint) (drawData.TotalVtxCount + 5000);
             _vertexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Vertex,
@@ -112,6 +113,7 @@ public class ImGuiRenderer : IDisposable
 
         if (drawData.TotalIdxCount >= _iBufferSize)
         {
+            Logger.Trace("Recreate index buffer.");
             _indexBuffer.Dispose();
             _iBufferSize = (uint) (drawData.TotalIdxCount + 10000);
             _indexBuffer = device.CreateBuffer(new BufferDescription(BufferType.Index, 
@@ -120,16 +122,20 @@ public class ImGuiRenderer : IDisposable
 
         uint vertexOffset = 0;
         uint indexOffset = 0;
+        nint vPtr = device.MapBuffer(_vertexBuffer, MapMode.Write);
+        nint iPtr = device.MapBuffer(_indexBuffer, MapMode.Write);
         for (int i = 0; i < drawData.CmdListsCount; i++)
         {
             ImDrawListPtr cmdList = drawData.CmdLists[i];
             
-            cl.UpdateBuffer(_vertexBuffer, vertexOffset, (uint) (cmdList.VtxBuffer.Size * sizeof(ImDrawVert)), (void*) cmdList.VtxBuffer.Data);
-            cl.UpdateBuffer(_indexBuffer, indexOffset, (uint) (cmdList.IdxBuffer.Size * sizeof(ImDrawIdx)), (void*) cmdList.IdxBuffer.Data);
+            Unsafe.CopyBlock((byte*) vPtr + vertexOffset, (void*) cmdList.VtxBuffer.Data, (uint) (cmdList.VtxBuffer.Size * sizeof(ImDrawVert)));
+            Unsafe.CopyBlock((byte*) iPtr + indexOffset, (void*) cmdList.IdxBuffer.Data, (uint) (cmdList.IdxBuffer.Size * sizeof(ImDrawIdx)));
 
             vertexOffset += (uint) (cmdList.VtxBuffer.Size * sizeof(ImDrawVert));
             indexOffset += (uint) (cmdList.IdxBuffer.Size * sizeof(ImDrawIdx));
         }
+        device.UnmapBuffer(_vertexBuffer);
+        device.UnmapBuffer(_indexBuffer);
 
         cl.UpdateBuffer(_projectionBuffer, 0,
             Matrix4x4.CreateOrthographicOffCenter(drawData.DisplayPos.X, drawData.DisplayPos.X + drawData.DisplaySize.X,
@@ -172,7 +178,7 @@ public class ImGuiRenderer : IDisposable
                 if (clipMax.X <= clipMin.X || clipMax.Y <= clipMin.Y)
                     continue;
 
-                cl.SetScissor(new Rectangle((int) clipMin.X, (int) clipMin.Y, (int) clipMax.X, (int) clipMax.Y));
+                cl.SetScissor(new Rectangle((int) clipMin.X, (int) clipMin.Y, (int) clipMax.X - (int) clipMin.X, (int) clipMax.Y - (int) clipMin.Y));
                 
                 cl.SetDescriptorSet(1, _textureSet);
                 cl.DrawIndexed(drawCmd.ElemCount, drawCmd.IdxOffset + indexOffset,
