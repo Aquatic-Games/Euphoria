@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Euphoria.Math;
 
@@ -33,6 +35,10 @@ public struct Color
         B = ((packedRgba >> 8) & 0xFF) / (float) byte.MaxValue;
         A = (packedRgba & 0xFF) / (float) byte.MaxValue;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator Vector4(Color color)
+        => new Vector4(color.R, color.G, color.B, color.A);
     
     // TODO: HSV
     

@@ -31,7 +31,17 @@ VSOutput VSMain(const in VSInput input)
 {
     VSOutput output;
 
-    output.Position = mul(Projection, mul(View, float4(input.Position, 1.0)));
+    const float3x3 view3x3 = (float3x3) View;
+    const float4x4 view = {
+        float4(view3x3[0], 0.0),
+        float4(view3x3[1], 0.0),
+        float4(view3x3[2], 0.0),
+        float4(0.0, 0.0, 0.0, 1.0),
+    };
+
+    const float4 pos = mul(Projection, mul(view, float4(input.Position, 1.0)));
+    
+    output.Position = pos.xyww;
     output.TexCoord = input.Position;
     
     return output;

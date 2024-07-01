@@ -4,6 +4,7 @@ using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
 using grabs.Graphics.GL43;
+using ImGuiNET;
 using Silk.NET.SDL;
 using Surface = grabs.Graphics.Surface;
 
@@ -121,6 +122,7 @@ public abstract unsafe class TestBase : IDisposable
                 }
             }
             
+            ImGui.NewFrame();
             Update(1 / 60.0f);
             Draw();
             

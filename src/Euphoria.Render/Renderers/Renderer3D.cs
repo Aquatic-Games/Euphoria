@@ -4,9 +4,11 @@ using System.Drawing;
 using System.Numerics;
 using Euphoria.Core;
 using Euphoria.Math;
+using Euphoria.Render.Primitives;
 using Euphoria.Render.Renderers.Structs;
 using grabs.Graphics;
 using Buffer = grabs.Graphics.Buffer;
+using Color = Euphoria.Math.Color;
 
 namespace Euphoria.Render.Renderers;
 
@@ -33,16 +35,24 @@ public class Renderer3D : IDisposable
     private readonly Pipeline _passPipeline;
     private readonly Pipeline _compositePipeline;
     
-    private Buffer _cameraInfoBuffer;
-    private DescriptorSet _cameraInfoSet;
+    private readonly Buffer _cameraInfoBuffer;
+    private readonly DescriptorSet _cameraInfoSet;
     
-    private Buffer _drawInfoBuffer;
-    private DescriptorSet _drawInfoSet;
+    private readonly Buffer _drawInfoBuffer;
+    private readonly DescriptorSet _drawInfoSet;
 
-    private DescriptorSet _passInputSet;
-    private DescriptorSet _compositeSet;
+    private readonly DescriptorSet _passInputSet;
+    private readonly DescriptorSet _compositeSet;
+
+    private readonly Buffer _skyboxVertexBuffer;
+    private readonly Buffer _skyboxIndexBuffer;
+    private readonly Pipeline _skyboxPipeline;
     
     public CameraInfo Camera;
+
+    public Color BackgroundColor;
+
+    public Cubemap Skybox;
 
     public Renderer3D(Device device, Size<int> size)
     {
@@ -147,6 +157,40 @@ public class Renderer3D : IDisposable
         
         _compositeSet =
             device.CreateDescriptorSet(compositeLayout, new DescriptorSetDescription(texture: _passTexture));
+        
+        Logger.Trace("Creating skybox buffers.");
+        
+        Cube cube = new Cube();
+
+        _skyboxVertexBuffer = device.CreateBuffer(BufferType.Vertex, cube.Vertices);
+        _skyboxIndexBuffer = device.CreateBuffer(BufferType.Index, cube.Indices);
+        
+        Logger.Trace("Loading skybox shaders.");
+
+        using ShaderModule skyboxVertex = device.CreateShaderModule(ShaderStage.Vertex,
+            ShaderLoader.LoadSpirvShader("Skybox/Skybox", ShaderStage.Vertex), "VSMain");
+        using ShaderModule skyboxPixel = device.CreateShaderModule(ShaderStage.Pixel,
+            ShaderLoader.LoadSpirvShader("Skybox/Skybox", ShaderStage.Pixel), "PSMain");
+        
+        Logger.Trace("Creating skybox layouts.");
+
+        using DescriptorLayout skyboxTextureLayout = device.CreateDescriptorLayout(
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
+                ShaderStage.Pixel)));
+        
+        Logger.Trace("Creating skybox pipeline.");
+
+        InputLayoutDescription[] skyboxInputLayout =
+            [new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex)];
+
+        PipelineDescription skyboxDesc = new PipelineDescription(skyboxVertex, skyboxPixel, skyboxInputLayout,
+            DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullCounterClockwise, BlendDescription.Disabled,
+            [cameraInfoLayout, skyboxTextureLayout]);
+
+        _skyboxPipeline = device.CreatePipeline(skyboxDesc);
+        
+        BackgroundColor = Color.Black;
+        Skybox = null;
     }
     
     public Renderable CreateRenderable(Mesh mesh, Material material)
@@ -201,14 +245,27 @@ public class Renderer3D : IDisposable
         
         cl.EndRenderPass();
 
-        RenderPassDescription lightingPassDesc = new RenderPassDescription(_passBuffer, new Vector4(0, 0, 0, 1));
+        RenderPassDescription lightingPassDesc = new RenderPassDescription(_passBuffer, (Vector4) BackgroundColor, depthLoadOp: LoadOp.Load);
         cl.BeginRenderPass(lightingPassDesc);
         
         cl.SetDescriptorSet(0, _passInputSet);
         cl.SetPipeline(_passPipeline);
         
         cl.Draw(6);
-        
+
+        // Draw skybox.
+        if (Skybox != null)
+        {
+            cl.SetPipeline(_skyboxPipeline);
+            cl.SetDescriptorSet(0, _cameraInfoSet);
+            cl.SetDescriptorSet(1, Skybox.DescriptorSet);
+
+            cl.SetVertexBuffer(0, _skyboxVertexBuffer, Vertex.SizeInBytes, 0);
+            cl.SetIndexBuffer(_skyboxIndexBuffer, Format.R32_UInt);
+
+            cl.DrawIndexed(36);
+        }
+
         cl.EndRenderPass();
 
         cl.SetViewport(new Viewport(0, 0, (uint) framebufferSize.Width, (uint) framebufferSize.Height));

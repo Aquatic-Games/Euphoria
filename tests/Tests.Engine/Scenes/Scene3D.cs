@@ -16,6 +16,14 @@ public class Scene3D : Scene
     
     public override void Initialize()
     {
+        App.Graphics.Renderer3D.Skybox = App.Graphics.CreateCubemap(
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\right.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\left.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\top.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\bottom.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
+        
         _texture = App.Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"));
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.

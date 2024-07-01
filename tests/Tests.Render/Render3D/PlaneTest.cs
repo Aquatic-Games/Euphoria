@@ -19,6 +19,15 @@ public class PlaneTest : TestBase
     protected override void Initialize()
     {
         base.Initialize();
+        
+        Graphics.Renderer3D.BackgroundColor = Color.CornflowerBlue;
+        Graphics.Renderer3D.Skybox = Graphics.CreateCubemap(
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\right.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\left.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\top.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\bottom.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
+            new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
 
         _texture = Graphics.CreateTexture(new Bitmap("Content/awesomeface.png"));
         _material = Graphics.Renderer3D.CreateMaterial(new MaterialDescription(_texture));
