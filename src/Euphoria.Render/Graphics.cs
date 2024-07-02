@@ -25,17 +25,21 @@ public sealed class Graphics : IDisposable
     internal Framebuffer SwapchainFramebuffer;
 
     internal ItemIdCollection<Texture> Textures;
-
-    public GraphicsApi Api => Instance.Api;
-
-    public Size<int> Size => _size;
-
+    
     public readonly TextureBatcher TextureBatcher;
 
     //public readonly Renderer2D Renderer2D;
     public readonly Renderer3D Renderer3D;
     
     public readonly ImGuiRenderer ImGuiRenderer;
+
+    public readonly Texture WhiteTexture;
+
+    public readonly Texture BlackTexture;
+
+    public GraphicsApi Api => Instance.Api;
+
+    public Size<int> Size => _size;
 
     public VSyncMode VSyncMode
     {
@@ -92,6 +96,10 @@ public sealed class Graphics : IDisposable
         Logger.Trace("Creating texture renderer.");
         TextureBatcher = new TextureBatcher(Device);
         
+        Logger.Trace("Creating default textures.");
+        WhiteTexture = CreateTexture(new Bitmap([255, 255, 255, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
+        BlackTexture = CreateTexture(new Bitmap([0, 0, 0, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
+        
         Logger.Debug($"Render type: {options.RenderType}");
         // TODO: Implement render type, and 2D renderer, which is currently disabled to aid development of the 3D renderer.
         Logger.Warn("Currently the render type is being IGNORED. This will be implemented in a later version.");
@@ -133,6 +141,7 @@ public sealed class Graphics : IDisposable
                 TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
                     TextureUsage.ShaderResource | TextureUsage.GenerateMips), bitmap.Data);
 
+        // TODO: TextureBatcher.TextureDescriptorLayout should be moved to Graphics directly.
         DescriptorSet descriptorSet = Device.CreateDescriptorSet(TextureBatcher.TextureDescriptorLayout,
             new DescriptorSetDescription(texture: texture));
         
@@ -214,6 +223,9 @@ public sealed class Graphics : IDisposable
         Renderer3D?.Dispose();
         //Renderer2D?.Dispose();
         TextureBatcher.Dispose();
+        
+        BlackTexture.Dispose();
+        WhiteTexture.Dispose();
         
         CommandList.Dispose();
         SwapchainFramebuffer.Dispose();
