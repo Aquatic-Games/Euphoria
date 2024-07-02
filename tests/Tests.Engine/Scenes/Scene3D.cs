@@ -34,13 +34,13 @@ public class Scene3D : Scene
         Plane plane = new Plane();
         Mesh mesh = new Mesh(plane.Vertices, plane.Indices);
 
-        Renderable renderable = App.Graphics.Renderer3D.CreateRenderable(mesh, _material, UpdateFlags.Dynamic);
+        Renderable renderable = App.Graphics.Renderer3D.CreateEmptyRenderable(32, 32, _material, UpdateFlags.Dynamic);
         renderable.Update(mesh);
 
         Cube cube = new Cube();
         Mesh cubeMesh = new Mesh(cube.Vertices, cube.Indices);
         
-        //renderable.Update(cubeMesh);
+        renderable.Update(cubeMesh);
 
         Entity entity = new Entity("Plane", new Transform(new Vector3(0, 0, -3)));
         entity.AddComponent(new MeshRenderer(renderable));

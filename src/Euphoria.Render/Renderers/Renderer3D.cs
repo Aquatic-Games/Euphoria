@@ -203,6 +203,20 @@ public class Renderer3D : IDisposable
         return new Renderable(_device, vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material, updateFlags);
     }
 
+    public Renderable CreateEmptyRenderable(uint numVertices, uint numIndices, Material material,
+        UpdateFlags updateFlags = UpdateFlags.Updatable)
+    {
+        if ((updateFlags & UpdateFlags.Updatable) != UpdateFlags.Updatable)
+            throw new Exception("Empty renderable must be marked with \"Updatable\" flag.");
+
+        Buffer vertexBuffer =
+            _device.CreateBuffer(new BufferDescription(BufferType.Vertex, numVertices * Vertex.SizeInBytes, true));
+        Buffer indexBuffer =
+            _device.CreateBuffer(new BufferDescription(BufferType.Index, numIndices * sizeof(uint), true));
+
+        return new Renderable(_device, vertexBuffer, indexBuffer, 0, material, updateFlags);
+    }
+
     public Material CreateMaterial(in MaterialDescription description)
     {
         DescriptorSet matDescriptor = _device.CreateDescriptorSet(_materialInfoLayout,
