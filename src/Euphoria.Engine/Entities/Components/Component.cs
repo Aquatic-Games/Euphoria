@@ -14,5 +14,5 @@ public abstract class Component : IDisposable
 
     public virtual void Draw() { }
 
-    public void Dispose() { }
+    public virtual void Dispose() { }
 }

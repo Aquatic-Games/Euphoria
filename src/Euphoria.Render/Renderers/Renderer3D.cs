@@ -193,12 +193,14 @@ public class Renderer3D : IDisposable
         Skybox = null;
     }
     
-    public Renderable CreateRenderable(Mesh mesh, Material material)
+    public Renderable CreateRenderable(Mesh mesh, Material material, UpdateFlags updateFlags = UpdateFlags.None)
     {
-        Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices);
-        Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices);
+        bool updatable = (updateFlags & UpdateFlags.Updatable) == UpdateFlags.Updatable;
+        
+        Buffer vertexBuffer = _device.CreateBuffer(BufferType.Vertex, mesh.Vertices, updatable);
+        Buffer indexBuffer = _device.CreateBuffer(BufferType.Index, mesh.Indices, updatable);
 
-        return new Renderable(vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material);
+        return new Renderable(_device, vertexBuffer, indexBuffer, (uint) mesh.Indices.Length, material, updateFlags);
     }
 
     public Material CreateMaterial(in MaterialDescription description)
