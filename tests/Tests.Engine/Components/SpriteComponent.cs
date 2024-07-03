@@ -19,6 +19,6 @@ public class SpriteComponent : Component
     {
         Vector3 position = Transform.Position;
         
-        App.Graphics.TextureBatcher.Draw(Texture, new Vector2(position.X, position.Y), Color.White);
+        Graphics.TextureBatcher.Draw(Texture, new Vector2(position.X, position.Y), Color.White);
     }
 }

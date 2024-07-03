@@ -10,7 +10,7 @@ public class MeshRenderer : Component
 
     public MeshRenderer(Mesh mesh, Material material)
     {
-        _renderable = App.Graphics.Renderer3D.CreateRenderable(mesh, material);
+        _renderable = Graphics.Renderer3D.CreateRenderable(mesh, material);
     }
 
     public MeshRenderer(Renderable renderable)
@@ -20,7 +20,7 @@ public class MeshRenderer : Component
 
     public override void Draw()
     {
-        App.Graphics.Renderer3D.Draw(_renderable, Transform.WorldMatrix);
+        Graphics.Renderer3D.Draw(_renderable, Transform.WorldMatrix);
     }
 
     public override void Dispose()

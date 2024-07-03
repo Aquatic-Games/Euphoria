@@ -10,9 +10,9 @@ internal static class ImGuiController
 {
     private static IntPtr _context;
     
-    internal static unsafe void Initialize(Graphics graphics, Window window)
+    internal static unsafe void Initialize(Window window)
     {
-        _context = graphics.ImGuiRenderer.ImGuiContext;
+        _context = Graphics.ImGuiRenderer.ImGuiContext;
         ImGui.SetCurrentContext(_context);
 
         ImGuiIOPtr io = ImGui.GetIO();

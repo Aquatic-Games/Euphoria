@@ -19,8 +19,6 @@ public abstract unsafe class TestBase : IDisposable
     private Window* _window;
     private void* _glContext;
 
-    public Graphics Graphics;
-
     protected TestBase(string title)
     {
         _title = title;
@@ -75,7 +73,7 @@ public abstract unsafe class TestBase : IDisposable
 
                 Surface surface = new D3D11Surface(sysWmInfo.Info.Win.Hwnd);
 
-                Graphics = new Graphics(instance, surface, size, options);
+                Graphics.Initialize(instance, surface, size, options);
                 break;
             }
 
@@ -91,7 +89,7 @@ public abstract unsafe class TestBase : IDisposable
                     _sdl.GLSwapWindow(_window);
                 });
 
-                Graphics = new Graphics(instance, surface, size, options);
+                Graphics.Initialize(instance, surface, size, options);
 
                 break;
             }
@@ -132,7 +130,7 @@ public abstract unsafe class TestBase : IDisposable
 
     public virtual void Dispose()
     {
-        Graphics.Dispose();
+        Graphics.Deinitialize();
         
         if (_glContext != null)
             _sdl.GLDeleteContext(_glContext);

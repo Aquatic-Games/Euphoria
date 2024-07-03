@@ -17,12 +17,11 @@ public class TestScene : Scene
     public override void Initialize()
     {
         App.TargetFramesPerSecond = 0;
-        Graphics graphics = App.Graphics;
 
-        _texture = graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
+        _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\awesomeface.png"));
 
         Entity entity = new Entity("test");
-        entity.AddComponent(new SpriteComponent(graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"))));
+        entity.AddComponent(new SpriteComponent(Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"))));
         entity.AddComponent(new MoveComponent());
         //entity.AddComponent(new MoveComponent());
         
@@ -39,7 +38,7 @@ public class TestScene : Scene
         if (Input.IsKeyPressed(Key.P))
             SceneManager.LoadAndSwitchScene(new Scene3D());
 
-        ImGui.PushFont(App.Graphics.ImGuiRenderer.Fonts["RussoOne"]);
+        ImGui.PushFont(Graphics.ImGuiRenderer.Fonts["RussoOne"]);
         if (ImGui.Begin("Hello"))
         {
             ImGui.Image((IntPtr) _texture.Id, new Vector2(128));
@@ -52,8 +51,7 @@ public class TestScene : Scene
 
     public override void Draw()
     {
-        Graphics graphics = App.Graphics;
-        graphics.TextureBatcher.Draw(_texture, new Vector2(0, 0), Color.White);
+        Graphics.TextureBatcher.Draw(_texture, new Vector2(0, 0), Color.White);
         
         base.Draw();
     }

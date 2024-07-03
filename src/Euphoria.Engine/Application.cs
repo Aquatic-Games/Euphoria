@@ -6,8 +6,6 @@ namespace Euphoria.Engine;
 
 public class Application : IDisposable
 {
-    public Graphics Graphics => App.Graphics;
-    
     public virtual void Initialize(Scene initialScene)
     {
         SceneManager.Initialize(initialScene);

@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Euphoria.Math;
+using Euphoria.Render;
 
 namespace Euphoria.Engine.Entities;
 
@@ -47,7 +48,7 @@ public class Camera : Entity
     {
         base.Draw();
 
-        Size<int> size = App.Graphics.Size;
+        Size<int> size = Graphics.Size;
 
         _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, size.Width / (float) size.Height, _near, _far);
         

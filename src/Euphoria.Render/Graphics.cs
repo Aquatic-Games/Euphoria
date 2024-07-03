@@ -11,38 +11,38 @@ using Buffer = grabs.Graphics.Buffer;
 
 namespace Euphoria.Render;
 
-public sealed class Graphics : IDisposable
+public static class Graphics
 {
-    private readonly Swapchain _swapchain;
-    private GrabsTexture _swapchainTexture;
+    private static Swapchain _swapchain;
+    private static GrabsTexture _swapchainTexture;
 
-    private Size<int> _size;
+    private static Size<int> _size;
     
-    internal readonly Instance Instance;
-    internal readonly Device Device;
-    internal readonly CommandList CommandList;
+    internal static Instance Instance;
+    internal static Device Device;
+    internal static CommandList CommandList;
     
-    internal Framebuffer SwapchainFramebuffer;
+    internal static Framebuffer SwapchainFramebuffer;
 
-    internal ItemIdCollection<Texture> Textures;
+    internal static ItemIdCollection<Texture> Textures;
 
-    public readonly RenderType RenderType;
+    public static RenderType RenderType;
     
-    public readonly TextureBatcher TextureBatcher;
+    public static TextureBatcher TextureBatcher;
     
-    public readonly Renderer3D Renderer3D;
+    public static Renderer3D Renderer3D;
     
-    public readonly ImGuiRenderer ImGuiRenderer;
+    public static ImGuiRenderer ImGuiRenderer;
 
-    public readonly Texture WhiteTexture;
+    public static Texture WhiteTexture;
 
-    public readonly Texture BlackTexture;
+    public static Texture BlackTexture;
 
-    public GraphicsApi Api => Instance.Api;
+    public static GraphicsApi Api => Instance.Api;
 
-    public Size<int> Size => _size;
+    public static Size<int> Size => _size;
 
-    public VSyncMode VSyncMode
+    public static VSyncMode VSyncMode
     {
         get
         {
@@ -66,7 +66,7 @@ public sealed class Graphics : IDisposable
         }
     }
 
-    public Graphics(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
+    public static void Initialize(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
     {
         Instance = instance;
         _size = size;
@@ -114,7 +114,7 @@ public sealed class Graphics : IDisposable
         }
     }
 
-    public Texture CreateTexture(Bitmap bitmap)
+    public static Texture CreateTexture(Bitmap bitmap)
     {
         GrabsTexture texture =
             Device.CreateTexture(
@@ -132,13 +132,13 @@ public sealed class Graphics : IDisposable
         Device.ExecuteCommandList(CommandList);
 
         ulong id = Textures.NextId;
-        Texture tex = new Texture(this, texture, descriptorSet, id, bitmap.Size);
+        Texture tex = new Texture(texture, descriptorSet, id, bitmap.Size);
         Textures.AddItem(tex);
 
         return tex;
     }
 
-    public Cubemap CreateCubemap(Bitmap right, Bitmap left, Bitmap top, Bitmap bottom, Bitmap front, Bitmap back)
+    public static Cubemap CreateCubemap(Bitmap right, Bitmap left, Bitmap top, Bitmap bottom, Bitmap front, Bitmap back)
     {
         TextureDescription textureDesc = TextureDescription.Cubemap((uint) right.Size.Width, (uint) right.Size.Height,
             1, Format.R8G8B8A8_UNorm, TextureUsage.ShaderResource);
@@ -152,7 +152,7 @@ public sealed class Graphics : IDisposable
         return new Cubemap(texture, descriptorSet, right.Size);
     }
     
-    public void Present()
+    public static void Present()
     {
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
@@ -182,7 +182,7 @@ public sealed class Graphics : IDisposable
         _swapchain.Present();
     }
 
-    public void Resize(in Size<int> size)
+    public static void Resize(in Size<int> size)
     {
         _size = size;
         
@@ -204,7 +204,7 @@ public sealed class Graphics : IDisposable
         ImGuiRenderer.Resize(size);
     }
 
-    public void Dispose()
+    public static void Deinitialize()
     {
         Renderer3D?.Dispose();
         ImGuiRenderer.Dispose();

@@ -16,9 +16,7 @@ public class Scene : IDisposable
     private List<Entity> _entities;
     private Dictionary<string, Entity> _entityPointers;
     private bool _hasInitialized;
-
-    public Graphics Graphics => App.Graphics;
-
+    
     public Camera Camera
     {
         get
@@ -112,7 +110,7 @@ public class Scene : IDisposable
             entity.Draw();
         
         Camera camera = Camera;
-        App.Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
+        Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
     }
 
     public virtual void Dispose()

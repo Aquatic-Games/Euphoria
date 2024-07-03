@@ -40,7 +40,6 @@ public static class App
     public static Application Application { get; private set; }
     
     public static Window Window { get; private set; }
-    public static Graphics Graphics { get; private set; }
 
     static App()
     {
@@ -89,7 +88,7 @@ public static class App
         {
             case GraphicsApi.D3D11:
                 Logger.Trace("Creating D3D11 graphics.");
-                Graphics = new Graphics(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels,
+                Graphics.Initialize(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels,
                     options.GraphicsOptions);
                 break;
             
@@ -98,7 +97,7 @@ public static class App
                 Window.CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc);
                 
                 Logger.Trace("Creating GL graphics.");
-                Graphics = new Graphics(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
+                Graphics.Initialize(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
                     Window.SizeInPixels, options.GraphicsOptions);
                 break;
             
@@ -117,7 +116,7 @@ public static class App
         Logger.Debug("Initializing input system.");
         Input.Initialize(Window);
 
-        ImGuiController.Initialize(Graphics, Window);
+        ImGuiController.Initialize(Window);
         
         Logger.Debug("Initializing user code.");
         Application.Initialize(initialScene);
@@ -144,7 +143,7 @@ public static class App
         }
         
         Application.Dispose();
-        Graphics.Dispose();
+        Graphics.Deinitialize();
         Window.Dispose();
     }
 

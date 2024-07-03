@@ -17,7 +17,7 @@ public class Scene3D : Scene
     
     public override void Initialize()
     {
-        App.Graphics.Renderer3D.Skybox = App.Graphics.CreateCubemap(
+        Graphics.Renderer3D.Skybox = Graphics.CreateCubemap(
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\right.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\left.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\top.jpg"),
@@ -25,16 +25,16 @@ public class Scene3D : Scene
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
         
-        _texture = App.Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"));
+        _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"));
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.
         MaterialDescription matDesc = new MaterialDescription(_texture);
-        _material = App.Graphics.Renderer3D.CreateMaterial(matDesc);
+        _material = Graphics.Renderer3D.CreateMaterial(matDesc);
         
         Plane plane = new Plane();
         Mesh mesh = new Mesh(plane.Vertices, plane.Indices);
 
-        Renderable renderable = App.Graphics.Renderer3D.CreateEmptyRenderable(32, 32, _material, UpdateFlags.Dynamic);
+        Renderable renderable = Graphics.Renderer3D.CreateEmptyRenderable(32, 32, _material, UpdateFlags.Dynamic);
         renderable.Update(mesh);
 
         Cube cube = new Cube();

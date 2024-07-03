@@ -15,8 +15,6 @@ public class Entity : IDisposable
 
     public Transform Transform;
 
-    public Graphics Graphics => Graphics;
-
     public Entity(string name) : this(name, new Transform()) { }
 
     public Entity(string name, Transform transform)
