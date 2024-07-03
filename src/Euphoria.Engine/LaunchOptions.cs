@@ -15,7 +15,7 @@ public struct LaunchOptions
     
     public Size<int> WindowSize;
 
-    public bool Resizable;
+    public WindowBorder WindowBorder;
 
     public GraphicsApi Api;
 
@@ -28,7 +28,7 @@ public struct LaunchOptions
 
         WindowTitle = appName;
         WindowSize = new Size<int>(1280, 720);
-        Resizable = false;
+        WindowBorder = WindowBorder.Fixed;
 
         Api = App.PickBestGraphicsApi();
         

@@ -83,9 +83,6 @@ public unsafe class Window : IDisposable
             throw new Exception($"Failed to initialize SDL: {_sdl.GetErrorS()}");
 
         WindowFlags flags = WindowFlags.Shown;
-
-        if (options.Resizable)
-            flags |= WindowFlags.Resizable;
         
         switch (options.Api)
         {
@@ -98,6 +95,20 @@ public unsafe class Window : IDisposable
                 _sdl.GLSetAttribute(GLattr.AlphaSize, 0);
 
                 flags |= WindowFlags.Opengl;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        switch (options.WindowBorder)
+        {
+            case WindowBorder.Fixed:
+                break;
+            case WindowBorder.Resizable:
+                flags |= WindowFlags.Resizable;
+                break;
+            case WindowBorder.Borderless:
+                flags |= WindowFlags.Borderless;
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Euphoria.Engine.Entities.Components;
+using Euphoria.Render;
 
 namespace Euphoria.Engine.Entities;
 
@@ -13,6 +14,8 @@ public class Entity : IDisposable
     public readonly string Name;
 
     public Transform Transform;
+
+    public Graphics Graphics => Graphics;
 
     public Entity(string name) : this(name, new Transform()) { }
 

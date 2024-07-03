@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using Euphoria.Core;
 using Euphoria.Engine.Entities;
 using Euphoria.Math;
+using Euphoria.Render;
 using Euphoria.Render.Renderers.Structs;
 
 namespace Euphoria.Engine.Scenes;
 
-public abstract class Scene : IDisposable
+public class Scene : IDisposable
 {
     // Use that Entities are heap allocated to our advantage.
     // The List is what is iterated through, as its iteration performance is fast.
@@ -15,6 +16,8 @@ public abstract class Scene : IDisposable
     private List<Entity> _entities;
     private Dictionary<string, Entity> _entityPointers;
     private bool _hasInitialized;
+
+    public Graphics Graphics => App.Graphics;
 
     public Camera Camera
     {
