@@ -25,10 +25,11 @@ public sealed class Graphics : IDisposable
     internal Framebuffer SwapchainFramebuffer;
 
     internal ItemIdCollection<Texture> Textures;
+
+    public readonly RenderType RenderType;
     
     public readonly TextureBatcher TextureBatcher;
-
-    //public readonly Renderer2D Renderer2D;
+    
     public readonly Renderer3D Renderer3D;
     
     public readonly ImGuiRenderer ImGuiRenderer;
@@ -96,42 +97,21 @@ public sealed class Graphics : IDisposable
         Logger.Trace("Creating texture renderer.");
         TextureBatcher = new TextureBatcher(Device);
         
+        Logger.Trace("Creating IMGUI renderer.");
+        ImGuiRenderer = new ImGuiRenderer(Device, size);
+        
         Logger.Trace("Creating default textures.");
         WhiteTexture = CreateTexture(new Bitmap([255, 255, 255, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
         BlackTexture = CreateTexture(new Bitmap([0, 0, 0, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
         
         Logger.Debug($"Render type: {options.RenderType}");
-        // TODO: Implement render type, and 2D renderer, which is currently disabled to aid development of the 3D renderer.
-        Logger.Warn("Currently the render type is being IGNORED. This will be implemented in a later version.");
-        
-        Logger.Trace("Creating 3D renderer.");
-        Renderer3D = new Renderer3D(Device, size);
-        
-        Logger.Trace("Creating IMGUI renderer.");
-        ImGuiRenderer = new ImGuiRenderer(Device, size);
+        RenderType = options.RenderType;
 
-        /*switch (options.RenderType)
+        if (options.RenderType == RenderType.Normal)
         {
-            case RenderType.None:
-                break;
-            case RenderType.Only2D:
-                Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size);
-                break;
-            case RenderType.Only3D:
-                Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D(Device, size);
-                break;
-            case RenderType.Both:
-                Logger.Trace("Creating 2D renderer.");
-                Renderer2D = new Renderer2D(Device, size);
-
-                Logger.Trace("Creating 3D renderer.");
-                Renderer3D = new Renderer3D(Device, size);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }*/
+            Logger.Trace("Creating 3D renderer.");
+            Renderer3D = new Renderer3D(Device, size);
+        }
     }
 
     public Texture CreateTexture(Bitmap bitmap)
@@ -178,12 +158,19 @@ public sealed class Graphics : IDisposable
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         CommandList.SetScissor(new Rectangle(0, 0, _size.Width, _size.Height));
         
-        Renderer3D.Render(CommandList, SwapchainFramebuffer, _size);
+        Renderer3D?.Render(CommandList, SwapchainFramebuffer, _size);
         
         //Renderer2D?.DispatchRender(Device, CommandList, _swapchainBuffer);
         
         // TODO: UI Renderer instead of texture batcher.
-        CommandList.BeginRenderPass(new RenderPassDescription(SwapchainFramebuffer, Vector4.Zero, LoadOp.Load));
+        RenderPassDescription description = new RenderPassDescription(SwapchainFramebuffer, Vector4.Zero, LoadOp.Load);
+        if (RenderType == RenderType.UIOnly)
+        {
+            description.ClearColor = new Vector4(0, 0, 0, 1);
+            description.ColorLoadOp = LoadOp.Clear;
+        }
+        
+        CommandList.BeginRenderPass(description);
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
@@ -219,9 +206,8 @@ public sealed class Graphics : IDisposable
 
     public void Dispose()
     {
-        ImGuiRenderer.Dispose();
         Renderer3D?.Dispose();
-        //Renderer2D?.Dispose();
+        ImGuiRenderer.Dispose();
         TextureBatcher.Dispose();
         
         BlackTexture.Dispose();

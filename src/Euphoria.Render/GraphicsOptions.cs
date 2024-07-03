@@ -9,5 +9,5 @@ public struct GraphicsOptions
         RenderType = renderType;
     }
 
-    public static GraphicsOptions Default => new GraphicsOptions(RenderType.Both);
+    public static GraphicsOptions Default => new GraphicsOptions(RenderType.Normal);
 }
