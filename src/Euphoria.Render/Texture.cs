@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Euphoria.Core;
 using Euphoria.Math;
 using grabs.Graphics;
@@ -36,6 +37,17 @@ public class Texture : IDisposable
         Id = _loadedTextures.AddItem(this);
     }
 
+    internal Texture(GrabsTexture texture, Size<int> size)
+    {
+        GTexture = texture;
+        Size = size;
+        
+        DescriptorSet = Graphics.Device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
+            new DescriptorSetDescription(texture: GTexture));
+
+        Id = _loadedTextures.AddItem(this);
+    }
+
     public void Dispose()
     {
         DescriptorSet.Dispose();
@@ -45,19 +57,31 @@ public class Texture : IDisposable
     }
     
     private static ItemIdCollection<Texture> _loadedTextures;
+    private static Dictionary<string, ulong> _namedTextures;
 
     static Texture()
     {
         _loadedTextures = new ItemIdCollection<Texture>();
+        _namedTextures = new Dictionary<string, ulong>();
         
         Logger.Trace("Creating default textures.");
         White = new Texture([255, 255, 255, 255], new Size<int>(1));
         Black = new Texture([0, 0, 0, 255], new Size<int>(1));
     }
 
+    public static void StoreTexture(Texture texture, string name)
+    {
+        _namedTextures.Add(name, texture.Id);
+    }
+
     public static Texture GetTexture(ulong id)
     {
         return _loadedTextures[id];
+    }
+
+    public static Texture GetTexture(string name)
+    {
+        return _loadedTextures[_namedTextures[name]];
     }
 
     public static void DisposeAllTextures()
