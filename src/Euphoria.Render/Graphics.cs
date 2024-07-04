@@ -1,6 +1,7 @@
 ﻿global using GrabsTexture = grabs.Graphics.Texture;
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using Euphoria.Core;
@@ -24,6 +25,8 @@ public static class Graphics
     internal static Framebuffer SwapchainFramebuffer;
 
     internal static DescriptorLayout TextureDescriptorLayout;
+
+    internal static List<GrabsTexture> TexturesQueuedForMipGeneration;
 
     public static RenderType RenderType { get; private set; }
     
@@ -65,6 +68,8 @@ public static class Graphics
     {
         Instance = instance;
         _size = size;
+
+        TexturesQueuedForMipGeneration = new List<GrabsTexture>();
 
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
@@ -126,6 +131,13 @@ public static class Graphics
         CommandList.Begin();
         CommandList.SetViewport(new Viewport(0, 0, (uint) _size.Width, (uint) _size.Height));
         CommandList.SetScissor(new Rectangle(0, 0, _size.Width, _size.Height));
+        
+        // Mips generation queue. Generate mipmaps for all textures that have requested it.
+        // The reason this is not in the Texture class is because it applies to ALL textures. Cubemaps, render targets, etc.
+        foreach (GrabsTexture texture in TexturesQueuedForMipGeneration)
+            CommandList.GenerateMipmaps(texture);
+        
+        TexturesQueuedForMipGeneration.Clear();
         
         Renderer3D?.Render(CommandList, SwapchainFramebuffer, _size);
         

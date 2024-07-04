@@ -24,10 +24,11 @@ public class Texture : IDisposable
         
         Device device = Graphics.Device;
 
-        TextureDescription desc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1, format,
-            TextureUsage.ShaderResource);
+        TextureDescription desc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 0, format,
+            TextureUsage.ShaderResource | TextureUsage.GenerateMips);
 
         GTexture = device.CreateTexture(desc, data);
+        Graphics.TexturesQueuedForMipGeneration.Add(GTexture);
 
         DescriptorSet = device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
             new DescriptorSetDescription(texture: GTexture));
