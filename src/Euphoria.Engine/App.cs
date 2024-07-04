@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Euphoria.Core;
+using Euphoria.Engine.Debugging;
 using Euphoria.Engine.Exceptions;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;
@@ -135,6 +136,7 @@ public static class App
             float dt = (float) Metrics.TimeSinceLastFrame;
             
             ImGuiController.Update(dt);
+            EuphoriaDebug.Update();
             
             Application.Update(dt);
             Application.Draw();

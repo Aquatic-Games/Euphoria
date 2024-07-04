@@ -1,4 +1,5 @@
 ﻿using Euphoria.Engine;
+using Euphoria.Engine.Debugging;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
@@ -13,8 +14,9 @@ public class TestApp : Application
         base.Initialize(initialScene);
         
         ImGuiRenderer imGui = Graphics.ImGuiRenderer;
-            
         imGui.AddFont(@"C:\Users\ollie\Downloads\Russo_One\RussoOne-Regular.ttf", 14, "RussoOne");
+
+        EuphoriaDebug.IsOpen = true;
     }
 
     public override void Update(float dt)
