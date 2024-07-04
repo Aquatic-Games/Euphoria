@@ -1,4 +1,5 @@
 ﻿using System;
+using Euphoria.Core;
 using Euphoria.Math;
 using grabs.Graphics;
 
@@ -13,12 +14,25 @@ public class Texture : IDisposable
     
     public readonly Size<int> Size;
 
-    internal Texture(GrabsTexture gTexture, DescriptorSet descriptorSet, ulong id, Size<int> size)
+    public Texture(string path) : this(new Bitmap(path)) { }
+
+    public Texture(Bitmap bitmap) : this(bitmap.Data, bitmap.Size, bitmap.Format) { }
+
+    public Texture(byte[] data, Size<int> size, Format format = Format.R8G8B8A8_UNorm)
     {
-        GTexture = gTexture;
-        DescriptorSet = descriptorSet;
-        Id = id;
         Size = size;
+        
+        Device device = Graphics.Device;
+
+        TextureDescription desc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 1, format,
+            TextureUsage.ShaderResource);
+
+        GTexture = device.CreateTexture(desc, data);
+
+        DescriptorSet = device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
+            new DescriptorSetDescription(texture: GTexture));
+
+        Id = _loadedTextures.AddItem(this);
     }
 
     public void Dispose()
@@ -26,6 +40,32 @@ public class Texture : IDisposable
         DescriptorSet.Dispose();
         GTexture.Dispose();
         
-        Graphics.Textures.RemoveItem(Id);
+        _loadedTextures.RemoveItem(Id);
     }
+    
+    private static ItemIdCollection<Texture> _loadedTextures;
+
+    static Texture()
+    {
+        _loadedTextures = new ItemIdCollection<Texture>();
+        
+        Logger.Trace("Creating default textures.");
+        White = new Texture([255, 255, 255, 255], new Size<int>(1));
+        Black = new Texture([0, 0, 0, 255], new Size<int>(1));
+    }
+
+    public static Texture GetTexture(ulong id)
+    {
+        return _loadedTextures[id];
+    }
+
+    public static void DisposeAllTextures()
+    {
+        foreach ((_, Texture texture) in _loadedTextures.Items)
+            texture.Dispose();
+    }
+
+    public static readonly Texture White;
+    
+    public static readonly Texture Black;
 }

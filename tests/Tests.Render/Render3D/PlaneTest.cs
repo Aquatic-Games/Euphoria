@@ -29,7 +29,7 @@ public class PlaneTest : TestBase
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
 
-        _texture = Graphics.CreateTexture(new Bitmap("Content/awesomeface.png"));
+        _texture = new Texture("Content/awesomeface.png");
         _material = Graphics.Renderer3D.CreateMaterial(new MaterialDescription(_texture));
 
         Vertex[] vertices =
@@ -49,7 +49,7 @@ public class PlaneTest : TestBase
         Mesh mesh = new Mesh(vertices, indices);
         _renderable = Graphics.Renderer3D.CreateRenderable(mesh, _material);
 
-        _debugTexture = Graphics.CreateTexture(new Bitmap("Content/DEBUG.png"));
+        _debugTexture = new Texture("Content/DEBUG.png");
     }
 
     protected override void Update(float dt)

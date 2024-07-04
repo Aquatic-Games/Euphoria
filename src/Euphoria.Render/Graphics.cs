@@ -13,30 +13,25 @@ namespace Euphoria.Render;
 
 public static class Graphics
 {
-    private static Swapchain _swapchain;
-    private static GrabsTexture _swapchainTexture;
-
     private static Size<int> _size;
     
     internal static Instance Instance;
     internal static Device Device;
     internal static CommandList CommandList;
     
+    private static Swapchain _swapchain;
+    private static GrabsTexture _swapchainTexture;
     internal static Framebuffer SwapchainFramebuffer;
 
-    internal static ItemIdCollection<Texture> Textures;
+    internal static DescriptorLayout TextureDescriptorLayout;
 
-    public static RenderType RenderType;
+    public static RenderType RenderType { get; private set; }
     
-    public static TextureBatcher TextureBatcher;
+    public static TextureBatcher TextureBatcher { get; private set; }
     
-    public static Renderer3D Renderer3D;
+    public static Renderer3D Renderer3D { get; private set; }
     
-    public static ImGuiRenderer ImGuiRenderer;
-
-    public static Texture WhiteTexture;
-
-    public static Texture BlackTexture;
+    public static ImGuiRenderer ImGuiRenderer { get; private set; }
 
     public static GraphicsApi Api => Instance.Api;
 
@@ -71,8 +66,6 @@ public static class Graphics
         Instance = instance;
         _size = size;
 
-        Textures = new ItemIdCollection<Texture>();
-
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
         Adapter currentAdapter = adapters[adapter?.Index ?? 0];
@@ -90,6 +83,10 @@ public static class Graphics
 
         Logger.Trace("Creating swapchain buffer.");
         SwapchainFramebuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
+        
+        Logger.Trace("Creating texture descriptor layout.");
+        TextureDescriptorLayout = Device.CreateDescriptorLayout(new DescriptorLayoutDescription(
+            new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel)));
 
         Logger.Trace("Creating main command list.");
         CommandList = Device.CreateCommandList();
@@ -100,10 +97,6 @@ public static class Graphics
         Logger.Trace("Creating IMGUI renderer.");
         ImGuiRenderer = new ImGuiRenderer(Device, size);
         
-        Logger.Trace("Creating default textures.");
-        WhiteTexture = CreateTexture(new Bitmap([255, 255, 255, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
-        BlackTexture = CreateTexture(new Bitmap([0, 0, 0, 255], new Size<int>(1), Format.R8G8B8A8_UNorm));
-        
         Logger.Debug($"Render type: {options.RenderType}");
         RenderType = options.RenderType;
 
@@ -112,30 +105,6 @@ public static class Graphics
             Logger.Trace("Creating 3D renderer.");
             Renderer3D = new Renderer3D(Device, size);
         }
-    }
-
-    public static Texture CreateTexture(Bitmap bitmap)
-    {
-        GrabsTexture texture =
-            Device.CreateTexture(
-                TextureDescription.Texture2D((uint) bitmap.Size.Width, (uint) bitmap.Size.Height, 0, bitmap.Format,
-                    TextureUsage.ShaderResource | TextureUsage.GenerateMips), bitmap.Data);
-
-        // TODO: TextureBatcher.TextureDescriptorLayout should be moved to Graphics directly.
-        DescriptorSet descriptorSet = Device.CreateDescriptorSet(TextureBatcher.TextureDescriptorLayout,
-            new DescriptorSetDescription(texture: texture));
-        
-        // TODO: Mipmaps queue to be done in present.
-        CommandList.Begin();
-        CommandList.GenerateMipmaps(texture);
-        CommandList.End();
-        Device.ExecuteCommandList(CommandList);
-
-        ulong id = Textures.NextId;
-        Texture tex = new Texture(texture, descriptorSet, id, bitmap.Size);
-        Textures.AddItem(tex);
-
-        return tex;
     }
 
     public static Cubemap CreateCubemap(Bitmap right, Bitmap left, Bitmap top, Bitmap bottom, Bitmap front, Bitmap back)
@@ -174,7 +143,7 @@ public static class Graphics
         TextureBatcher.DispatchDrawQueue(CommandList, _size);
         CommandList.EndRenderPass();
         
-        ImGuiRenderer.Render(CommandList, SwapchainFramebuffer, Textures);
+        ImGuiRenderer.Render(CommandList, SwapchainFramebuffer);
         
         CommandList.End();
         Device.ExecuteCommandList(CommandList);
@@ -210,8 +179,9 @@ public static class Graphics
         ImGuiRenderer.Dispose();
         TextureBatcher.Dispose();
         
-        BlackTexture.Dispose();
-        WhiteTexture.Dispose();
+        Texture.DisposeAllTextures();
+        
+        TextureDescriptorLayout.Dispose();
         
         CommandList.Dispose();
         SwapchainFramebuffer.Dispose();

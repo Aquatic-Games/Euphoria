@@ -11,7 +11,7 @@ public class BasicTest : TestBase
     
     protected override void Initialize()
     {
-        _texture = Graphics.CreateTexture(new Bitmap("Content/awesomeface.png"));
+        _texture = new Texture("Content/awesomeface.png");
     }
 
     protected override void Draw()

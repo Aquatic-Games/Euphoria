@@ -25,7 +25,7 @@ public class Scene3D : Scene
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
         
-        _texture = Graphics.CreateTexture(new Bitmap(@"C:\Users\ollie\Pictures\BAGELMIP.png"));
+        _texture = new Texture(@"C:\Users\ollie\Pictures\BAGELMIP.png");
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.
         MaterialDescription matDesc = new MaterialDescription(_texture);

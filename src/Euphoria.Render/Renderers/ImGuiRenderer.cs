@@ -97,7 +97,7 @@ public class ImGuiRenderer : IDisposable
         RecreateFontTexture();
     }
 
-    internal unsafe void Render(CommandList cl, Framebuffer framebuffer, ItemIdCollection<Texture> textures)
+    internal unsafe void Render(CommandList cl, Framebuffer framebuffer)
     {
         ImGui.SetCurrentContext(_context);
         
@@ -173,7 +173,7 @@ public class ImGuiRenderer : IDisposable
 
                 DescriptorSet texSet = _textureSet;
                 if (drawCmd.TextureId != 0)
-                    texSet = textures[(ulong) drawCmd.TextureId].DescriptorSet;
+                    texSet = Texture.GetTexture((ulong) drawCmd.TextureId).DescriptorSet;
 
                 Vector2 clipMin = new Vector2(drawCmd.ClipRect.X - clipOff.X, drawCmd.ClipRect.Y - clipOff.Y);
                 Vector2 clipMax = new Vector2(drawCmd.ClipRect.Z - clipOff.X, drawCmd.ClipRect.W - clipOff.Y);
