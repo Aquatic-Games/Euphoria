@@ -12,7 +12,7 @@ public static class EuphoriaDebug
     static EuphoriaDebug()
     {
         IsOpen = false;
-        Tabs = [new DebugConsole()];
+        Tabs = [new DebugConsole(), new StatsTab(), new RendererTab()];
     }
 
     internal static void Update()

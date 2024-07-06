@@ -47,6 +47,9 @@ public class Renderer3D : IDisposable
     private readonly Buffer _skyboxVertexBuffer;
     private readonly Buffer _skyboxIndexBuffer;
     private readonly Pipeline _skyboxPipeline;
+
+    // Only created if requested.
+    private (string, Texture)[] _debugTextures;
     
     public CameraInfo Camera;
 
@@ -230,6 +233,23 @@ public class Renderer3D : IDisposable
         _opaques.Add(new TransformedRenderable(renderable, world));
     }
 
+    public (string, Texture)[] GetDebugTextures()
+    {
+        if (_debugTextures == null)
+        {
+            Logger.Debug("Creating debug textures.");
+
+            _debugTextures =
+            [
+                ("Pass", new Texture(_passTexture, _size, false)), 
+                ("Albedo", new Texture(_albedoTexture, _size, false)),
+                ("Position", new Texture(_positionTexture, _size, false))
+            ];
+        }
+
+        return _debugTextures;
+    }
+
     internal void Render(CommandList cl, Framebuffer swapchainBuffer, Size<int> framebufferSize)
     {
         cl.UpdateBuffer(_cameraInfoBuffer, 0, Camera);
@@ -357,6 +377,14 @@ public class Renderer3D : IDisposable
         _positionTexture.Dispose();
         _albedoTexture.Dispose();
         _depthTexture.Dispose();
+
+        if (_debugTextures != null)
+        {
+            foreach ((_, Texture texture) in _debugTextures)
+                texture.Dispose();
+
+            _debugTextures = null;
+        }
     }
 
     public void Dispose()
