@@ -28,9 +28,13 @@ public class Renderer3D : IDisposable
     private GrabsTexture _passTexture;
     private Framebuffer _passBuffer;
     
-    private readonly DescriptorLayout _materialInfoLayout;
-    
-    private readonly Pipeline _defaultPipeline;
+    internal readonly ShaderModule GBufferVertexModule;
+    internal readonly ShaderModule GBufferPixelModule;
+    internal readonly InputLayoutDescription[] GBufferInputLayout;
+
+    internal readonly DescriptorLayout CameraInfoLayout;
+    internal readonly DescriptorLayout DrawInfoLayout;
+    internal readonly DescriptorLayout MaterialInfoLayout;
     
     private readonly Pipeline _passPipeline;
     private readonly Pipeline _compositePipeline;
@@ -67,45 +71,41 @@ public class Renderer3D : IDisposable
 
         Logger.Trace("Loading GBuffer shaders.");
         
-        using ShaderModule gBufferVertex = device.CreateShaderModule(ShaderStage.Vertex,
+        GBufferVertexModule = device.CreateShaderModule(ShaderStage.Vertex,
             ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Vertex), "VSMain");
-        using ShaderModule gBufferPixel = device.CreateShaderModule(ShaderStage.Pixel,
+        GBufferPixelModule = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Deferred/GBuffer", ShaderStage.Pixel), "PSMain");
 
         Logger.Trace("Creating GBuffer layouts.");
         
-        using DescriptorLayout cameraInfoLayout = device.CreateDescriptorLayout(
+        CameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
-        using DescriptorLayout drawInfoLayout = device.CreateDescriptorLayout(
+        DrawInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
-        _materialInfoLayout = device.CreateDescriptorLayout(
+        
+        MaterialInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
 
-        Logger.Trace("Creating default material pipelines.");
-        
-        PipelineDescription defaultPipelineDesc = new PipelineDescription(gBufferVertex, gBufferPixel,
-            [
-                new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex),
-                new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex),
-                new InputLayoutDescription(Format.R32G32B32A32_Float, 20, 0, InputType.PerVertex),
-                new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex)
-            ], DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullNone, BlendDescription.Disabled,
-            [cameraInfoLayout, drawInfoLayout, _materialInfoLayout]);
-
-        _defaultPipeline = device.CreatePipeline(defaultPipelineDesc);
+        GBufferInputLayout =
+        [
+            new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex), // Position
+            new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex), // TexCoord
+            new InputLayoutDescription(Format.R32G32B32A32_Float, 20, 0, InputType.PerVertex), // Color
+            new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex) // Normal
+        ];
 
         Logger.Trace("Creating GBuffer buffers.");
         
         _cameraInfoBuffer = device.CreateBuffer(BufferType.Constant, Camera, true);
         _cameraInfoSet =
-            device.CreateDescriptorSet(cameraInfoLayout, new DescriptorSetDescription(buffer: _cameraInfoBuffer));
+            device.CreateDescriptorSet(CameraInfoLayout, new DescriptorSetDescription(buffer: _cameraInfoBuffer));
         
         _drawInfoBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
         _drawInfoSet =
-            device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
+            device.CreateDescriptorSet(DrawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
 
         Logger.Trace("Loading pass shaders.");
 
@@ -192,20 +192,12 @@ public class Renderer3D : IDisposable
 
         PipelineDescription skyboxDesc = new PipelineDescription(skyboxVertex, skyboxPixel, skyboxInputLayout,
             DepthStencilDescription.DepthLessEqual, RasterizerDescription.CullCounterClockwise, BlendDescription.Disabled,
-            [cameraInfoLayout, skyboxTextureLayout]);
+            [CameraInfoLayout, skyboxTextureLayout]);
 
         _skyboxPipeline = device.CreatePipeline(skyboxDesc);
         
         BackgroundColor = Color.Black;
         Skybox = null;
-    }
-
-    public Material CreateMaterial(in MaterialDescription description)
-    {
-        DescriptorSet matDescriptor = _device.CreateDescriptorSet(_materialInfoLayout,
-            new DescriptorSetDescription(texture: description.Albedo.GTexture));
-
-        return new Material(description.Albedo, _defaultPipeline, matDescriptor);
     }
 
     public void Draw(Renderable renderable, in Matrix4x4 world)
@@ -377,8 +369,12 @@ public class Renderer3D : IDisposable
         _drawInfoBuffer.Dispose();
         _cameraInfoSet.Dispose();
         _cameraInfoBuffer.Dispose();
-        _defaultPipeline.Dispose();
-        _materialInfoLayout.Dispose();
+        
+        MaterialInfoLayout.Dispose();
+        DrawInfoLayout.Dispose();
+        CameraInfoLayout.Dispose();
+        GBufferPixelModule.Dispose();
+        GBufferVertexModule.Dispose();
         DisposeTextureResources();
     }
 }

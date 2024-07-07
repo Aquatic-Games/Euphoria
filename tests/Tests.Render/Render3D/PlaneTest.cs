@@ -30,7 +30,7 @@ public class PlaneTest : TestBase
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
 
         _texture = new Texture("Content/awesomeface.png");
-        _material = Graphics.Renderer3D.CreateMaterial(new MaterialDescription(_texture));
+        _material = new Material(new MaterialDescription(_texture));
 
         Vertex[] vertices =
         [

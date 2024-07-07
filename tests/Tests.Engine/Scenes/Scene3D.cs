@@ -29,7 +29,7 @@ public class Scene3D : Scene
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.
         MaterialDescription matDesc = new MaterialDescription(_texture);
-        _material = Graphics.Renderer3D.CreateMaterial(matDesc);
+        _material = new Material(matDesc);
         
         Plane plane = new Plane();
         Mesh mesh = new Mesh(plane.Vertices, plane.Indices);

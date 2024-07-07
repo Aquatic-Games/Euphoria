@@ -1,4 +1,5 @@
 ﻿using System;
+using Euphoria.Render.Renderers;
 using grabs.Graphics;
 
 namespace Euphoria.Render;
@@ -12,16 +13,28 @@ public sealed class Material : IDisposable
 
     public Texture Albedo => _albedo;
 
-    public Material(Texture albedo, Pipeline pipeline, DescriptorSet matDescriptor)
+    public Material(in MaterialDescription description)
     {
-        _albedo = albedo;
+        _albedo = description.Albedo;
 
-        Pipeline = pipeline;
-        MatDescriptor = matDescriptor;
+        Device device = Graphics.Device;
+        Renderer3D renderer = Graphics.Renderer3D;
+        
+        PipelineDescription pipelineDesc = new PipelineDescription(renderer.GBufferVertexModule,
+            renderer.GBufferPixelModule, renderer.GBufferInputLayout, description.Depth, description.Rasterizer,
+            BlendDescription.Disabled,
+            [renderer.CameraInfoLayout, renderer.DrawInfoLayout, renderer.MaterialInfoLayout],
+            description.PrimitiveType);
+
+        Pipeline = device.CreatePipeline(pipelineDesc);
+
+        MatDescriptor = device.CreateDescriptorSet(renderer.MaterialInfoLayout,
+            new DescriptorSetDescription(texture: _albedo.GTexture));
     }
 
     public void Dispose()
     {
         MatDescriptor.Dispose();
+        Pipeline.Dispose();
     }
 }
