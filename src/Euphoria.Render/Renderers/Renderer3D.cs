@@ -108,9 +108,13 @@ public class Renderer3D : IDisposable
             device.CreateDescriptorSet(drawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
 
         Logger.Trace("Loading pass shaders.");
-        
+
+        // We need to flip the framebuffers upside down if we're using opengl, because opengl is stupid.
+        bool isOpenGL = Graphics.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES;
+
         using ShaderModule passVertex = device.CreateShaderModule(ShaderStage.Vertex,
-            ShaderLoader.LoadSpirvShader("QuadDraw", ShaderStage.Vertex), "VSMain");
+            ShaderLoader.LoadSpirvShader("QuadDraw", ShaderStage.Vertex), "VSMain",
+            [new SpecializationConstant(0, isOpenGL)]);
         using ShaderModule passPixel = device.CreateShaderModule(ShaderStage.Pixel,
             ShaderLoader.LoadSpirvShader("Deferred/LightingPass", ShaderStage.Pixel), "PSMain");
 

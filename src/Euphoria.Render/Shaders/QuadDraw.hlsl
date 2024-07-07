@@ -7,6 +7,8 @@ struct VSOutput
     float2 TexCoord: TEXCOORD0;
 };
 
+[[vk::constant_id(0)]] const bool Flip = false;
+
 VSOutput VSMain(const in uint vertex: SV_VertexID)
 {
     VSOutput output;
@@ -32,6 +34,9 @@ VSOutput VSMain(const in uint vertex: SV_VertexID)
 
     output.Position = float4(vertices[indices[vertex]], 0.0, 1.0);
     output.TexCoord = texCoords[indices[vertex]];
+
+    if (Flip)
+        output.TexCoord.y = 1.0 - output.TexCoord.y;
     
     return output;
 }
