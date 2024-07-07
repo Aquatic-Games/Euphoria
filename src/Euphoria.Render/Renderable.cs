@@ -7,8 +7,6 @@ namespace Euphoria.Render;
 
 public sealed class Renderable : IDisposable
 {
-    private readonly Device _device;
-    
     internal Buffer VertexBuffer;
     internal Buffer IndexBuffer;
 
@@ -20,12 +18,43 @@ public sealed class Renderable : IDisposable
 
     internal Renderable(Device device, Buffer vertexBuffer, Buffer indexBuffer, uint numElements, Material material, UpdateFlags updateFlags)
     {
-        _device = device;
         VertexBuffer = vertexBuffer;
         IndexBuffer = indexBuffer;
         NumElements = numElements;
         Material = material;
         UpdateFlags = updateFlags;
+    }
+
+    public Renderable(Mesh mesh, Material material, UpdateFlags updateFlags = UpdateFlags.None)
+    {
+        Device device = Graphics.Device;
+        
+        bool updatable = (updateFlags & UpdateFlags.Updatable) == UpdateFlags.Updatable;
+        
+        VertexBuffer = device.CreateBuffer(BufferType.Vertex, mesh.Vertices, updatable);
+        IndexBuffer = device.CreateBuffer(BufferType.Index, mesh.Indices, updatable);
+        
+        NumElements = (uint) mesh.Indices.Length;
+        UpdateFlags = updateFlags;
+        Material = material;
+    }
+
+    public Renderable(uint numVertices, uint numIndices, Material material,
+        UpdateFlags updateFlags = UpdateFlags.Updatable)
+    {
+        if ((updateFlags & UpdateFlags.Updatable) != UpdateFlags.Updatable)
+            throw new Exception("Empty renderable must be marked with \"Updatable\" flag.");
+
+        Device device = Graphics.Device;
+
+        VertexBuffer =
+            device.CreateBuffer(new BufferDescription(BufferType.Vertex, numVertices * Vertex.SizeInBytes, true));
+        IndexBuffer =
+            device.CreateBuffer(new BufferDescription(BufferType.Index, numIndices * sizeof(uint), true));
+
+        NumElements = numIndices;
+        UpdateFlags = updateFlags;
+        Material = material;
     }
 
     public void Update(Mesh mesh)
@@ -36,6 +65,8 @@ public sealed class Renderable : IDisposable
         
         if (!updatable)
             throw new Exception("Cannot update: Renderable has not been created with \"UpdateFlags.Updatable\" flag.");
+
+        Device device = Graphics.Device;
 
         if (mesh.Vertices.Length * Vertex.SizeInBytes > VertexBuffer.Description.SizeInBytes)
         {
@@ -52,7 +83,7 @@ public sealed class Renderable : IDisposable
                 VertexBuffer.Dispose();
                 // We don't create these buffers with any initial data, as we map them and write to them later.
                 VertexBuffer =
-                    _device.CreateBuffer(new BufferDescription(BufferType.Vertex, bufferSizeInBytes, updatable));
+                    device.CreateBuffer(new BufferDescription(BufferType.Vertex, bufferSizeInBytes, updatable));
             }
             else
             {
@@ -75,7 +106,7 @@ public sealed class Renderable : IDisposable
 
                 IndexBuffer.Dispose();
                 IndexBuffer =
-                    _device.CreateBuffer(new BufferDescription(BufferType.Index, bufferSizeInBytes, updatable));
+                    device.CreateBuffer(new BufferDescription(BufferType.Index, bufferSizeInBytes, updatable));
             }
             else
             {
@@ -84,13 +115,13 @@ public sealed class Renderable : IDisposable
             }
         }
 
-        nint vPtr = _device.MapBuffer(VertexBuffer, MapMode.Write);
+        nint vPtr = device.MapBuffer(VertexBuffer, MapMode.Write);
         GraphicsUtils.CopyToUnmanaged(vPtr, mesh.Vertices);
-        _device.UnmapBuffer(VertexBuffer);
+        device.UnmapBuffer(VertexBuffer);
 
-        nint iPtr = _device.MapBuffer(IndexBuffer, MapMode.Write);
+        nint iPtr = device.MapBuffer(IndexBuffer, MapMode.Write);
         GraphicsUtils.CopyToUnmanaged(iPtr, mesh.Indices);
-        _device.UnmapBuffer(IndexBuffer);
+        device.UnmapBuffer(IndexBuffer);
 
         NumElements = (uint) mesh.Indices.Length;
     }

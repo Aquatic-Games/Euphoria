@@ -10,7 +10,7 @@ public class MeshRenderer : Component
 
     public MeshRenderer(Mesh mesh, Material material)
     {
-        _renderable = Graphics.Renderer3D.CreateRenderable(mesh, material);
+        _renderable = new Renderable(mesh, material);
     }
 
     public MeshRenderer(Renderable renderable)

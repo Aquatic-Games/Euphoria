@@ -34,7 +34,7 @@ public class Scene3D : Scene
         Plane plane = new Plane();
         Mesh mesh = new Mesh(plane.Vertices, plane.Indices);
 
-        Renderable renderable = Graphics.Renderer3D.CreateEmptyRenderable(32, 32, _material, UpdateFlags.Dynamic);
+        Renderable renderable = new Renderable(32, 32, _material, UpdateFlags.Dynamic);
         renderable.Update(mesh);
 
         Cube cube = new Cube();

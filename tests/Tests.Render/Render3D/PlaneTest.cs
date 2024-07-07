@@ -47,7 +47,7 @@ public class PlaneTest : TestBase
         ];
 
         Mesh mesh = new Mesh(vertices, indices);
-        _renderable = Graphics.Renderer3D.CreateRenderable(mesh, _material);
+        _renderable = new Renderable(mesh, _material);
 
         _debugTexture = new Texture("Content/DEBUG.png");
     }
