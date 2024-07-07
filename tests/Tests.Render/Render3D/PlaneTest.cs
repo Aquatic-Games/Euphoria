@@ -21,7 +21,7 @@ public class PlaneTest : TestBase
         base.Initialize();
         
         Graphics.Renderer3D.BackgroundColor = Color.CornflowerBlue;
-        Graphics.Renderer3D.Skybox = Graphics.CreateCubemap(
+        Graphics.Renderer3D.Skybox = new Cubemap(
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\right.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\left.jpg"),
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\top.jpg"),

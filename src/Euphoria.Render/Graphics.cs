@@ -111,20 +111,6 @@ public static class Graphics
             Renderer3D = new Renderer3D(Device, size);
         }
     }
-
-    public static Cubemap CreateCubemap(Bitmap right, Bitmap left, Bitmap top, Bitmap bottom, Bitmap front, Bitmap back)
-    {
-        TextureDescription textureDesc = TextureDescription.Cubemap((uint) right.Size.Width, (uint) right.Size.Height,
-            1, Format.R8G8B8A8_UNorm, TextureUsage.ShaderResource);
-
-        GrabsTexture texture = Device.CreateTexture(textureDesc,
-            [right.Data, left.Data, top.Data, bottom.Data, front.Data, back.Data]);
-        
-        DescriptorSet descriptorSet = Device.CreateDescriptorSet(TextureBatcher.TextureDescriptorLayout,
-            new DescriptorSetDescription(texture: texture));
-
-        return new Cubemap(texture, descriptorSet, right.Size);
-    }
     
     public static void Present()
     {
