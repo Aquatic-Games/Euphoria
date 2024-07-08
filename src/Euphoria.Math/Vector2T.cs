@@ -32,6 +32,10 @@ public struct Vector2T<T> where T : INumber<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly Vector2T<TOther> As<TOther>() where TOther : INumber<TOther>
+        => new Vector2T<TOther>(TOther.CreateChecked(X), TOther.CreateChecked(Y));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2T<T> operator +(in Vector2T<T> left, in Vector2T<T> right)
         => new Vector2T<T>(left.X + right.X, left.Y + right.Y);
     

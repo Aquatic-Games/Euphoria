@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -9,6 +10,7 @@ using Euphoria.Math;
 using grabs.Graphics;
 using grabs.ShaderCompiler.DXC;
 using Buffer = grabs.Graphics.Buffer;
+using Color = Euphoria.Math.Color;
 
 namespace Euphoria.Render.Renderers;
 
@@ -91,12 +93,23 @@ public sealed class TextureBatcher : IDisposable
         _drawQueue = new List<DrawQueueItem>();
     }
 
-    public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint, float sortIndex = 0)
+    public void Draw(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint, Rectangle<int>? source = null, float sortIndex = 0)
     {
-        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            Size<int> texSize = texture.Size;
+            
+            nSource.X = src.X / (float) texSize.Width;
+            nSource.Y = src.Y / (float) texSize.Height;
+            nSource.Width = src.Width / (float) texSize.Width;
+            nSource.Height = src.Height / (float) texSize.Height;
+        }
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
     
-    public void Draw(Texture texture, Vector2 position, Color tint, float rotation, Vector2 scale, Vector2 origin, float sortIndex = 0)
+    public void Draw(Texture texture, Vector2 position, Color tint, float rotation, Vector2 scale, Vector2 origin, Rectangle<int>? source = null, float sortIndex = 0)
     {
         Size<int> size = texture.Size;
         Matrix4x4 transformMatrix = Matrix4x4.CreateRotationZ(rotation);
@@ -106,10 +119,23 @@ public sealed class TextureBatcher : IDisposable
         Vector2 bottomLeft = Vector2.Transform((-origin + new Vector2(0, size.Height)) * scale, transformMatrix) + position;
         Vector2 bottomRight = Vector2.Transform((-origin + new Vector2(size.Width, size.Height)) * scale, transformMatrix) + position;
         
-        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            nSource.X = src.X / (float) size.Width;
+            nSource.Y = src.Y / (float) size.Height;
+            nSource.Width = src.Width / (float) size.Width;
+            nSource.Height = src.Height / (float) size.Height;
+            
+            topRight.X *= nSource.Width;
+            bottomLeft.Y *= nSource.Height;
+            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
+        }
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
 
-    public void Draw(Texture texture, Vector2 position, Color tint, float sortIndex = 0)
+    public void Draw(Texture texture, Vector2 position, Color tint, Rectangle<int>? source = null, float sortIndex = 0)
     {
         Size<int> size = texture.Size;
 
@@ -118,10 +144,23 @@ public sealed class TextureBatcher : IDisposable
         Vector2 bottomLeft = position + new Vector2(0, size.Height);
         Vector2 bottomRight = position + new Vector2(size.Width, size.Height);
         
-        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            nSource.X = src.X / (float) size.Width;
+            nSource.Y = src.Y / (float) size.Height;
+            nSource.Width = src.Width / (float) size.Width;
+            nSource.Height = src.Height / (float) size.Height;
+            
+            topRight.X *= nSource.Width;
+            bottomLeft.Y *= nSource.Height;
+            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
+        }
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
 
-    public void Draw(Texture texture, Matrix3x2 matrix, Color tint, float sortIndex = 0)
+    public void Draw(Texture texture, Matrix3x2 matrix, Color tint, Rectangle<int>? source = null, float sortIndex = 0)
     {
         Size<int> texSize = texture.Size;
 
@@ -130,7 +169,20 @@ public sealed class TextureBatcher : IDisposable
         Vector2 bottomLeft = Vector2.Transform(new Vector2(0, texSize.Height), matrix);
         Vector2 bottomRight = Vector2.Transform(new Vector2(texSize.Width, texSize.Height), matrix);
         
-        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, tint, sortIndex));
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            nSource.X = src.X / (float) texSize.Width;
+            nSource.Y = src.Y / (float) texSize.Height;
+            nSource.Width = src.Width / (float) texSize.Width;
+            nSource.Height = src.Height / (float) texSize.Height;
+            
+            topRight.X *= nSource.Width;
+            bottomLeft.Y *= nSource.Height;
+            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
+        }
+        
+        _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
 
     public void DispatchDrawQueue(CommandList cl, Size<int> viewportSize, Matrix4x4? transform = null, SortMode sortMode = SortMode.Ignore)
@@ -164,10 +216,19 @@ public sealed class TextureBatcher : IDisposable
             uint vCurrent = currentDraw * NumVertices;
             uint iCurrent = currentDraw * NumIndices;
 
-            _vertices[vCurrent + 0] = new Vertex(item.TopLeft, new Vector2(0, 0), item.Tint);
-            _vertices[vCurrent + 1] = new Vertex(item.TopRight, new Vector2(1, 0), item.Tint);
-            _vertices[vCurrent + 2] = new Vertex(item.BottomRight, new Vector2(1, 1), item.Tint);
-            _vertices[vCurrent + 3] = new Vertex(item.BottomLeft, new Vector2(0, 1), item.Tint);
+            Vector2T<float> sourcePos = item.Source.Position;
+            Size<float> sourceSize = item.Source.Size;
+            Size<float> texSize = currentTexture!.Size.As<float>();
+
+            float texX = sourcePos.X;
+            float texY = sourcePos.Y;
+            float texW = sourceSize.Width;
+            float texH = sourceSize.Height;
+
+            _vertices[vCurrent + 0] = new Vertex(item.TopLeft, new Vector2(texX, texY), item.Tint);
+            _vertices[vCurrent + 1] = new Vertex(item.TopRight, new Vector2(texX + texW, texY), item.Tint);
+            _vertices[vCurrent + 2] = new Vertex(item.BottomRight, new Vector2(texX + texW, texY + texH), item.Tint);
+            _vertices[vCurrent + 3] = new Vertex(item.BottomLeft, new Vector2(texX, texY + texH), item.Tint);
 
             _indices[iCurrent + 0] = 0 + vCurrent;
             _indices[iCurrent + 1] = 1 + vCurrent;
@@ -245,16 +306,19 @@ public sealed class TextureBatcher : IDisposable
         public readonly Vector2 TopRight;
         public readonly Vector2 BottomLeft;
         public readonly Vector2 BottomRight;
+        public readonly Rectangle<float> Source;
         public readonly Color Tint;
         public readonly float SortIndex;
 
-        public DrawQueueItem(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color tint, float sortIndex)
+        public DrawQueueItem(Texture texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft,
+            Vector2 bottomRight, Rectangle<float> source, Color tint, float sortIndex)
         {
             Texture = texture;
             TopLeft = topLeft;
             TopRight = topRight;
             BottomLeft = bottomLeft;
             BottomRight = bottomRight;
+            Source = source;
             Tint = tint;
             SortIndex = sortIndex;
         }

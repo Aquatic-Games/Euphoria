@@ -1,6 +1,8 @@
-﻿namespace Euphoria.Math;
+﻿using System.Numerics;
 
-public struct Size<T>
+namespace Euphoria.Math;
+
+public struct Size<T> where T : INumber<T>
 {
     public T Width;
     
@@ -17,6 +19,9 @@ public struct Size<T>
         Width = wh;
         Height = wh;
     }
+
+    public readonly Size<TOther> As<TOther>() where TOther : INumber<TOther>
+        => new Size<TOther>(TOther.CreateChecked(Width), TOther.CreateChecked(Height));
 
     public override string ToString()
     {
