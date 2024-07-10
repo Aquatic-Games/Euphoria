@@ -84,20 +84,16 @@ public class Texture : IDisposable
         Black = new Texture([0, 0, 0, 255], new Size<int>(1));
     }
 
-    public static void StoreTexture(Texture texture, string name)
+    public static void StoreTexture(string name, Texture texture)
     {
-        _namedTextures.Add(name, texture.Id);
+        _namedTextures[name] = texture.Id;
     }
 
     public static Texture GetTexture(ulong id)
-    {
-        return _loadedTextures[id];
-    }
+        => _loadedTextures[id];
 
     public static Texture GetTexture(string name)
-    {
-        return _loadedTextures[_namedTextures[name]];
-    }
+        => _loadedTextures[_namedTextures[name]];
 
     public static void DisposeAllTextures()
     {

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Renderers;
 // TODO: grabs.Text!
@@ -10,6 +12,8 @@ namespace Euphoria.Render.Text;
 public class Font : IDisposable
 {
     private FontFace _face;
+
+    public readonly ulong Id;
     
     public Font(string path, params string[] subFonts)
     {
@@ -17,6 +21,8 @@ public class Font : IDisposable
         
         foreach (string font in subFonts)
             _face.AddSubFace(font);
+
+        Id = _loadedFonts.AddItem(this);
     }
 
     public void Draw(TextureBatcher batcher, Vector2 position, string text, int size, Color color)
@@ -59,12 +65,36 @@ public class Font : IDisposable
     public void Dispose()
     {
         _face.Dispose();
+        
+        _loadedFonts.RemoveItem(Id);
     }
+    
+    private static ItemIdCollection<Font> _loadedFonts;
+    private static Dictionary<string, ulong> _namedFonts;
 
     internal static FreeType FreeType;
 
     static Font()
     {
         FreeType = new FreeType();
+        _loadedFonts = new ItemIdCollection<Font>();
+        _namedFonts = new Dictionary<string, ulong>();
+    }
+
+    public static void StoreFont(string name, Font font)
+    {
+        _namedFonts[name] = font.Id;
+    }
+
+    public static Font GetFont(ulong id)
+        => _loadedFonts[id];
+
+    public static Font GetFont(string name)
+        => _loadedFonts[_namedFonts[name]];
+
+    public static void DisposeAllFonts()
+    {
+        foreach ((_, Font font) in _loadedFonts.Items)
+            font.Dispose();
     }
 }
