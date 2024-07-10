@@ -7,6 +7,7 @@ using System.Numerics;
 using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Renderers;
+using Euphoria.Render.Text;
 using grabs.Graphics;
 using Buffer = grabs.Graphics.Buffer;
 
@@ -177,6 +178,8 @@ public static class Graphics
         ImGuiRenderer.Dispose();
         TextureBatcher.Dispose();
         
+        Font.DisposeAllFonts();
+        Font.FreeType.Dispose();
         Texture.DisposeAllTextures();
         
         TextureDescriptorLayout.Dispose();

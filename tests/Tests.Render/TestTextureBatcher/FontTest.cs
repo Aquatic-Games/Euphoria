@@ -35,6 +35,10 @@ public class FontTest : TestBase
         _font.Draw(batcher, new Vector2(50),
             "Hi! This is some text. I like text.\nこのテキストは日本語です。\n한국어는 어때요?\nИ русский тоже.\n\nAs you can see, it supports \"sub-fonts\",\nso if a character is missing in the main font,\nit will check a sub font.", 50,
             Color.White);
+
+        const string text = "This should be in the\nbottom right.";
+        Size<int> stringSize = _font.MeasureString(text, 20);
+        _font.Draw(batcher, new Vector2(Graphics.Size.Width - stringSize.Width, Graphics.Size.Height - stringSize.Height), text, 20, Color.White);
     }
 
     public FontTest() : base("Font Test") { }

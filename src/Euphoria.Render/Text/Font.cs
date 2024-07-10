@@ -32,7 +32,7 @@ public class Font : IDisposable
         int maxBearing = 0;
         foreach (char c in text)
         {
-            (Texture texture, Character character) = _face.GetCharacter(c, size);
+            (_, Character character) = _face.GetCharacter(c, size);
             if (character.Bearing.Y >= maxBearing)
                 maxBearing = character.Bearing.Y;
         }
@@ -60,6 +60,35 @@ public class Font : IDisposable
 
             currentPos.X += character.Advance;
         }
+    }
+
+    public Size<int> MeasureString(string text, int size)
+    {
+        Size<int> currentSize = Size<int>.Zero;
+        int currentX = 0;
+        int currentY = 0;
+
+        foreach (char c in text)
+        {
+            (_, Character character) = _face.GetCharacter(c, size);
+
+            switch (c)
+            {
+                case '\n':
+                    currentY += size;
+                    currentX = 0;
+                    break;
+            }
+            
+            currentX += character.Advance;
+            if (currentX >= currentSize.Width)
+                currentSize.Width = currentX;
+
+            if (character.Size.Height >= currentSize.Height - currentY)
+                currentSize.Height = currentY + character.Size.Height;
+        }
+
+        return currentSize;
     }
     
     public void Dispose()
