@@ -37,8 +37,8 @@ public class FontTest : TestBase
             Color.White);
 
         const string text = "This should be in the\nbottom right.";
-        Size<int> stringSize = _font.MeasureString(text, 20);
-        _font.Draw(batcher, new Vector2(Graphics.Size.Width - stringSize.Width, Graphics.Size.Height - stringSize.Height), text, 20, Color.White);
+        Size<int> stringSize = Font.Roboto.MeasureString(text, 20, MeasureMode.FullSize);
+        Font.Roboto.Draw(batcher, new Vector2(Graphics.Size.Width - stringSize.Width, Graphics.Size.Height - stringSize.Height), text, 20, Color.White);
     }
 
     public FontTest() : base("Font Test") { }

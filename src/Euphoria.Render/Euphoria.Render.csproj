@@ -22,6 +22,8 @@
     
     <ItemGroup>
         <EmbeddedResource Include="Shaders\**\*.spv" />
+        <None Remove="Roboto-Regular.ttf" />
+        <EmbeddedResource Include="Roboto-Regular.ttf" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Reflection;
 using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Renderers;
@@ -22,6 +23,12 @@ public class Font : IDisposable
         foreach (string font in subFonts)
             _face.AddSubFace(font);
 
+        Id = _loadedFonts.AddItem(this);
+    }
+
+    public Font(byte[] data)
+    {
+        _face = new FontFace(data, new Size<int>(2048, 1024));
         Id = _loadedFonts.AddItem(this);
     }
 
@@ -62,7 +69,7 @@ public class Font : IDisposable
         }
     }
 
-    public Size<int> MeasureString(string text, int size)
+    public Size<int> MeasureString(string text, int size, MeasureMode mode = MeasureMode.LineHeight)
     {
         Size<int> currentSize = Size<int>.Zero;
         int currentX = 0;
@@ -70,22 +77,29 @@ public class Font : IDisposable
 
         foreach (char c in text)
         {
-            (_, Character character) = _face.GetCharacter(c, size);
-
             switch (c)
             {
                 case '\n':
                     currentY += size;
                     currentX = 0;
-                    break;
+                    continue;
             }
+            
+            (_, Character character) = _face.GetCharacter(c, size);
             
             currentX += character.Advance;
             if (currentX >= currentSize.Width)
                 currentSize.Width = currentX;
 
-            if (character.Size.Height >= currentSize.Height - currentY)
-                currentSize.Height = currentY + character.Size.Height;
+            int totalHeight = mode switch
+            {
+                MeasureMode.LineHeight => character.Size.Height,
+                MeasureMode.FullSize => character.Size.Height + (character.Size.Height - character.Bearing.Y),
+                _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+            };
+            
+            if (totalHeight >= currentSize.Height - currentY)
+                currentSize.Height = currentY + totalHeight;
         }
 
         return currentSize;
@@ -108,6 +122,9 @@ public class Font : IDisposable
         FreeType = new FreeType();
         _loadedFonts = new ItemIdCollection<Font>();
         _namedFonts = new Dictionary<string, ulong>();
+        
+        Logger.Trace("Loading built-in fonts.");
+        Roboto = new Font(Resource.LoadEmbedded("Euphoria.Render.Roboto-Regular.ttf", Assembly.GetExecutingAssembly()));
     }
 
     public static void StoreFont(string name, Font font)
@@ -126,4 +143,6 @@ public class Font : IDisposable
         foreach ((_, Font font) in _loadedFonts.Items)
             font.Dispose();
     }
+
+    public static readonly Font Roboto;
 }

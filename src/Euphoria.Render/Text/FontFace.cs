@@ -22,18 +22,27 @@ internal class FontFace : IDisposable
     public readonly Size<int> TextureSize;
 
     public int NumTextures => _textures.Count;
-    
-    public FontFace(string path, Size<int> textureSize)
+
+    protected FontFace(Size<int> textureSize)
     {
         TextureSize = textureSize;
         
-        _face = Font.FreeType.CreateFace(path);
         _textures = [new Texture((byte[]) null, TextureSize)];
 
         _characters = new Dictionary<(char, int), FaceCharacter>();
 
         _currentPos = new Vector2T<int>(Padding);
         _currentTexture = 0;
+    }
+    
+    public FontFace(string path, Size<int> textureSize) : this(textureSize)
+    {
+        _face = Font.FreeType.CreateFace(path);
+    }
+
+    public FontFace(byte[] data, Size<int> textureSize) : this(textureSize)
+    {
+        _face = Font.FreeType.CreateFace(data);
     }
 
     public void AddSubFace(string path)
