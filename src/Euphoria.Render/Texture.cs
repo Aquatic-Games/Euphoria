@@ -52,6 +52,12 @@ public class Texture : IDisposable
         Id = _loadedTextures.AddItem(this);
     }
 
+    public void Update(int x, int y, int width, int height, byte[] data)
+    {
+        Graphics.Device.UpdateTexture(GTexture, x, y, (uint) width, (uint) height, 0, data);
+        Graphics.TexturesQueuedForMipGeneration.Add(GTexture);
+    }
+
     public void Dispose()
     {
         DescriptorSet.Dispose();

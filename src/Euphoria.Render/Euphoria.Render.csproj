@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="ImGui.NET" Version="1.90.8.1" />
+      <PackageReference Include="Pie.Text" Version="0.10.1" />
       <PackageReference Include="StbImageSharp" Version="2.27.13" />
     </ItemGroup>
 

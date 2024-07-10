@@ -26,7 +26,7 @@ public static class Graphics
 
     internal static DescriptorLayout TextureDescriptorLayout;
 
-    internal static List<GrabsTexture> TexturesQueuedForMipGeneration;
+    internal static HashSet<GrabsTexture> TexturesQueuedForMipGeneration;
 
     public static RenderType RenderType { get; private set; }
     
@@ -69,7 +69,7 @@ public static class Graphics
         Instance = instance;
         _size = size;
 
-        TexturesQueuedForMipGeneration = new List<GrabsTexture>();
+        TexturesQueuedForMipGeneration = new HashSet<GrabsTexture>();
 
         // TOO MANY ADAPTERS
         Adapter[] adapters = Instance.EnumerateAdapters();
