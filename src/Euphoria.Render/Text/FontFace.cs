@@ -23,12 +23,15 @@ internal class FontFace : IDisposable
     
     public FontFace(string path, Size<int> textureSize)
     {
+        TextureSize = textureSize;
+        
         _face = Font.FreeType.CreateFace(path);
         _textures = [new Texture((byte[]) null, TextureSize)];
 
         _characters = new Dictionary<(char, int), FaceCharacter>();
 
-        TextureSize = textureSize;
+        _currentPos = new Vector2T<int>(Padding);
+        _currentTexture = 0;
     }
 
     public (Texture, Character) GetCharacter(char c, int size)
@@ -39,18 +42,29 @@ internal class FontFace : IDisposable
 
             Size<int> charSize = new Size<int>(chr.Width, chr.Height);
 
-            if (_currentPos.X + charSize.Width >= TextureSize.Width ||
+            /*if (_currentPos.X + charSize.Width >= TextureSize.Width ||
                 _currentPos.Y + charSize.Height >= TextureSize.Height)
             {
                 _textures.Add(new Texture((byte[]) null, TextureSize));
                 _currentTexture++;
-            }
+            }*/
 
             Texture current = _textures[_currentTexture];
             
             current.Update(_currentPos.X, _currentPos.Y, charSize.Width, charSize.Height, chr.Bitmap);
 
-            _currentPos += new Vector2T<int>(charSize.Width, charSize.Height);
+            character = new FaceCharacter(_currentTexture,
+                new Character(_currentPos, charSize, new Vector2T<int>(chr.BitmapLeft, chr.BitmapTop), chr.Advance));
+            _characters.Add((c, size), character);
+
+            int posChange = charSize.Width + Padding;
+            if (_currentPos.X + posChange >= TextureSize.Width)
+            {
+                _currentPos.X = 0;
+                _currentPos.Y += charSize.Height + Padding;
+            }
+            else
+                _currentPos.X += charSize.Width + Padding;
         }
 
         return (_textures[character.TextureIndex], character.Character);

@@ -111,76 +111,73 @@ public sealed class TextureBatcher : IDisposable
     
     public void Draw(Texture texture, Vector2 position, Color tint, float rotation, Vector2 scale, Vector2 origin, Rectangle<int>? source = null, float sortIndex = 0)
     {
-        Size<int> size = texture.Size;
+        Size<float> size = texture.Size.As<float>();
         Matrix4x4 transformMatrix = Matrix4x4.CreateRotationZ(rotation);
+        
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            nSource.X = src.X / size.Width;
+            nSource.Y = src.Y / size.Height;
+            nSource.Width = src.Width / size.Width;
+            nSource.Height = src.Height / size.Height;
+            
+            size.Width *= nSource.Width;
+            size.Height *= nSource.Height;
+        }
 
         Vector2 topLeft = Vector2.Transform(-origin * scale, transformMatrix) + position;
         Vector2 topRight = Vector2.Transform((-origin + new Vector2(size.Width, 0)) * scale, transformMatrix) + position;
         Vector2 bottomLeft = Vector2.Transform((-origin + new Vector2(0, size.Height)) * scale, transformMatrix) + position;
         Vector2 bottomRight = Vector2.Transform((-origin + new Vector2(size.Width, size.Height)) * scale, transformMatrix) + position;
         
-        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
-        if (source is { } src)
-        {
-            nSource.X = src.X / (float) size.Width;
-            nSource.Y = src.Y / (float) size.Height;
-            nSource.Width = src.Width / (float) size.Width;
-            nSource.Height = src.Height / (float) size.Height;
-            
-            topRight.X *= nSource.Width;
-            bottomLeft.Y *= nSource.Height;
-            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
-        }
-        
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
 
     public void Draw(Texture texture, Vector2 position, Color tint, Rectangle<int>? source = null, float sortIndex = 0)
     {
-        Size<int> size = texture.Size;
+        Size<float> size = texture.Size.As<float>();
+        
+        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
+        if (source is { } src)
+        {
+            nSource.X = src.X / size.Width;
+            nSource.Y = src.Y / size.Height;
+            nSource.Width = src.Width / size.Width;
+            nSource.Height = src.Height / size.Height;
+            
+            size.Width *= nSource.Width;
+            size.Height *= nSource.Height;
+        }
 
         Vector2 topLeft = position;
         Vector2 topRight = position + new Vector2(size.Width, 0);
         Vector2 bottomLeft = position + new Vector2(0, size.Height);
         Vector2 bottomRight = position + new Vector2(size.Width, size.Height);
         
-        Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
-        if (source is { } src)
-        {
-            nSource.X = src.X / (float) size.Width;
-            nSource.Y = src.Y / (float) size.Height;
-            nSource.Width = src.Width / (float) size.Width;
-            nSource.Height = src.Height / (float) size.Height;
-            
-            topRight.X *= nSource.Width;
-            bottomLeft.Y *= nSource.Height;
-            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
-        }
-        
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }
 
     public void Draw(Texture texture, Matrix3x2 matrix, Color tint, Rectangle<int>? source = null, float sortIndex = 0)
     {
-        Size<int> texSize = texture.Size;
-
-        Vector2 topLeft = Vector2.Transform(Vector2.Zero, matrix);
-        Vector2 topRight = Vector2.Transform(new Vector2(texSize.Width, 0), matrix);
-        Vector2 bottomLeft = Vector2.Transform(new Vector2(0, texSize.Height), matrix);
-        Vector2 bottomRight = Vector2.Transform(new Vector2(texSize.Width, texSize.Height), matrix);
+        Size<float> size = texture.Size.As<float>();
         
         Rectangle<float> nSource = new Rectangle<float>(0, 0, 1, 1);
         if (source is { } src)
         {
-            nSource.X = src.X / (float) texSize.Width;
-            nSource.Y = src.Y / (float) texSize.Height;
-            nSource.Width = src.Width / (float) texSize.Width;
-            nSource.Height = src.Height / (float) texSize.Height;
+            nSource.X = src.X / size.Width;
+            nSource.Y = src.Y / size.Height;
+            nSource.Width = src.Width / size.Width;
+            nSource.Height = src.Height / size.Height;
             
-            topRight.X *= nSource.Width;
-            bottomLeft.Y *= nSource.Height;
-            bottomRight *= new Vector2(nSource.Size.Width, nSource.Size.Height);
+            size.Width *= nSource.Width;
+            size.Height *= nSource.Height;
         }
+
+        Vector2 topLeft = Vector2.Transform(Vector2.Zero, matrix);
+        Vector2 topRight = Vector2.Transform(new Vector2(size.Width, 0), matrix);
+        Vector2 bottomLeft = Vector2.Transform(new Vector2(0, size.Height), matrix);
+        Vector2 bottomRight = Vector2.Transform(new Vector2(size.Width, size.Height), matrix);
         
         _drawQueue.Add(new DrawQueueItem(texture, topLeft, topRight, bottomLeft, bottomRight, nSource, tint, sortIndex));
     }

@@ -31,7 +31,10 @@ public class Texture : IDisposable
         TextureDescription desc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 0, format,
             TextureUsage.ShaderResource | TextureUsage.GenerateMips);
 
-        GTexture = device.CreateTexture(desc, data);
+        if (data == null)
+            GTexture = device.CreateTexture(desc);
+        else
+            GTexture = device.CreateTexture(desc, data);
         Graphics.TexturesQueuedForMipGeneration.Add(GTexture);
 
         DescriptorSet = device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
