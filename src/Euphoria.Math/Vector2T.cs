@@ -58,6 +58,9 @@ public struct Vector2T<T> where T : INumber<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2T<T> operator /(in Vector2T<T> left, T right)
         => new Vector2T<T>(left.X / right, left.Y / right);
-    
-    
+
+    public override string ToString()
+    {
+        return $"(X: {X}, Y: {Y})";
+    }
 }

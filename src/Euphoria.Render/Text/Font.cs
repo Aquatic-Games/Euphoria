@@ -11,9 +11,12 @@ public class Font : IDisposable
 {
     private FontFace _face;
     
-    public Font(string path)
+    public Font(string path, params string[] subFonts)
     {
         _face = new FontFace(path, new Size<int>(2048, 1024));
+        
+        foreach (string font in subFonts)
+            _face.AddSubFace(font);
     }
 
     public void Draw(TextureBatcher batcher, Vector2 position, string text, int size, Color color)
