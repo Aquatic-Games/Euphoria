@@ -36,6 +36,14 @@ public struct Color
         A = (packedRgba & 0xFF) / (float) byte.MaxValue;
     }
 
+    public Color(Color color, float alpha)
+    {
+        R = color.R;
+        G = color.G;
+        B = color.B;
+        A = alpha;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static explicit operator Vector4(Color color)
         => new Vector4(color.R, color.G, color.B, color.A);

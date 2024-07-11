@@ -90,11 +90,18 @@ public class ImGuiRenderer : IDisposable
         Fonts = new Dictionary<string, ImFontPtr>();
     }
 
-    public void AddFont(string path, uint size, string name)
+    public ImFontPtr AddFont(string path, uint size, string name)
     {
         ImFontPtr font = ImGui.GetIO().Fonts.AddFontFromFileTTF(path, size);
         Fonts.Add(name, font);
         RecreateFontTexture();
+
+        return font;
+    }
+
+    public unsafe void SetDefaultFont(ImFontPtr font)
+    {
+        ImGui.GetIO().NativePtr->FontDefault = font.NativePtr;
     }
 
     internal unsafe void Render(CommandList cl, Framebuffer framebuffer)
