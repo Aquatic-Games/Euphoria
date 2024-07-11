@@ -29,9 +29,13 @@ public class Scene3D : Scene
         _texture = new Texture(@"C:\Users\ollie\Pictures\BAGELMIP.png");
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.
-        MaterialDescription matDesc = new MaterialDescription(
-            new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_basecolor.png"),
-            new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_normal-dx.png"));
+        MaterialDescription matDesc = new MaterialDescription(new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_basecolor.png"))
+        {
+            Normal = new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_normal-dx.png"),
+            Metallic = new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_metallic.png"),
+            Roughness = new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_roughness.png"),
+            Occlusion = new Texture(@"C:\Users\ollie\Downloads\metalgrid2-dx\metalgrid2_AO.png")
+        };
         _material = new Material(matDesc);
         
         Plane plane = new Plane();
@@ -43,16 +47,6 @@ public class Scene3D : Scene
         Cube cube = new Cube();
         Mesh cubeMesh = new Mesh(cube.Vertices, cube.Indices);
         //cubeMesh.CalculateTangents();
-
-        foreach (Vertex vertex in cubeMesh.Vertices)
-        {
-            Vector3 pos = vertex.Position;
-            Vector2 uv = vertex.TexCoord;
-            Vector3 nm = vertex.Normal;
-            Vector3 tan = vertex.Tangent;
-            
-            Console.WriteLine($"new Vertex(new Vector3({pos.X}, {pos.Y}, {pos.Z}), new Vector2({uv.X}, {uv.Y}), Color.White, new Vector3({nm.X}, {nm.Y}, {nm.Z}), new Vector3({tan.X}, {tan.Y}, {tan.Z})),");
-        }
         
         renderable.Update(cubeMesh);
 

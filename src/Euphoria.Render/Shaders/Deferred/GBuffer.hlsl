@@ -23,9 +23,10 @@ struct VSOutput
 
 struct PSOutput
 {
-    float4 Albedo:   SV_Target0;
-    float4 Position: SV_Target1;
-    float4 Normal:   SV_Target2;
+    float4 Albedo:            SV_Target0;
+    float4 Position:          SV_Target1;
+    float4 Normal:            SV_Target2;
+    float4 MetallicRoughness: SV_Target3;
 };
 
 cbuffer CameraInfo : register(b0, space0)
@@ -40,8 +41,11 @@ cbuffer DrawInfo : register(b0, space1)
 }
 
 SamplerState Sampler : register(s0, space2);
-Texture2D Albedo : register(t0, space2);
-Texture2D Normal : register(t1, space2);
+Texture2D Albedo     : register(t0, space2);
+Texture2D Normal     : register(t1, space2);
+Texture2D Metallic   : register(t2, space2);
+Texture2D Roughness  : register(t3, space2);
+Texture2D Occlusion  : register(t4, space2);
 
 VSOutput VSMain(const in VSInput input)
 {
@@ -63,7 +67,11 @@ PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 
-    const float4 albedo = Albedo.Sample(Sampler, input.TexCoord) * input.Color;
+    const float4 albedoTex = Albedo.Sample(Sampler, input.TexCoord) * input.Color;
+    const float4 normalTex = Normal.Sample(Sampler, input.TexCoord);
+    const float4 metallicTex = Metallic.Sample(Sampler, input.TexCoord);
+    const float4 roughnessTex = Roughness.Sample(Sampler, input.TexCoord);
+    const float4 occlusionTex = Occlusion.Sample(Sampler, input.TexCoord);
 
     const float3 tangent = input.Tangent;
     float3 normal = input.Normal;
@@ -72,11 +80,12 @@ PSOutput PSMain(const in VSOutput input)
     const float3 B = cross(input.Normal, T);
     const float3x3 TBN = float3x3(T, B, normal);
 
-    normal = normalize(mul(Normal.Sample(Sampler, input.TexCoord), TBN));
+    normal = normalize(mul(normalTex, TBN));
     
-    output.Albedo = float4(albedo.rgb, 1.0);
+    output.Albedo = float4(albedoTex.rgb, 1.0);
     output.Position = float4(input.WorldSpace, 1.0);
     output.Normal = float4(normal, 1.0);
+    output.MetallicRoughness = float4(metallicTex.r, roughnessTex.r, occlusionTex.r, 1.0);
     
     return output;
 }
