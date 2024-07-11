@@ -13,10 +13,10 @@ public class Plane : IPrimitive
     {
         Vertices =
         [
-            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 1), Color.White, Vector3.UnitZ),
-            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 0), Color.White, Vector3.UnitZ),
-            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 0), Color.White, Vector3.UnitZ),
-            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 1), Color.White, Vector3.UnitZ)
+            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 1), Color.White, Vector3.UnitZ, Vector3.UnitX),
+            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 0), Color.White, Vector3.UnitZ, Vector3.UnitX),
+            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 0), Color.White, Vector3.UnitZ, Vector3.UnitX),
+            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 1), Color.White, Vector3.UnitZ, Vector3.UnitX)
         ];
 
         Indices =

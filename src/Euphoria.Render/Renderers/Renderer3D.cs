@@ -23,6 +23,7 @@ public class Renderer3D : IDisposable
     
     private GrabsTexture _albedoTexture;
     private GrabsTexture _positionTexture;
+    private GrabsTexture _normalTexture;
     private Framebuffer _gBuffer;
 
     private GrabsTexture _passTexture;
@@ -86,15 +87,18 @@ public class Renderer3D : IDisposable
                 ShaderStage.Vertex)));
         
         MaterialInfoLayout = device.CreateDescriptorLayout(
-            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
-                ShaderStage.Pixel)));
+            new DescriptorLayoutDescription(
+                new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel),
+                new DescriptorBindingDescription(1, DescriptorType.Texture, ShaderStage.Pixel)
+                ));
 
         GBufferInputLayout =
         [
             new InputLayoutDescription(Format.R32G32B32_Float, 0, 0, InputType.PerVertex), // Position
             new InputLayoutDescription(Format.R32G32_Float, 12, 0, InputType.PerVertex), // TexCoord
             new InputLayoutDescription(Format.R32G32B32A32_Float, 20, 0, InputType.PerVertex), // Color
-            new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex) // Normal
+            new InputLayoutDescription(Format.R32G32B32_Float, 36, 0, InputType.PerVertex), // Normal
+            new InputLayoutDescription(Format.R32G32B32_Float, 48, 0, InputType.PerVertex) // Tangent
         ];
 
         Logger.Trace("Creating GBuffer buffers.");
@@ -139,7 +143,7 @@ public class Renderer3D : IDisposable
         
         _passInputSet = device.CreateDescriptorSet(passInputLayout,
             new DescriptorSetDescription(texture: _albedoTexture),
-            new DescriptorSetDescription(texture: _positionTexture));
+            new DescriptorSetDescription(texture: _positionTexture), new DescriptorSetDescription(texture: _normalTexture));
 
         Logger.Trace("Loading composite shaders.");
         
@@ -215,7 +219,8 @@ public class Renderer3D : IDisposable
             [
                 ("Pass", new Texture(_passTexture, _size, false)), 
                 ("Albedo", new Texture(_albedoTexture, _size, false)),
-                ("Position", new Texture(_positionTexture, _size, false))
+                ("Position", new Texture(_positionTexture, _size, false)),
+                ("Normal", new Texture(_normalTexture, _size, false))
             ];
         }
 
@@ -320,7 +325,8 @@ public class Renderer3D : IDisposable
 
         _albedoTexture = _device.CreateTexture(textureDesc);
         _positionTexture = _device.CreateTexture(textureDesc);
-        _gBuffer = _device.CreateFramebuffer([_albedoTexture, _positionTexture], _depthTexture);
+        _normalTexture = _device.CreateTexture(textureDesc);
+        _gBuffer = _device.CreateFramebuffer([_albedoTexture, _positionTexture, _normalTexture], _depthTexture);
         
         Logger.Trace("Creating pass buffer.");
         
@@ -335,7 +341,7 @@ public class Renderer3D : IDisposable
         Logger.Trace("Updating descriptor resources.");
 
         _device.UpdateDescriptorSet(_passInputSet, new DescriptorSetDescription(texture: _albedoTexture),
-            new DescriptorSetDescription(texture: _positionTexture));
+            new DescriptorSetDescription(texture: _positionTexture), new DescriptorSetDescription(texture: _normalTexture));
 
         _device.UpdateDescriptorSet(_compositeSet, new DescriptorSetDescription(texture: _passTexture));
     }
@@ -346,6 +352,7 @@ public class Renderer3D : IDisposable
         _passBuffer.Dispose();
         _passTexture.Dispose();
         _gBuffer.Dispose();
+        _normalTexture.Dispose();
         _positionTexture.Dispose();
         _albedoTexture.Dispose();
         _depthTexture.Dispose();

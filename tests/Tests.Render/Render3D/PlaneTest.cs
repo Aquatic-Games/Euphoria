@@ -3,6 +3,8 @@ using Euphoria.Math;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
 using Euphoria.Render.Renderers.Structs;
+using grabs.Graphics;
+using Texture = Euphoria.Render.Texture;
 
 namespace Tests.Render.Render3D;
 
@@ -30,14 +32,14 @@ public class PlaneTest : TestBase
             new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
 
         _texture = new Texture("Content/awesomeface.png");
-        _material = new Material(new MaterialDescription(_texture));
+        _material = new Material(new MaterialDescription(_texture) { Rasterizer = RasterizerDescription.CullNone });
 
         Vertex[] vertices =
         [
-            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 1), new Color(1.0f, 0.0f, 0.0f), Vector3.Zero),
-            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 0), new Color(0.0f, 1.0f, 0.0f), Vector3.Zero),
-            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 0), new Color(0.0f, 0.0f, 1.0f), Vector3.Zero),
-            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 1), new Color(0.0f, 0.0f, 0.0f), Vector3.Zero)
+            new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector2(0, 1), new Color(1.0f, 0.0f, 0.0f), Vector3.Zero, Vector3.Zero),
+            new Vertex(new Vector3(-0.5f, +0.5f, 0.0f), new Vector2(0, 0), new Color(0.0f, 1.0f, 0.0f), Vector3.Zero, Vector3.Zero),
+            new Vertex(new Vector3(+0.5f, +0.5f, 0.0f), new Vector2(1, 0), new Color(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Zero),
+            new Vertex(new Vector3(+0.5f, -0.5f, 0.0f), new Vector2(1, 1), new Color(0.0f, 0.0f, 0.0f), Vector3.Zero, Vector3.Zero)
         ];
 
         uint[] indices =
@@ -47,6 +49,7 @@ public class PlaneTest : TestBase
         ];
 
         Mesh mesh = new Mesh(vertices, indices);
+        mesh.CalculateTangents();
         _renderable = new Renderable(mesh, _material);
 
         _debugTexture = new Texture("Content/DEBUG.png");

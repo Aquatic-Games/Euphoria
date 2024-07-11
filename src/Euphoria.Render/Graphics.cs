@@ -179,7 +179,8 @@ public static class Graphics
         TextureBatcher.Dispose();
         
         Font.DisposeAllFonts();
-        Font.FreeType.Dispose();
+        // TODO: This seems to cause an access violation exception if no text is rendered. Not sure why.
+        //Font.FreeType.Dispose();
         Texture.DisposeAllTextures();
         
         TextureDescriptorLayout.Dispose();

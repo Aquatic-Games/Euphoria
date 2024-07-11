@@ -82,6 +82,7 @@ public class Texture : IDisposable
         Logger.Trace("Creating default textures.");
         White = new Texture([255, 255, 255, 255], new Size<int>(1));
         Black = new Texture([0, 0, 0, 255], new Size<int>(1));
+        EmptyNormal = new Texture([128, 128, 255, 255], new Size<int>(1));
     }
 
     public static void StoreTexture(string name, Texture texture)
@@ -104,4 +105,6 @@ public class Texture : IDisposable
     public static readonly Texture White;
     
     public static readonly Texture Black;
+
+    public static readonly Texture EmptyNormal;
 }
