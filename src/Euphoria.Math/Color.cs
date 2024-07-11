@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -49,6 +51,14 @@ public struct Color
         => new Vector4(color.R, color.G, color.B, color.A);
     
     // TODO: HSV
+
+    public static Color FromString(string @string)
+    {
+        if (!_namedColors.TryGetValue(@string.ToLower(), out Color color))
+            color = new Color();
+
+        return color;
+    }
     
     /// <summary>
     /// AliceBlue has an RGBA value of #F0F8FFFF (240, 248, 255, 255)
@@ -789,4 +799,14 @@ public struct Color
     /// YellowGreen has an RGBA value of #9ACD32FF (154, 205, 50, 255)
     /// </summary>
     public static Color YellowGreen => new Color(0.6039215686274509f, 0.803921568627451f, 0.19607843137254902f);
+
+    private static Dictionary<string, Color> _namedColors;
+
+    static Color()
+    {
+        _namedColors = new Dictionary<string, Color>();
+        
+        foreach (PropertyInfo info in typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static))
+            _namedColors.Add(info.Name.ToLower(), (Color) info.GetValue(null));
+    }
 }

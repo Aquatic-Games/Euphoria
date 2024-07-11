@@ -35,16 +35,7 @@ public class Font : IDisposable
     public void Draw(TextureBatcher batcher, Vector2 position, string text, int size, Color color)
     {
         Vector2 currentPos = position;
-
-        int maxBearing = 0;
-        foreach (char c in text)
-        {
-            (_, Character character) = _face.GetCharacter(c, size);
-            if (character.Bearing.Y >= maxBearing)
-                maxBearing = character.Bearing.Y;
-        }
-
-        currentPos.Y += maxBearing;
+        currentPos.Y += CalculateMaxBearing(text, size);
         
         foreach (char c in text)
         {
@@ -64,6 +55,82 @@ public class Font : IDisposable
             Vector2 pos = currentPos + new Vector2(character.Bearing.X, -character.Bearing.Y);
             
             batcher.Draw(texture, pos, color, source: new Rectangle<int>(character.TexPosition, character.Size));
+
+            currentPos.X += character.Advance;
+        }
+    }
+
+    public void DrawRichText(TextureBatcher batcher, Vector2 position, string text, int size, Color color)
+    {
+        Vector2 currentPos = position;
+        currentPos.Y += CalculateMaxBearing(text, size);
+
+        Color currentColor = color;
+        int currentSize = size;
+        
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            
+            (Texture texture, Character character) = _face.GetCharacter(c, currentSize);
+
+            switch (c)
+            {
+                case ' ':
+                    currentPos.X += character.Advance;
+                    continue;
+                case '\n':
+                    currentPos.X = position.X;
+                    currentPos.Y += size;
+                    continue;
+                
+                case '<' when i > 0 && text[i - 1] != '\\':
+                {
+                    int textPos = i + 1;
+                    while (text[i] != '>')
+                        i++;
+
+                    string argument = text[textPos..i].Trim();
+
+                    if (argument.StartsWith('/'))
+                    {
+                        switch (argument)
+                        {
+                            case "/size":
+                                currentSize = size;
+                                break;
+                            
+                            case "/color":
+                                currentColor = color;
+                                break;
+                            
+                            default:
+                                throw new Exception($"Unrecognized argument {argument}");
+                        }
+                    }
+                    else
+                    {
+                        string[] splitArgument = argument.Split('=', StringSplitOptions.TrimEntries);
+
+                        switch (splitArgument[0])
+                        {
+                            case "size":
+                                currentSize = int.Parse(splitArgument[1]);
+                                break;
+                            
+                            case "color":
+                                currentColor = Color.FromString(splitArgument[1]);
+                                break;
+                        }
+                    }
+
+                    continue;
+                }
+            }
+            
+            Vector2 pos = currentPos + new Vector2(character.Bearing.X, -character.Bearing.Y);
+            
+            batcher.Draw(texture, pos, currentColor, source: new Rectangle<int>(character.TexPosition, character.Size));
 
             currentPos.X += character.Advance;
         }
@@ -103,6 +170,19 @@ public class Font : IDisposable
         }
 
         return currentSize;
+    }
+
+    private int CalculateMaxBearing(string text, int size)
+    {
+        int maxBearing = 0;
+        foreach (char c in text)
+        {
+            (_, Character character) = _face.GetCharacter(c, size);
+            if (character.Bearing.Y >= maxBearing)
+                maxBearing = character.Bearing.Y;
+        }
+
+        return maxBearing;
     }
     
     public void Dispose()
