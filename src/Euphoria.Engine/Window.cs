@@ -7,34 +7,34 @@ using SdlWindow = Silk.NET.SDL.Window;
 
 namespace Euphoria.Engine;
 
-public unsafe class Window : IDisposable
+public static unsafe class Window
 {
-    public event OnCloseRequested CloseRequested = delegate { };
+    public static event OnCloseRequested CloseRequested = delegate { };
 
-    public event OnResized Resized = delegate { };
+    public static event OnResized Resized = delegate { };
 
-    public event OnKeyDown KeyDown = delegate { };
+    public static event OnKeyDown KeyDown = delegate { };
 
-    public event OnKeyUp KeyUp = delegate { };
+    public static event OnKeyUp KeyUp = delegate { };
 
-    public event OnMouseButtonDown MouseButtonDown = delegate { };
+    public static event OnMouseButtonDown MouseButtonDown = delegate { };
 
-    public event OnMouseButtonUp MouseButtonUp = delegate { };
+    public static event OnMouseButtonUp MouseButtonUp = delegate { };
 
-    public event OnMouseMove MouseMove = delegate { };
+    public static event OnMouseMove MouseMove = delegate { };
 
-    public event OnMouseScroll MouseScroll = delegate { };
+    public static event OnMouseScroll MouseScroll = delegate { };
 
-    public event OnTextInput TextInput = delegate { };
+    public static event OnTextInput TextInput = delegate { };
 
-    private Sdl _sdl;
-    private SdlWindow* _window;
-    private void* _glContext;
+    private static Sdl _sdl;
+    private static SdlWindow* _window;
+    private static void* _glContext;
 
-    private string _userTitle;
-    private string _engineTitle;
+    private static string _userTitle;
+    private static string _engineTitle;
 
-    public Size<int> Size
+    public static Size<int> Size
     {
         get
         {
@@ -46,7 +46,7 @@ public unsafe class Window : IDisposable
         set => _sdl.SetWindowSize(_window, value.Width, value.Height);
     }
 
-    public Size<int> SizeInPixels
+    public static Size<int> SizeInPixels
     {
         get
         {
@@ -57,7 +57,7 @@ public unsafe class Window : IDisposable
         }
     }
 
-    public string Title
+    public static string Title
     {
         get => _userTitle;
         set
@@ -67,13 +67,13 @@ public unsafe class Window : IDisposable
         }
     }
 
-    public string ClipboardText
+    public static string ClipboardText
     {
         get => _sdl.GetClipboardTextS();
         set => _sdl.SetClipboardText(value);
     }
 
-    public Window(in LaunchOptions options)
+    internal static void Create(in LaunchOptions options)
     {
         _userTitle = options.WindowTitle;
         
@@ -127,7 +127,7 @@ public unsafe class Window : IDisposable
         }
     }
 
-    internal nint Hwnd
+    internal static nint Hwnd
     {
         get
         {
@@ -138,7 +138,7 @@ public unsafe class Window : IDisposable
         }
     }
 
-    internal string EngineTitle
+    internal static string EngineTitle
     {
         get => _engineTitle;
         set
@@ -148,7 +148,7 @@ public unsafe class Window : IDisposable
         }
     }
 
-    internal void ProcessEvents()
+    internal static void ProcessEvents()
     {
         Event winEvent;
         while (_sdl.PollEvent(&winEvent) != 0)
@@ -229,7 +229,7 @@ public unsafe class Window : IDisposable
         }
     }
 
-    internal void CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc)
+    internal static void CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc)
     {
         presentFunc = i =>
         {
@@ -240,7 +240,7 @@ public unsafe class Window : IDisposable
         getProcAddressFunc = s => (nint) _sdl.GLGetProcAddress(s);
     }
 
-    public void Dispose()
+    internal static void Destroy()
     {
         if (_glContext != null)
             _sdl.GLDeleteContext(_glContext);

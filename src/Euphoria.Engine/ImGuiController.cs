@@ -10,7 +10,7 @@ internal static class ImGuiController
 {
     private static IntPtr _context;
     
-    internal static unsafe void Initialize(Window window)
+    internal static unsafe void Initialize()
     {
         _context = Graphics.ImGuiRenderer.ImGuiContext;
         ImGui.SetCurrentContext(_context);
@@ -19,13 +19,13 @@ internal static class ImGuiController
         io.SetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(SetClipboardText);
         io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(GetClipboardText);
         
-        window.MouseMove += OnMouseMove;
-        window.MouseButtonDown += OnMouseButtonDown;
-        window.MouseButtonUp += OnMouseButtonUp;
-        window.KeyDown += OnKeyDown;
-        window.KeyUp += OnKeyUp;
-        window.MouseScroll += OnMouseScroll;
-        window.TextInput += OnTextInput;
+        Window.MouseMove += OnMouseMove;
+        Window.MouseButtonDown += OnMouseButtonDown;
+        Window.MouseButtonUp += OnMouseButtonUp;
+        Window.KeyDown += OnKeyDown;
+        Window.KeyUp += OnKeyUp;
+        Window.MouseScroll += OnMouseScroll;
+        Window.TextInput += OnTextInput;
     }
 
     internal static void Update(float dt)
@@ -83,12 +83,12 @@ internal static class ImGuiController
     private static unsafe void SetClipboardText(void* userData, string text)
     {
         // TODO: Move clipboard and events away from window
-        App.Window.ClipboardText = text;
+        Window.ClipboardText = text;
     }
 
     private static unsafe string GetClipboardText(void* userData)
     {
-        return App.Window.ClipboardText;
+        return Window.ClipboardText;
     }
     
     private static ImGuiMouseButton MouseButtonToImGui(MouseButton button)

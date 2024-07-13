@@ -35,15 +35,15 @@ public static class Input
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
     
-    internal static void Initialize(Window window)
+    internal static void Initialize()
     {
-        window.KeyDown += OnKeyDown;
-        window.KeyUp += OnKeyUp;
+        Window.KeyDown += OnKeyDown;
+        Window.KeyUp += OnKeyUp;
         
-        window.MouseButtonDown += OnMouseButtonDown;
-        window.MouseButtonUp += OnMouseButtonUp;
+        Window.MouseButtonDown += OnMouseButtonDown;
+        Window.MouseButtonUp += OnMouseButtonUp;
         
-        window.MouseMove += OnMouseMove;
+        Window.MouseMove += OnMouseMove;
     }
 
     internal static void Update()

@@ -39,8 +39,6 @@ public static class App
     }
     
     public static Application Application { get; private set; }
-    
-    public static Window Window { get; private set; }
 
     static App()
     {
@@ -81,7 +79,7 @@ public static class App
         Application = application ?? new Application();
 
         Logger.Trace("Creating window.");
-        Window = new Window(options);
+        Window.Create(options);
 
         Logger.Debug($"Selected API: {options.Api}");
         
@@ -115,9 +113,9 @@ public static class App
         Metrics.Initialize(SetEngineTitle);
         
         Logger.Debug("Initializing input system.");
-        Input.Initialize(Window);
+        Input.Initialize();
 
-        ImGuiController.Initialize(Window);
+        ImGuiController.Initialize();
         
         Logger.Debug("Initializing user code.");
         Application.Initialize(initialScene);
@@ -146,7 +144,7 @@ public static class App
         
         Application.Dispose();
         Graphics.Deinitialize();
-        Window.Dispose();
+        Window.Destroy();
     }
 
     public static void Close()

@@ -14,7 +14,7 @@ public class TestApp : Application
         base.Initialize(initialScene);
         
         ImGuiRenderer imGui = Graphics.ImGuiRenderer;
-        imGui.AddFont(@"C:\Users\ollie\Downloads\Russo_One\RussoOne-Regular.ttf", 14, "RussoOne");
+        imGui.AddFont("/home/aqua/Downloads/Russo_One/RussoOne-Regular.ttf", 14, "RussoOne");
 
         EuphoriaDebug.IsOpen = true;
     }
