@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
 using Euphoria.Render;
+using grabs.Graphics;
 using ImGuiNET;
+using Texture = Euphoria.Render.Texture;
 
 namespace Euphoria.Engine.Debugging;
 
@@ -11,6 +13,17 @@ public class RendererTab : IDebugTab
     public void Update()
     {
         Vector2 constSize = new Vector2(1280, 720);
+
+        Vector2 uv0 = new Vector2(0, 0);
+        Vector2 uv1 = new Vector2(1, 1);
+
+        if (Graphics.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
+        {
+            uv0 = new Vector2(0, 1);
+            uv1 = new Vector2(1, 0);
+            
+            ImGui.Text("*OpenGL renderer - Textures have been flipped.");
+        }
         
         foreach ((string name, Texture texture) in Graphics.Renderer3D.GetDebugTextures())
         {
@@ -20,7 +33,7 @@ public class RendererTab : IDebugTab
             if (size.Y >= constSize.Y)
                 size *= constSize.Y / size.Y;
             
-            ImGui.Image((nint) texture.Id, size / 4);
+            ImGui.Image((nint) texture.Id, size / 4, uv0, uv1);
             ImGui.SameLine();
             ImGui.Text($"{name}\n{texture.Size}");
         }
