@@ -67,7 +67,7 @@ public class ImGuiRenderer : IDisposable
             new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer, ShaderStage.Vertex)));
 
         using DescriptorLayout textureLayout = _device.CreateDescriptorLayout(new DescriptorLayoutDescription(
-            new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel)));
+            new DescriptorBindingDescription(0, DescriptorType.Image, ShaderStage.Pixel)));
 
         PipelineDescription pipelineDesc = new PipelineDescription(vertexModule, pixelModule, inputLayout,
             DepthStencilDescription.Disabled, RasterizerDescription.CullNone, BlendDescription.NonPremultiplied,

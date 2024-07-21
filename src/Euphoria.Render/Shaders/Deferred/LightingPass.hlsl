@@ -8,10 +8,10 @@ struct PSOutput
 };
 
 SamplerState Sampler        : register(s0, space0);
-Texture2D Albedo            : register(t0, space0);
-Texture2D Position          : register(t1, space0);
-Texture2D Normal            : register(t2, space0);
-Texture2D MetallicRoughness : register(t3, space0);
+Texture2D Albedo            : register(t1, space0);
+Texture2D Position          : register(t2, space0);
+Texture2D Normal            : register(t3, space0);
+Texture2D MetallicRoughness : register(t4, space0);
 
 PSOutput PSMain(const in VSOutput input)
 {

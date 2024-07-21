@@ -11,17 +11,20 @@ public class Texture : IDisposable
     private bool _ownsTexture;
     
     internal readonly GrabsTexture GTexture;
+    internal readonly Sampler Sampler;
     internal readonly DescriptorSet DescriptorSet;
 
     public readonly ulong Id;
     
     public readonly Size<int> Size;
 
-    public Texture(string path) : this(new Bitmap(path)) { }
+    public Format Format => GTexture.Description.Format;
 
-    public Texture(Bitmap bitmap) : this(bitmap.Data, bitmap.Size, bitmap.Format) { }
+    public Texture(string path, SamplerDescription? sampler = null) : this(new Bitmap(path), sampler) { }
 
-    public Texture(byte[] data, Size<int> size, Format format = Format.R8G8B8A8_UNorm)
+    public Texture(Bitmap bitmap, SamplerDescription? sampler = null) : this(bitmap.Data, bitmap.Size, bitmap.Format, sampler) { }
+
+    public Texture(byte[] data, Size<int> size, Format format = Format.R8G8B8A8_UNorm, SamplerDescription? sampler = null)
     {
         _ownsTexture = true;
         Size = size;
@@ -37,8 +40,10 @@ public class Texture : IDisposable
             GTexture = device.CreateTexture(desc, data);
         Graphics.TexturesQueuedForMipGeneration.Add(GTexture);
 
+        Sampler = device.CreateSampler(sampler ?? SamplerDescription.LinearClamp);
+
         DescriptorSet = device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
-            new DescriptorSetDescription(texture: GTexture));
+            new DescriptorSetDescription(texture: GTexture, sampler: Sampler));
 
         Id = _loadedTextures.AddItem(this);
     }
@@ -95,6 +100,12 @@ public class Texture : IDisposable
 
     public static Texture GetTexture(string name)
         => _loadedTextures[_namedTextures[name]];
+
+    public static IEnumerable<Texture> GetAllTextures()
+    {
+        foreach ((_, Texture texture) in _loadedTextures.Items)
+            yield return texture;
+    }
 
     public static void DisposeAllTextures()
     {

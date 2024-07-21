@@ -89,11 +89,11 @@ public class Renderer3D : IDisposable
         
         MaterialInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
-                new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel), // Albedo
-                new DescriptorBindingDescription(1, DescriptorType.Texture, ShaderStage.Pixel), // Normal
-                new DescriptorBindingDescription(2, DescriptorType.Texture, ShaderStage.Pixel), // Metallic
-                new DescriptorBindingDescription(3, DescriptorType.Texture, ShaderStage.Pixel), // Roughness
-                new DescriptorBindingDescription(4, DescriptorType.Texture, ShaderStage.Pixel) // Occlusion
+                new DescriptorBindingDescription(0, DescriptorType.Image, ShaderStage.Pixel), // Albedo
+                new DescriptorBindingDescription(1, DescriptorType.Image, ShaderStage.Pixel), // Normal
+                new DescriptorBindingDescription(2, DescriptorType.Image, ShaderStage.Pixel), // Metallic
+                new DescriptorBindingDescription(3, DescriptorType.Image, ShaderStage.Pixel), // Roughness
+                new DescriptorBindingDescription(4, DescriptorType.Image, ShaderStage.Pixel) // Occlusion
                 ));
 
         GBufferInputLayout =
@@ -130,10 +130,10 @@ public class Renderer3D : IDisposable
         
         using DescriptorLayout passInputLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
-                new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel), // Albedo
-                new DescriptorBindingDescription(1, DescriptorType.Texture, ShaderStage.Pixel), // Position
-                new DescriptorBindingDescription(2, DescriptorType.Texture, ShaderStage.Pixel), // Normal
-                new DescriptorBindingDescription(3, DescriptorType.Texture, ShaderStage.Pixel) // MetallicRoughness
+                new DescriptorBindingDescription(0, DescriptorType.Image, ShaderStage.Pixel), // Albedo
+                new DescriptorBindingDescription(1, DescriptorType.Image, ShaderStage.Pixel), // Position
+                new DescriptorBindingDescription(2, DescriptorType.Image, ShaderStage.Pixel), // Normal
+                new DescriptorBindingDescription(3, DescriptorType.Image, ShaderStage.Pixel) // MetallicRoughness
                 )
             );
 
@@ -161,7 +161,7 @@ public class Renderer3D : IDisposable
         Logger.Trace("Creating composite layout.");
         
         using DescriptorLayout compositeLayout = device.CreateDescriptorLayout(
-            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Image,
                 ShaderStage.Pixel)));
 
         Logger.Trace("Creating composite pipeline.");
@@ -194,7 +194,7 @@ public class Renderer3D : IDisposable
         Logger.Trace("Creating skybox layouts.");
 
         using DescriptorLayout skyboxTextureLayout = device.CreateDescriptorLayout(
-            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Image,
                 ShaderStage.Pixel)));
         
         Logger.Trace("Creating skybox pipeline.");

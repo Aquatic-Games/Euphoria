@@ -41,11 +41,11 @@ cbuffer DrawInfo : register(b0, space1)
 }
 
 SamplerState Sampler : register(s0, space2);
-Texture2D Albedo     : register(t0, space2);
-Texture2D Normal     : register(t1, space2);
-Texture2D Metallic   : register(t2, space2);
-Texture2D Roughness  : register(t3, space2);
-Texture2D Occlusion  : register(t4, space2);
+Texture2D Albedo     : register(t1, space2);
+Texture2D Normal     : register(t2, space2);
+Texture2D Metallic   : register(t3, space2);
+Texture2D Roughness  : register(t4, space2);
+Texture2D Occlusion  : register(t5, space2);
 
 VSOutput VSMain(const in VSInput input)
 {

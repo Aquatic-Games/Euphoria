@@ -1,4 +1,7 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
+using Euphoria.Math;
 using Euphoria.Render;
 using grabs.Graphics;
 using ImGuiNET;
@@ -10,9 +13,17 @@ public class RendererTab : IDebugTab
 {
     public string TabName => "Renderer";
     
+    private List<Texture> _viewTextures;
+
+    public RendererTab()
+    {
+        _viewTextures = new List<Texture>();
+        ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+    }
+    
     public void Update()
     {
-        Vector2 constSize = new Vector2(1280, 720);
+        Size<int> constSize = new Size<int>(1280, 720);
 
         Vector2 uv0 = new Vector2(0, 0);
         Vector2 uv1 = new Vector2(1, 1);
@@ -24,18 +35,66 @@ public class RendererTab : IDebugTab
             
             ImGui.Text("*OpenGL renderer - Textures have been flipped.");
         }
-        
-        foreach ((string name, Texture texture) in Graphics.Renderer3D.GetDebugTextures())
+
+        if (ImGui.CollapsingHeader("Renderer"))
         {
-            Vector2 size = new Vector2(texture.Size.Width, texture.Size.Height);
-            if (size.X > constSize.X)
-                size *= constSize.X / size.X;
-            if (size.Y >= constSize.Y)
-                size *= constSize.Y / size.Y;
-            
-            ImGui.Image((nint) texture.Id, size / 4, uv0, uv1);
-            ImGui.SameLine();
-            ImGui.Text($"{name}\n{texture.Size}");
+            foreach ((string name, Texture texture) in Graphics.Renderer3D.GetDebugTextures())
+            {
+                ImGui.Image((nint) texture.Id, GetScaledSize(texture.Size, constSize) / 4, uv0, uv1);
+                ImGui.SameLine();
+                ImGui.Text($"{name}\n{texture.Size}");
+            }
         }
+
+        if (ImGui.CollapsingHeader("Textures"))
+        {
+            int i = 0;
+            foreach (Texture texture in Texture.GetAllTextures())
+            {
+                if (ImGui.ImageButton($"{texture.Id}", (nint) texture.Id, GetScaledSize(texture.Size, constSize) / 8, uv0, uv1))
+                    _viewTextures.Add(texture);
+                
+                ImGui.SameLine();
+                ImGui.Text($"Texture {texture.Id}\n{texture.Size}\n{texture.Format}");
+                
+                if (i++ % 2 == 0)
+                    ImGui.SameLine();
+            }
+        }
+        
+        for (int i = 0; i < _viewTextures.Count; i++)
+        {
+            Texture texture = _viewTextures[i];
+            
+            bool open = true;
+            if (ImGui.Begin($"View Texture {texture.Id}##{texture.Id}", ref open))
+            {
+                Vector2 size = ImGui.GetWindowSize();
+                ImGui.Image((nint) texture.Id, GetScaledSize(texture.Size, new Size<int>((int) size.X, (int) size.Y)));
+                ImGui.End();
+            }
+
+            if (!open)
+                _viewTextures.Remove(texture);
+        }
+        
+    }
+
+    private static Vector2 GetScaledSize(Size<int> actualSize, Size<int> maxSize)
+    {
+        Vector2 size = new Vector2(actualSize.Width, actualSize.Height);
+        if (actualSize.Width >= maxSize.Width)
+            size *= maxSize.Width / size.X;
+        else if (actualSize.Height >= maxSize.Height)
+            size *= maxSize.Height / size.Y;
+        else
+        {
+            if (actualSize.Width >= actualSize.Height)
+                size *= maxSize.Width / size.X;
+            else
+                size *= maxSize.Height / size.Y;
+        }
+
+        return size;
     }
 }

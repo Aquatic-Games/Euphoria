@@ -2,6 +2,8 @@
 #pragma pixel PSMain
 #pragma debug
 
+#include "../Common.hlsli"
+
 struct VSInput
 {
     float2 Position: POSITION0;
@@ -26,8 +28,7 @@ cbuffer CameraMatrices : register(b0, space0)
     float4x4 Projection;
 }
 
-Texture2D Texture  : register(t1, space1);
-SamplerState State : register(s1, space1);
+EE_SAMPLER2D(Texture, 0, 1);
 
 VSOutput VSMain(const in VSInput input)
 {
@@ -44,7 +45,7 @@ PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 
-    output.Color = Texture.Sample(State, input.TexCoord) * input.Tint;
+    output.Color = EE_TEXTURE(Texture, input.TexCoord) * input.Tint;
     
     return output;
 }

@@ -25,5 +25,9 @@
         <None Remove="Roboto-Regular.ttf" />
         <EmbeddedResource Include="Roboto-Regular.ttf" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Shaders\Lighting\" />
+    </ItemGroup>
 
 </Project>

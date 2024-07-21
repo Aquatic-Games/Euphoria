@@ -24,8 +24,8 @@ cbuffer CameraMatrices : register(b0, space0)
     float4x4 View;
 }
 
-TextureCube Cubemap  : register(t0, space1);
 SamplerState Sampler : register(s0, space1);
+TextureCube Cubemap  : register(t1, space1);
 
 VSOutput VSMain(const in VSInput input)
 {

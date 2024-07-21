@@ -37,8 +37,6 @@ public sealed class TextureBatcher : IDisposable
     private readonly DescriptorSet _transformSet;
 
     private readonly List<DrawQueueItem> _drawQueue;
-    
-    internal readonly DescriptorLayout TextureDescriptorLayout;
 
     public TextureBatcher(Device device)
     {
@@ -59,10 +57,6 @@ public sealed class TextureBatcher : IDisposable
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
 
-        TextureDescriptorLayout = device.CreateDescriptorLayout(
-            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
-                ShaderStage.Pixel)));
-
         Logger.Trace("Loading shader.");
         
         ShaderModule vTexModule = device.CreateShaderModule(ShaderStage.Vertex,
@@ -78,7 +72,7 @@ public sealed class TextureBatcher : IDisposable
                 new InputLayoutDescription(Format.R32G32_Float, 8, 0, InputType.PerVertex), // TexCoord
                 new InputLayoutDescription(Format.R32G32B32A32_Float, 16, 0, InputType.PerVertex) // Tint
             }, DepthStencilDescription.Disabled, RasterizerDescription.CullClockwise, BlendDescription.NonPremultiplied,
-            [transformLayout, TextureDescriptorLayout]));
+            [transformLayout, Graphics.TextureDescriptorLayout]));
         
         vTexModule.Dispose();
         pTexModule.Dispose();
