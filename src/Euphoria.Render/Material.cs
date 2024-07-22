@@ -45,11 +45,11 @@ public sealed class Material : IDisposable
         Pipeline = device.CreatePipeline(pipelineDesc);
 
         MatDescriptor = device.CreateDescriptorSet(renderer.MaterialInfoLayout,
-            new DescriptorSetDescription(texture: _albedo.GTexture),
-            new DescriptorSetDescription(texture: _normal.GTexture),
-            new DescriptorSetDescription(texture: _metallic.GTexture),
-            new DescriptorSetDescription(texture: _roughness.GTexture),
-            new DescriptorSetDescription(texture: _occlusion.GTexture));
+            new DescriptorSetDescription(texture: _albedo.GTexture, sampler: _albedo.Sampler),
+            new DescriptorSetDescription(texture: _normal.GTexture, sampler: _normal.Sampler),
+            new DescriptorSetDescription(texture: _metallic.GTexture, sampler: _metallic.Sampler),
+            new DescriptorSetDescription(texture: _roughness.GTexture, sampler: _roughness.Sampler),
+            new DescriptorSetDescription(texture: _occlusion.GTexture, sampler: _occlusion.Sampler));
     }
 
     public void Dispose()

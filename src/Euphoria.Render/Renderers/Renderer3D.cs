@@ -89,11 +89,11 @@ public class Renderer3D : IDisposable
         
         MaterialInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
-                new DescriptorBindingDescription(0, DescriptorType.Image, ShaderStage.Pixel), // Albedo
-                new DescriptorBindingDescription(1, DescriptorType.Image, ShaderStage.Pixel), // Normal
-                new DescriptorBindingDescription(2, DescriptorType.Image, ShaderStage.Pixel), // Metallic
-                new DescriptorBindingDescription(3, DescriptorType.Image, ShaderStage.Pixel), // Roughness
-                new DescriptorBindingDescription(4, DescriptorType.Image, ShaderStage.Pixel) // Occlusion
+                new DescriptorBindingDescription(0, DescriptorType.Texture, ShaderStage.Pixel), // Albedo
+                new DescriptorBindingDescription(1, DescriptorType.Texture, ShaderStage.Pixel), // Normal
+                new DescriptorBindingDescription(2, DescriptorType.Texture, ShaderStage.Pixel), // Metallic
+                new DescriptorBindingDescription(3, DescriptorType.Texture, ShaderStage.Pixel), // Roughness
+                new DescriptorBindingDescription(4, DescriptorType.Texture, ShaderStage.Pixel) // Occlusion
                 ));
 
         GBufferInputLayout =
@@ -130,10 +130,11 @@ public class Renderer3D : IDisposable
         
         using DescriptorLayout passInputLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(
-                new DescriptorBindingDescription(0, DescriptorType.Image, ShaderStage.Pixel), // Albedo
-                new DescriptorBindingDescription(1, DescriptorType.Image, ShaderStage.Pixel), // Position
-                new DescriptorBindingDescription(2, DescriptorType.Image, ShaderStage.Pixel), // Normal
-                new DescriptorBindingDescription(3, DescriptorType.Image, ShaderStage.Pixel) // MetallicRoughness
+                new DescriptorBindingDescription(0, DescriptorType.Sampler, ShaderStage.Pixel),
+                new DescriptorBindingDescription(1, DescriptorType.Image, ShaderStage.Pixel), // Albedo
+                new DescriptorBindingDescription(2, DescriptorType.Image, ShaderStage.Pixel), // Position
+                new DescriptorBindingDescription(3, DescriptorType.Image, ShaderStage.Pixel), // Normal
+                new DescriptorBindingDescription(4, DescriptorType.Image, ShaderStage.Pixel) // MetallicRoughness
                 )
             );
 
@@ -148,6 +149,7 @@ public class Renderer3D : IDisposable
         Logger.Trace("Creating pass descriptors.");
 
         _passInputSet = device.CreateDescriptorSet(passInputLayout,
+            new DescriptorSetDescription(sampler: Graphics.DefaultSampler),
             new DescriptorSetDescription(texture: _albedoTexture),
             new DescriptorSetDescription(texture: _positionTexture),
             new DescriptorSetDescription(texture: _normalTexture),
@@ -194,7 +196,7 @@ public class Renderer3D : IDisposable
         Logger.Trace("Creating skybox layouts.");
 
         using DescriptorLayout skyboxTextureLayout = device.CreateDescriptorLayout(
-            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Image,
+            new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.Texture,
                 ShaderStage.Pixel)));
         
         Logger.Trace("Creating skybox pipeline.");
@@ -225,11 +227,11 @@ public class Renderer3D : IDisposable
 
             _debugTextures =
             [
-                ("Pass", new Texture(_passTexture, _size, false)), 
-                ("Albedo", new Texture(_albedoTexture, _size, false)),
-                ("Position", new Texture(_positionTexture, _size, false)),
-                ("Normal", new Texture(_normalTexture, _size, false)),
-                ("MetallicRoughness", new Texture(_metallicRoughnessTexture, _size, false))
+                ("Pass", new Texture(_passTexture, Graphics.DefaultSampler, _size, false)), 
+                ("Albedo", new Texture(_albedoTexture, Graphics.DefaultSampler, _size, false)),
+                ("Position", new Texture(_positionTexture, Graphics.DefaultSampler, _size, false)),
+                ("Normal", new Texture(_normalTexture, Graphics.DefaultSampler, _size, false)),
+                ("MetallicRoughness", new Texture(_metallicRoughnessTexture, Graphics.DefaultSampler, _size, false))
             ];
         }
 
@@ -351,7 +353,10 @@ public class Renderer3D : IDisposable
         
         Logger.Trace("Updating descriptor resources.");
 
+        Sampler sampler = Graphics.DefaultSampler;
+        
         _device.UpdateDescriptorSet(_passInputSet, 
+            new DescriptorSetDescription(sampler: sampler),
             new DescriptorSetDescription(texture: _albedoTexture),
             new DescriptorSetDescription(texture: _positionTexture),
             new DescriptorSetDescription(texture: _normalTexture),

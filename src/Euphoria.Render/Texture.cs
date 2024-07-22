@@ -48,10 +48,11 @@ public class Texture : IDisposable
         Id = _loadedTextures.AddItem(this);
     }
 
-    internal Texture(GrabsTexture texture, Size<int> size, bool ownsTexture = true)
+    internal Texture(GrabsTexture texture, Sampler sampler, Size<int> size, bool ownsTexture = true)
     {
         _ownsTexture = ownsTexture;
         GTexture = texture;
+        Sampler = sampler;
         Size = size;
         
         DescriptorSet = Graphics.Device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
@@ -69,10 +70,13 @@ public class Texture : IDisposable
     public void Dispose()
     {
         DescriptorSet.Dispose();
-        
+
         if (_ownsTexture)
+        {
+            Sampler.Dispose();
             GTexture.Dispose();
-        
+        }
+
         _loadedTextures.RemoveItem(Id);
     }
     

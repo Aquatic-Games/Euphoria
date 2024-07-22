@@ -2,6 +2,8 @@
 #pragma pixel PSMain
 #pragma debug
 
+#include "../Common.hlsli"
+
 struct VSInput
 {
     float3 Position:  POSITION0;
@@ -40,12 +42,11 @@ cbuffer DrawInfo : register(b0, space1)
     float4x4 World;
 }
 
-SamplerState Sampler : register(s0, space2);
-Texture2D Albedo     : register(t1, space2);
-Texture2D Normal     : register(t2, space2);
-Texture2D Metallic   : register(t3, space2);
-Texture2D Roughness  : register(t4, space2);
-Texture2D Occlusion  : register(t5, space2);
+EE_SAMPLER2D(Albedo, 0, 2);
+EE_SAMPLER2D(Normal, 1, 2);
+EE_SAMPLER2D(Metallic, 2, 2);
+EE_SAMPLER2D(Roughness, 3, 2);
+EE_SAMPLER2D(Occlusion, 4, 2);
 
 VSOutput VSMain(const in VSInput input)
 {
@@ -67,11 +68,11 @@ PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 
-    const float4 albedoTex = Albedo.Sample(Sampler, input.TexCoord) * input.Color;
-    const float4 normalTex = Normal.Sample(Sampler, input.TexCoord);
-    const float4 metallicTex = Metallic.Sample(Sampler, input.TexCoord);
-    const float4 roughnessTex = Roughness.Sample(Sampler, input.TexCoord);
-    const float4 occlusionTex = Occlusion.Sample(Sampler, input.TexCoord);
+    const float4 albedoTex = EE_TEXTURE(Albedo, input.TexCoord) * input.Color;
+    const float4 normalTex = EE_TEXTURE(Normal, input.TexCoord);
+    const float4 metallicTex = EE_TEXTURE(Metallic, input.TexCoord);
+    const float4 roughnessTex = EE_TEXTURE(Roughness, input.TexCoord);
+    const float4 occlusionTex = EE_TEXTURE(Occlusion, input.TexCoord);
 
     const float3 tangent = input.Tangent;
     float3 normal = input.Normal;

@@ -2,6 +2,8 @@
 #pragma pixel PSMain
 #pragma debug
 
+#include "../Common.hlsli"
+
 struct VSInput
 {
     float3 Position: POSITION0;
@@ -24,8 +26,7 @@ cbuffer CameraMatrices : register(b0, space0)
     float4x4 View;
 }
 
-SamplerState Sampler : register(s0, space1);
-TextureCube Cubemap  : register(t1, space1);
+EE_SAMPLERCUBE(Cubemap, 0, 1);
 
 VSOutput VSMain(const in VSInput input)
 {
@@ -51,7 +52,7 @@ PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
 
-    output.Color = Cubemap.Sample(Sampler, input.TexCoord);
+    output.Color = EE_TEXTURE(Cubemap, input.TexCoord);
     
     return output;
 }

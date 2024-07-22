@@ -26,6 +26,7 @@ public static class Graphics
     internal static Framebuffer SwapchainFramebuffer;
 
     internal static DescriptorLayout TextureDescriptorLayout;
+    internal static Sampler DefaultSampler;
 
     internal static HashSet<GrabsTexture> TexturesQueuedForMipGeneration;
 
@@ -89,6 +90,9 @@ public static class Graphics
 
         Logger.Trace("Creating swapchain buffer.");
         SwapchainFramebuffer = Device.CreateFramebuffer(new ReadOnlySpan<GrabsTexture>(ref _swapchainTexture));
+        
+        Logger.Trace("Creating default sampler.");
+        DefaultSampler = Device.CreateSampler(SamplerDescription.LinearClamp);
         
         Logger.Trace("Creating texture descriptor layout.");
         TextureDescriptorLayout = Device.CreateDescriptorLayout(new DescriptorLayoutDescription(
@@ -183,6 +187,7 @@ public static class Graphics
         //Font.FreeType.Dispose();
         Texture.DisposeAllTextures();
         
+        DefaultSampler.Dispose();
         TextureDescriptorLayout.Dispose();
         
         CommandList.Dispose();
