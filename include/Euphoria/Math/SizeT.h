@@ -5,21 +5,21 @@
 namespace Euphoria::Math {
 
     template<typename T>
-    struct Size {
+    struct SizeT {
         T Width;
         T Height;
 
-        Size() {
+        SizeT() {
             Width = 0;
             Height = 0;
         }
 
-        explicit Size(T wh) {
+        explicit SizeT(const T wh) {
             Width = wh;
             Height = wh;
         }
 
-        Size(T width, T height) {
+        SizeT(const T width, const T height) {
             Width = width;
             Height = height;
         }
@@ -28,5 +28,9 @@ namespace Euphoria::Math {
             return std::to_string(Width) + 'x' + std::to_string(Height);
         }
     };
+
+    typedef SizeT<int32_t> Size;
+    typedef SizeT<float> SizeF;
+    typedef SizeT<double> SizeD;
 
 }

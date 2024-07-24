@@ -33,19 +33,19 @@ namespace Euphoria {
         return (intptr_t) info.info.win.window;
     }
 
-    Math::Size<int32_t> Window::Size() const {
-        Math::Size<int32_t> size;
+    Math::Size Window::Size() const {
+        Math::Size size;
         SDL_GetWindowSize(_window, &size.Width, &size.Height);
 
         return size;
     }
 
-    void Window::SetSize(const Math::Size<int32_t>& size) {
+    void Window::SetSize(const Math::Size& size) {
         SDL_SetWindowSize(_window, size.Width, size.Height);
     }
 
-    Math::Size<int32_t> Window::SizeInPixels() const {
-        Math::Size<int32_t> size;
+    Math::Size Window::SizeInPixels() const {
+        Math::Size size;
         SDL_GetWindowSizeInPixels(_window, &size.Width, &size.Height);
 
         return size;

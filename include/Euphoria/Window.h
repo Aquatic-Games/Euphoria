@@ -8,7 +8,7 @@
 namespace Euphoria {
 
     struct WindowInfo {
-        Math::Size<int32_t> Size;
+        Math::Size Size;
         std::string Title;
     };
 
@@ -17,16 +17,16 @@ namespace Euphoria {
         SDL_Window* _window;
 
     public:
-        Window(const WindowInfo& info);
+        explicit Window(const WindowInfo& info);
         ~Window();
 
         [[nodiscard]] SDL_Window* Handle() const;
         [[nodiscard]] intptr_t HWND() const;
 
-        [[nodiscard]] Math::Size<int32_t> Size() const;
-        void SetSize(const Math::Size<int32_t>& size);
+        [[nodiscard]] Math::Size Size() const;
+        void SetSize(const Math::Size& size);
 
-        [[nodiscard]] Math::Size<int32_t> SizeInPixels() const;
+        [[nodiscard]] Math::Size SizeInPixels() const;
     };
 
 }

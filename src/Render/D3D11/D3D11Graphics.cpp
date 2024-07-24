@@ -31,6 +31,10 @@ namespace Euphoria::Render::D3D11 {
     }
 
     D3D11Graphics::~D3D11Graphics() {
+        _swapChainTarget->Release();
+        _swapChainTexture->Release();
+        _swapChain->Release();
+
         Context->Release();
         Device->Release();
 

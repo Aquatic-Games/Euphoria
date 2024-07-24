@@ -4,7 +4,7 @@ project(Euphoria)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(Euphoria STATIC
-        include/Euphoria/Math/Size.h
+        include/Euphoria/Math/SizeT.h
         src/Window.cpp
         include/Euphoria/Window.h
         include/Euphoria/Math/Math.h
@@ -16,6 +16,9 @@ add_library(Euphoria STATIC
         src/Render/D3D11/D3D11Utils.cpp
         src/Render/D3D11/D3D11Utils.h
         src/Render/Graphics.cpp
+        include/Euphoria/Render/Texture.h
+        include/Euphoria/Render/Bitmap.cpp
+        include/Euphoria/Render/Bitmap.h
 )
 
 target_include_directories(Euphoria PRIVATE include/)
