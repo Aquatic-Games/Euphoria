@@ -8,6 +8,8 @@ add_library(Euphoria STATIC
         src/Window.cpp
         include/Euphoria/Window.h
         include/Euphoria/Math/Math.h
+        src/App.cpp
+        include/Euphoria/App.h
 )
 
 target_include_directories(Euphoria PRIVATE include/)
@@ -20,3 +22,8 @@ if (TARGET SDL2::SDL2main)
 endif ()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+
+# ----- TEST -----
+add_executable(EuphoriaTest test/main.cpp)
+target_link_libraries(EuphoriaTest PRIVATE Euphoria)
+target_include_directories(EuphoriaTest PRIVATE include/)

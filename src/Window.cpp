@@ -14,4 +14,9 @@ namespace Euphoria {
             throw std::runtime_error("Window: Failed to create window: " + std::string(SDL_GetError()));
         }
     }
+
+    Window::~Window() {
+        SDL_DestroyWindow(_window);
+        SDL_Quit();
+    }
 }

@@ -5,7 +5,7 @@
 namespace Euphoria::Math {
 
     template<typename T>
-    struct Size<T> {
+    struct Size {
         T Width;
         T Height;
 
