@@ -13,13 +13,21 @@ namespace Euphoria {
     };
 
     class App {
-    private:
-        explicit App(const LaunchInfo& info);
+    protected:
+        virtual void Initialize();
+        virtual void Update(float dt);
+        virtual void Tick(float dt);
+        virtual void Draw();
+
+        void ProcessEvents();
 
     public:
+        bool IsAlive;
+
         std::unique_ptr<Window> Window;
 
-        static void Run(const LaunchInfo& info);
+        explicit App(const LaunchInfo& info);
+        void Run();
     };
 
 }

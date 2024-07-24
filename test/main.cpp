@@ -11,7 +11,9 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    App::Run(info);
+    App app(info);
+
+    app.Run();
 
     return 0;
 }
