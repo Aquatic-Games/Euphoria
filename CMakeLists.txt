@@ -15,6 +15,7 @@ add_library(Euphoria STATIC
         src/Render/D3D11/D3D11Graphics.h
         src/Render/D3D11/D3D11Utils.cpp
         src/Render/D3D11/D3D11Utils.h
+        src/Render/Graphics.cpp
 )
 
 target_include_directories(Euphoria PRIVATE include/)

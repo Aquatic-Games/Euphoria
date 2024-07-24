@@ -1,7 +1,6 @@
 #include "D3D11Utils.h"
 
 #include <stdexcept>
-#include <winerror.h>
 
 namespace Euphoria::Render::D3D11 {
     void D3D11Utils::CheckResult(HRESULT result, const std::string& operation) {

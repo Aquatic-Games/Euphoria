@@ -17,7 +17,7 @@ namespace Euphoria::Render::D3D11 {
         ID3D11Device* Device;
         ID3D11DeviceContext* Context;
 
-        D3D11Graphics();
+        D3D11Graphics(HWND hwnd, UINT width, UINT height);
         ~D3D11Graphics() override;
 
         void Present() override;

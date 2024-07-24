@@ -9,6 +9,11 @@ namespace Euphoria::Math {
         T Width;
         T Height;
 
+        Size() {
+            Width = 0;
+            Height = 0;
+        }
+
         explicit Size(T wh) {
             Width = wh;
             Height = wh;

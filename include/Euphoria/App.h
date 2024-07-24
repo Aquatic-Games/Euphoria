@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Window.h"
+#include "Render/Graphics.h"
 
 namespace Euphoria {
 
@@ -25,6 +26,7 @@ namespace Euphoria {
         bool IsAlive;
 
         std::unique_ptr<Window> Window;
+        std::unique_ptr<Render::Graphics> Graphics;
 
         explicit App(const LaunchInfo& info);
         void Run();

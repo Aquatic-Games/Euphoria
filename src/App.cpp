@@ -2,7 +2,12 @@
 
 namespace Euphoria {
     App::App(const LaunchInfo& info) {
+        IsAlive = false;
+
         Window = std::make_unique<Euphoria::Window>(info.Window);
+        auto size = Window->SizeInPixels();
+        Graphics = Render::Graphics::CreateD3D11(Window->HWND(), static_cast<uint32_t>(size.Width),
+                                                 static_cast<uint32_t>(size.Height));
     }
 
     void App::ProcessEvents() {
@@ -33,6 +38,8 @@ namespace Euphoria {
             Update(1 / 60.0f);
             Tick(1 / 60.0f);
             Draw();
+
+            Graphics->Present();
         }
     }
 

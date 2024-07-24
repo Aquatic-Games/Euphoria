@@ -1,6 +1,7 @@
 #include "Euphoria/Window.h"
 
 #include <stdexcept>
+#include <SDL_syswm.h>
 
 namespace Euphoria {
     Window::Window(const WindowInfo& info) {
@@ -18,5 +19,35 @@ namespace Euphoria {
     Window::~Window() {
         SDL_DestroyWindow(_window);
         SDL_Quit();
+    }
+
+    SDL_Window* Window::Handle() const {
+        return _window;
+    }
+
+    intptr_t Window::HWND() const {
+        SDL_SysWMinfo info;
+        SDL_VERSION(&info.version);
+        SDL_GetWindowWMInfo(_window, &info);
+
+        return (intptr_t) info.info.win.window;
+    }
+
+    Math::Size<int32_t> Window::Size() const {
+        Math::Size<int32_t> size;
+        SDL_GetWindowSize(_window, &size.Width, &size.Height);
+
+        return size;
+    }
+
+    void Window::SetSize(const Math::Size<int32_t>& size) {
+        SDL_SetWindowSize(_window, size.Width, size.Height);
+    }
+
+    Math::Size<int32_t> Window::SizeInPixels() const {
+        Math::Size<int32_t> size;
+        SDL_GetWindowSizeInPixels(_window, &size.Width, &size.Height);
+
+        return size;
     }
 }
