@@ -41,6 +41,10 @@ namespace Euphoria::Render::D3D11 {
         _factory->Release();
     }
 
+    std::unique_ptr<Texture> D3D11Graphics::CreateTexture(const Bitmap& bitmap) {
+        return std::unique_ptr<Texture>();
+    }
+
     void D3D11Graphics::Present() {
         Context->OMSetRenderTargets(1, &_swapChainTarget, nullptr);
         float clearColor[] = { 1.0f, 0.5f, 0.25f, 1.0f };

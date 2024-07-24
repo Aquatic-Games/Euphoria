@@ -2,10 +2,15 @@
 
 #include <memory>
 
+#include "Bitmap.h"
+#include "Texture.h"
+
 namespace Euphoria::Render {
     class Graphics {
     public:
         virtual ~Graphics() = default;
+
+        virtual std::unique_ptr<Texture> CreateTexture(const Bitmap& bitmap) = 0;
 
         virtual void Present() = 0;
 

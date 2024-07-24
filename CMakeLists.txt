@@ -4,7 +4,7 @@ project(Euphoria)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(Euphoria STATIC
-        include/Euphoria/Math/SizeT.h
+        include/Euphoria/Math/Size.h
         src/Window.cpp
         include/Euphoria/Window.h
         include/Euphoria/Math/Math.h
@@ -17,8 +17,9 @@ add_library(Euphoria STATIC
         src/Render/D3D11/D3D11Utils.h
         src/Render/Graphics.cpp
         include/Euphoria/Render/Texture.h
-        include/Euphoria/Render/Bitmap.cpp
+        src/Render/Bitmap.cpp
         include/Euphoria/Render/Bitmap.h
+        include/Euphoria/Render/Format.h
 )
 
 target_include_directories(Euphoria PRIVATE include/)
@@ -31,6 +32,10 @@ if (TARGET SDL2::SDL2main)
 endif ()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+
+# ---------- STB ----------
+add_subdirectory(lib/stb)
+target_link_libraries(${PROJECT_NAME} PUBLIC stb)
 
 # ---------- D3D11 ----------
 target_link_libraries(${PROJECT_NAME} PUBLIC d3d11 dxgi d3dcompiler)
