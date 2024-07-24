@@ -20,6 +20,8 @@ add_library(Euphoria STATIC
         src/Render/Bitmap.cpp
         include/Euphoria/Render/Bitmap.h
         include/Euphoria/Render/Format.h
+        src/Render/D3D11/D3D11Texture.cpp
+        src/Render/D3D11/D3D11Texture.h
 )
 
 target_include_directories(Euphoria PRIVATE include/)

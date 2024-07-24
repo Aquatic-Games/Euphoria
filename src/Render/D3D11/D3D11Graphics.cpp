@@ -1,5 +1,6 @@
 #include "D3D11Graphics.h"
 #include "D3D11Utils.h"
+#include "D3D11Texture.h"
 
 namespace Euphoria::Render::D3D11 {
     using namespace D3D11Utils;
@@ -41,8 +42,43 @@ namespace Euphoria::Render::D3D11 {
         _factory->Release();
     }
 
-    std::unique_ptr<Texture> D3D11Graphics::CreateTexture(const Bitmap& bitmap) {
-        return std::unique_ptr<Texture>();
+    std::unique_ptr<Texture> D3D11Graphics::CreateTexture(const Bitmap* bitmap) {
+        auto size = bitmap->Size().As<uint32_t>();
+        auto format = FormatToD3D(bitmap->Format());
+
+        D3D11_TEXTURE2D_DESC desc {
+            .Width = size.Width,
+            .Height = size.Height,
+            .MipLevels = 0,
+            .ArraySize = 1,
+            .Format = format,
+            .SampleDesc = { .Count = 1, .Quality = 0 },
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+            .CPUAccessFlags = 0,
+            .MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS
+        };
+
+        ID3D11Texture2D* texture;
+        CheckResult(Device->CreateTexture2D(&desc, nullptr, &texture), "Create texture");
+
+        Context->UpdateSubresource(texture, 0, nullptr, bitmap->Data().data(), size.Width * 4, 0);
+
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc {
+            .Format = format,
+            .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D,
+            .Texture2D {
+                .MostDetailedMip = 0,
+                .MipLevels = (UINT) -1,
+            }
+        };
+
+        ID3D11ShaderResourceView* srv;
+        CheckResult(Device->CreateShaderResourceView(texture, &srvDesc, &srv), "Create shader resource view");
+
+        Context->GenerateMips(srv);
+
+        return std::make_unique<D3D11Texture>(texture, srv, bitmap->Size());
     }
 
     void D3D11Graphics::Present() {

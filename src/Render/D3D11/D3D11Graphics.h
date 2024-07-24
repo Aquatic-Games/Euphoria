@@ -20,7 +20,7 @@ namespace Euphoria::Render::D3D11 {
         D3D11Graphics(HWND hwnd, UINT width, UINT height);
         ~D3D11Graphics() override;
 
-        std::unique_ptr<Texture> CreateTexture(const Bitmap& bitmap) override;
+        std::unique_ptr<Texture> CreateTexture(const Bitmap* bitmap) override;
 
         void Present() override;
     };

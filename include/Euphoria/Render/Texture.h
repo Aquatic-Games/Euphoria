@@ -6,7 +6,7 @@ namespace Euphoria::Render {
 
     class Texture {
     public:
-        virtual ~Texture() = 0;
+        virtual ~Texture() = default;
 
         virtual Math::Size Size() const = 0;
     };

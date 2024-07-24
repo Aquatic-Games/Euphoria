@@ -24,6 +24,11 @@ namespace Euphoria::Math {
             Height = height;
         }
 
+        template <typename TOther>
+        SizeT<TOther> As() const {
+            return { static_cast<TOther>(Width), static_cast<TOther>(Height) };
+        }
+
         [[nodiscard]] std::string ToString() const {
             return std::to_string(Width) + 'x' + std::to_string(Height);
         }

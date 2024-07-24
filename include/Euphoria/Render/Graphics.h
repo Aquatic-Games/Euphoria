@@ -10,7 +10,7 @@ namespace Euphoria::Render {
     public:
         virtual ~Graphics() = default;
 
-        virtual std::unique_ptr<Texture> CreateTexture(const Bitmap& bitmap) = 0;
+        virtual std::unique_ptr<Texture> CreateTexture(const Bitmap* bitmap) = 0;
 
         virtual void Present() = 0;
 

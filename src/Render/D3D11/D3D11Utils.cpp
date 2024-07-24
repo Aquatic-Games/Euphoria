@@ -15,4 +15,14 @@ namespace Euphoria::Render::D3D11 {
             throw std::runtime_error("D3D11: Operation failed with HRESULT " + std::to_string(result));
         }
     }
+
+    DXGI_FORMAT D3D11Utils::FormatToD3D(Format format) {
+        switch (format) {
+            case Format::R8G8B8A8_UNorm:
+                return DXGI_FORMAT_R8G8B8A8_UNORM;
+
+            default:
+                throw std::out_of_range("FormatToD3D: Format not in valid range of values.");
+        }
+    }
 }
