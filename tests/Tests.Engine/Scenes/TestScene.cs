@@ -18,10 +18,10 @@ public class TestScene : Scene
     {
         App.TargetFramesPerSecond = 0;
 
-        _texture = new Texture("C:/Users/ollie/Pictures/awesomeface.png");
+        _texture = new Texture($"{TestApp.FileBase}/Pictures/awesomeface.png");
 
         Entity entity = new Entity("test");
-        entity.AddComponent(new SpriteComponent(new Texture("C:/Users/ollie/Pictures/BAGELMIP.png")));
+        entity.AddComponent(new SpriteComponent(new Texture($"{TestApp.FileBase}/Pictures/BAGELMIP.png")));
         entity.AddComponent(new MoveComponent());
         //entity.AddComponent(new MoveComponent());
         

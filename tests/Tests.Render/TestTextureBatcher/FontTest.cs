@@ -14,8 +14,8 @@ public class FontTest : TestBase
     
     protected override void Initialize()
     {
-        //_font = new Font(@"C:\Users\ollie\Downloads\Noto_Sans_SC\static\NotoSansSC-Regular.ttf",
-        //    @"C:\Users\ollie\Downloads\Noto_Sans_KR,Noto_Sans_TC\Noto_Sans_KR\static\NotoSansKR-Regular.ttf");
+        //_font = new Font($"{TestBase.FileBase}\Downloads\Noto_Sans_SC\static\NotoSansSC-Regular.ttf",
+        //    $"{TestBase.FileBase}\Downloads\Noto_Sans_KR,Noto_Sans_TC\Noto_Sans_KR\static\NotoSansKR-Regular.ttf");
     }
 
     protected override void Draw()

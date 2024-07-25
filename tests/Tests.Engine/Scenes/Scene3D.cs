@@ -19,22 +19,22 @@ public class Scene3D : Scene
     public override void Initialize()
     {
         Graphics.Renderer3D.Skybox = new Cubemap(
-            new Bitmap("C:/Users/ollie/Pictures/skybox/right.jpg"),
-            new Bitmap("C:/Users/ollie/Pictures/skybox/left.jpg"),
-            new Bitmap("C:/Users/ollie/Pictures/skybox/top.jpg"),
-            new Bitmap("C:/Users/ollie/Pictures/skybox/bottom.jpg"),
-            new Bitmap("C:/Users/ollie/Pictures/skybox/front.jpg"),
-            new Bitmap("C:/Users/ollie/Pictures/skybox/back.jpg"));
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/right.jpg"),
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/left.jpg"),
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/top.jpg"),
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/bottom.jpg"),
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/front.jpg"),
+            new Bitmap($"{TestApp.FileBase}/Pictures/skybox/back.jpg"));
         
-        _texture = new Texture("C:/Users/ollie/Pictures/BAGELMIP.png");
+        _texture = new Texture($"{TestApp.FileBase}/Pictures/BAGELMIP.png");
 
         // TODO: A bit like textures with the content manager, materials should be managed internally, so you never actually create or manage them yourself.
-        MaterialDescription matDesc = new MaterialDescription(new Texture("C:/Users/ollie/Downloads/metalgrid2-dx/metalgrid2_basecolor.png"))
+        MaterialDescription matDesc = new MaterialDescription(new Texture($"{TestApp.FileBase}/Downloads/metalgrid2-dx/metalgrid2_basecolor.png"))
         {
-            Normal = new Texture("C:/Users/ollie/Downloads/metalgrid2-dx/metalgrid2_normal-dx.png"),
-            Metallic = new Texture("C:/Users/ollie/Downloads/metalgrid2-dx/metalgrid2_metallic.png"),
-            Roughness = new Texture("C:/Users/ollie/Downloads/metalgrid2-dx/metalgrid2_roughness.png"),
-            Occlusion = new Texture("C:/Users/ollie/Downloads/metalgrid2-dx/metalgrid2_AO.png")
+            Normal = new Texture($"{TestApp.FileBase}/Downloads/metalgrid2-dx/metalgrid2_normal-dx.png"),
+            Metallic = new Texture($"{TestApp.FileBase}/Downloads/metalgrid2-dx/metalgrid2_metallic.png"),
+            Roughness = new Texture($"{TestApp.FileBase}/Downloads/metalgrid2-dx/metalgrid2_roughness.png"),
+            Occlusion = new Texture($"{TestApp.FileBase}/Downloads/metalgrid2-dx/metalgrid2_AO.png")
         };
         _material = new Material(matDesc);
         

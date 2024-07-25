@@ -25,19 +25,19 @@ public class RendererTab : IDebugTab
     {
         Size<int> constSize = new Size<int>(1280, 720);
 
-        Vector2 uv0 = new Vector2(0, 0);
-        Vector2 uv1 = new Vector2(1, 1);
-
-        if (Graphics.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
-        {
-            uv0 = new Vector2(0, 1);
-            uv1 = new Vector2(1, 0);
-            
-            ImGui.Text("*OpenGL renderer - Textures have been flipped.");
-        }
-
         if (ImGui.CollapsingHeader("Renderer"))
         {
+            Vector2 uv0 = new Vector2(0, 0);
+            Vector2 uv1 = new Vector2(1, 1);
+
+            if (Graphics.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
+            {
+                uv0 = new Vector2(0, 1);
+                uv1 = new Vector2(1, 0);
+            
+                ImGui.Text("*OpenGL renderer - Textures have been flipped.");
+            }
+            
             foreach ((string name, Texture texture) in Graphics.Renderer3D.GetDebugTextures())
             {
                 ImGui.Image((nint) texture.Id, GetScaledSize(texture.Size, constSize) / 4, uv0, uv1);
@@ -51,7 +51,7 @@ public class RendererTab : IDebugTab
             int i = 0;
             foreach (Texture texture in Texture.GetAllTextures())
             {
-                if (ImGui.ImageButton($"{texture.Id}", (nint) texture.Id, GetScaledSize(texture.Size, constSize) / 8, uv0, uv1))
+                if (ImGui.ImageButton($"{texture.Id}", (nint) texture.Id, GetScaledSize(texture.Size, constSize) / 8))
                     _viewTextures.Add(texture);
                 
                 ImGui.SameLine();

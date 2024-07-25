@@ -12,6 +12,8 @@ namespace Tests.Render;
 
 public abstract unsafe class TestBase : IDisposable
 {
+    public const string FileBase = "/home/aqua";
+    
     private Sdl _sdl;
     private string _title;
     private bool _alive;
@@ -37,7 +39,7 @@ public abstract unsafe class TestBase : IDisposable
         if (_sdl.Init(Sdl.InitVideo | Sdl.InitEvents) < 0)
             throw new Exception($"Failed to initialize SDL: {_sdl.GetErrorS()}");
 
-        WindowFlags flags = WindowFlags.Shown;
+        WindowFlags flags = WindowFlags.Resizable;
 
         switch (api)
         {
@@ -95,7 +97,6 @@ public abstract unsafe class TestBase : IDisposable
             }
         }
         
-
         Initialize();
         
         _alive = true;
@@ -112,6 +113,10 @@ public abstract unsafe class TestBase : IDisposable
                         {
                             case WindowEventID.Close:
                                 _alive = false;
+                                break;
+                            
+                            case WindowEventID.Resized:
+                                Graphics.Resize(new Size<int>(winEvent.Window.Data1, winEvent.Window.Data2));
                                 break;
                         }
 

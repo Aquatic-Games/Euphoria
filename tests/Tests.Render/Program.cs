@@ -12,4 +12,4 @@ Size<int> size = new Size<int>(1280, 720);
 GraphicsOptions options = GraphicsOptions.Default;
 
 using TestBase test = new PlaneTest();
-test.Run(size, GraphicsApi.D3D11, options);
+test.Run(size, GraphicsApi.OpenGL, options);

@@ -9,12 +9,14 @@ namespace Tests.Engine;
 
 public class TestApp : Application
 {
+    public const string FileBase = "/home/aqua";
+    
     public override void Initialize(Scene initialScene)
     {
         base.Initialize(initialScene);
         
         ImGuiRenderer imGui = Graphics.ImGuiRenderer;
-        imGui.AddFont("C:/Users/ollie/Downloads/Russo_One/RussoOne-Regular.ttf", 14, "RussoOne");
+        imGui.AddFont($"{FileBase}/Downloads/Russo_One/RussoOne-Regular.ttf", 14, "RussoOne");
 
         EuphoriaDebug.IsOpen = true;
     }

@@ -17,7 +17,7 @@ public class SamplerTest : TestBase
     {
         base.Initialize();
 
-        const string path = @"C:\Users\ollie\Pictures\ball.png";
+        const string path = "/home/aqua/Pictures/ball.png";
 
         _defaultTexture = new Texture(path);
         _pointTexture = new Texture(path, SamplerDescription.PointClamp);

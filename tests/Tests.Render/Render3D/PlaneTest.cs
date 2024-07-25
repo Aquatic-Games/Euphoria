@@ -24,12 +24,12 @@ public class PlaneTest : TestBase
         
         Graphics.Renderer3D.BackgroundColor = Color.CornflowerBlue;
         Graphics.Renderer3D.Skybox = new Cubemap(
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\right.jpg"),
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\left.jpg"),
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\top.jpg"),
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\bottom.jpg"),
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\front.jpg"),
-            new Bitmap(@"C:\Users\ollie\Pictures\skybox\back.jpg"));
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/right.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/left.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/top.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/bottom.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/front.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/back.jpg"));
 
         _texture = new Texture("Content/awesomeface.png");
         _material = new Material(new MaterialDescription(_texture) { Rasterizer = RasterizerDescription.CullNone });
