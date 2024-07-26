@@ -1,7 +1,8 @@
 ﻿#pragma pixel PSMain
 #pragma debug
+
 #include "../QuadDraw.hlsl"
-#include "../Common.hlsli"
+#include "../Utils/Common.hlsli"
 
 struct PSOutput
 {

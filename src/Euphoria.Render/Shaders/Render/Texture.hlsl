@@ -2,7 +2,7 @@
 #pragma pixel PSMain
 #pragma debug
 
-#include "../Common.hlsli"
+#include "../Utils/Common.hlsli"
 
 struct VSInput
 {
