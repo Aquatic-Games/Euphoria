@@ -55,12 +55,19 @@ public class PbrTest : TestBase
         {
             Projection = Matrix4x4.CreatePerspectiveFieldOfView(float.DegreesToRadians(75),
                 size.Width / (float) size.Height, 0.1f, 100f),
-            View = Matrix4x4.CreateLookAt(new Vector3(0, 1.5f, -2), Vector3.Zero, Vector3.UnitY)
+            View = Matrix4x4.CreateLookAt(new Vector3(0, 1.5f, 2), Vector3.Zero, Vector3.UnitY)
         };
 
-        Matrix4x4 world = Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value);
+        Matrix4x4 world = Matrix4x4.CreateScale(5, 1, 5) * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value);
+        //Matrix4x4 world = Matrix4x4.Identity;
         
         renderer.Draw(_renderable, world);
+
+
+        TextureBatcher batcher = Graphics.TextureBatcher;
+        (string, Texture texture)[] textures = renderer.GetDebugTextures();
+
+        batcher.Draw(textures[0].texture, Vector2.Zero, Color.White);
     }
 
     public PbrTest() : base("PBR Test") { }
