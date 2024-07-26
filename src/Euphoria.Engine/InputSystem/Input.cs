@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
-namespace Euphoria.Engine;
+namespace Euphoria.Engine.InputSystem;
 
 public static class Input
 {
@@ -10,6 +11,8 @@ public static class Input
 
     private static HashSet<MouseButton> _buttonsDown;
     private static HashSet<MouseButton> _frameButtons;
+
+    private static Dictionary<Type, InputScene> _inputScenes;
 
     private static Vector2 _mousePosition;
     private static Vector2 _mouseDelta;
@@ -21,6 +24,8 @@ public static class Input
 
         _buttonsDown = new HashSet<MouseButton>();
         _frameButtons = new HashSet<MouseButton>();
+
+        _inputScenes = new Dictionary<Type, InputScene>();
     }
 
     public static Vector2 MousePosition => _mousePosition;
@@ -34,6 +39,19 @@ public static class Input
     public static bool IsMouseButtonDown(MouseButton button) => _buttonsDown.Contains(button);
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
+
+    public static void AddInputScene(InputScene scene)
+    {
+        _inputScenes.Add(scene.GetType(), scene);
+    }
+
+    public static void SetInputScene<T>() where T : InputScene
+    {
+        
+    }
+    
+    public static T GetInputScene<T>() where T : InputScene
+        => (T) _inputScenes[typeof(T)];
     
     internal static void Initialize()
     {

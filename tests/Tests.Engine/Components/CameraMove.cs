@@ -2,6 +2,7 @@
 using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities.Components;
+using Euphoria.Engine.InputSystem;
 
 namespace Tests.Engine.Components;
 

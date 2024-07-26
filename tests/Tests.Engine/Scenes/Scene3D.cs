@@ -3,6 +3,7 @@ using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities;
 using Euphoria.Engine.Entities.Components;
+using Euphoria.Engine.InputSystem;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 using Euphoria.Render.Primitives;

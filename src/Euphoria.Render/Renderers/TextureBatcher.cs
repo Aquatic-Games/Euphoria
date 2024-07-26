@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using Euphoria.Core;
 using Euphoria.Math;
 using grabs.Graphics;
-using grabs.ShaderCompiler.DXC;
 using Buffer = grabs.Graphics.Buffer;
 using Color = Euphoria.Math.Color;
 

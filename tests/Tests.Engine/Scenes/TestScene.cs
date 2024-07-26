@@ -2,6 +2,7 @@
 using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities;
+using Euphoria.Engine.InputSystem;
 using Euphoria.Engine.Scenes;
 using Euphoria.Math;
 using Euphoria.Render;

@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics\grabs.Graphics.csproj" />
-      <ProjectReference Include="..\..\lib\grabs\src\grabs.ShaderCompiler.DXC\grabs.ShaderCompiler.DXC.csproj" />
       <ProjectReference Include="..\Euphoria.Core\Euphoria.Core.csproj" />
       <ProjectReference Include="..\Euphoria.Math\Euphoria.Math.csproj" />
     </ItemGroup>
@@ -24,10 +23,6 @@
         <EmbeddedResource Include="Shaders\**\*.spv" />
         <None Remove="Roboto-Regular.ttf" />
         <EmbeddedResource Include="Roboto-Regular.ttf" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Shaders\Lighting\" />
     </ItemGroup>
 
 </Project>

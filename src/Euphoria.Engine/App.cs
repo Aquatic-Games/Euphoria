@@ -5,6 +5,7 @@ using System.Text;
 using Euphoria.Core;
 using Euphoria.Engine.Debugging;
 using Euphoria.Engine.Exceptions;
+using Euphoria.Engine.InputSystem;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 using grabs.Graphics;

@@ -19,7 +19,7 @@ public static class ShaderLoader
             _ => throw new ArgumentOutOfRangeException(nameof(stage), stage, null)
         };
 
-        Assembly assembly = Assembly.GetCallingAssembly();
+        Assembly assembly = Assembly.GetExecutingAssembly();
         using Stream stream = assembly.GetManifestResourceStream(resourceName);
         if (stream == null)
             throw new Exception($"Could not find a shader with name {shaderName}. (Resource name: {resourceName})");
