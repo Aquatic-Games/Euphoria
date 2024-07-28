@@ -66,7 +66,7 @@ public class PlaneTest : TestBase
         Matrix4x4 view = Matrix4x4.CreateLookAt(new Vector3(0, 0, 3), Vector3.Zero, Vector3.UnitY);
         
         Renderer3D renderer = Graphics.Renderer3D;
-        renderer.Camera = new CameraInfo(projection, view);
+        renderer.Camera = new CameraInfo(projection, view, new Vector3(0, 0, 3));
 
         _rotation += dt;
     }

@@ -82,7 +82,7 @@ public class Renderer3D : IDisposable
         
         CameraInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
-                ShaderStage.Vertex)));
+                ShaderStage.VertexPixel)));
         DrawInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
                 ShaderStage.Vertex)));
@@ -142,7 +142,7 @@ public class Renderer3D : IDisposable
 
         PipelineDescription passPipelineDesc = new PipelineDescription(passVertex, passPixel, null,
             DepthStencilDescription.Disabled, RasterizerDescription.CullCounterClockwise, BlendDescription.Disabled,
-            [passInputLayout]);
+            [passInputLayout, CameraInfoLayout]);
 
         _passPipeline = device.CreatePipeline(passPipelineDesc);
 
@@ -273,6 +273,7 @@ public class Renderer3D : IDisposable
         cl.BeginRenderPass(lightingPassDesc);
         
         cl.SetDescriptorSet(0, _passInputSet);
+        cl.SetDescriptorSet(1, _cameraInfoSet);
         cl.SetPipeline(_passPipeline);
         
         cl.Draw(6);

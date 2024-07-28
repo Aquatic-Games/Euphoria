@@ -61,12 +61,12 @@ public class PbrTest : TestBase
     {
         Renderer3D renderer = Graphics.Renderer3D;
         Size<int> size = Graphics.Size;
-        renderer.Camera = new CameraInfo()
-        {
-            Projection = Matrix4x4.CreatePerspectiveFieldOfView(float.DegreesToRadians(75),
-                size.Width / (float) size.Height, 0.1f, 100f),
-            View = Matrix4x4.CreateLookAt(new Vector3(0, 1.5f, 2), Vector3.Zero, Vector3.UnitY)
-        };
+
+        Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView(float.DegreesToRadians(75),
+            size.Width / (float) size.Height, 0.1f, 100f);
+        Matrix4x4 view = Matrix4x4.CreateLookAt(new Vector3(0, 1.5f, 2), Vector3.Zero, Vector3.UnitY);
+
+        renderer.Camera = new CameraInfo(projection, view, new Vector3(0, 1.5f, 2));
 
         Matrix4x4 world = Matrix4x4.CreateScale(5, 1, 5) * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value);
         //Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_value * 0.75f, _value, _value * 1.3f);

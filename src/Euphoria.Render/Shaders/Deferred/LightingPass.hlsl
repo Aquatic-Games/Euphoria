@@ -15,6 +15,14 @@ Texture2D Position          : register(t2, space0);
 Texture2D Normal            : register(t3, space0);
 Texture2D MetallicRoughness : register(t4, space0);
 
+// TODO: Convert this into a struct, it is used in GBuffer as well as Forward pass etc.
+cbuffer CameraInfo : register(b0, space1)
+{
+    float4x4 Projection;
+    float4x4 View;
+    float4   CameraPosition;
+}
+
 PSOutput PSMain(const in VSOutput input)
 {
     PSOutput output;
@@ -35,11 +43,11 @@ PSOutput PSMain(const in VSOutput input)
 
     // TODO: I don't think the normalize is necessary. If it is, it probably shouldn't be.
     const float3 n = normalize(normal.xyz);
-    // TODO: camPos - WorldPos: Can gbuffer be simplified to contain this directly?
-    const float3 TEMP_camPos = float3(0, 1.5, 2.0);
-    const float3 v = normalize(TEMP_camPos - position.xyz);
+    
+    // TODO: Implement camera position from depth https://mynameismjp.wordpress.com/2010/09/05/position-from-depth-3/
+    const float3 v = normalize(CameraPosition.xyz - position.xyz);
 
-    const float3 TEMP_lightDir = normalize(-float3(0.0, -1.0, 0.0));
+    const float3 TEMP_lightDir = normalize(-float3(0.0, -1.0, -0.5));
 
     //const float3 l = normalize(TEMP_lightDir - position.xyz);
     const float3 l = TEMP_lightDir;

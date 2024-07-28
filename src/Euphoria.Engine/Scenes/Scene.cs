@@ -110,7 +110,7 @@ public class Scene : IDisposable
             entity.Draw();
         
         Camera camera = Camera;
-        Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix);
+        Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix, camera.Transform.Position);
     }
 
     public virtual void Dispose()

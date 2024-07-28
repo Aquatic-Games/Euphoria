@@ -34,6 +34,7 @@ cbuffer CameraInfo : register(b0, space0)
 {
     float4x4 Projection;
     float4x4 View;
+    float4   Position;
 }
 
 cbuffer DrawInfo : register(b0, space1)
