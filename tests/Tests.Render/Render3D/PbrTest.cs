@@ -19,6 +19,14 @@ public class PbrTest : TestBase
     protected override void Initialize()
     {
         Graphics.Renderer3D.BackgroundColor = Color.CornflowerBlue;
+        
+        Graphics.Renderer3D.Skybox = new Cubemap(
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/right.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/left.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/top.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/bottom.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/front.jpg"),
+            new Bitmap($"{TestBase.FileBase}/Pictures/skybox/back.jpg"));
 
         Cube cube = new Cube();
         Mesh mesh = new Mesh(cube.Vertices, cube.Indices);
@@ -39,12 +47,14 @@ public class PbrTest : TestBase
             Occlusion = occlusion
         });
 
+        //_material = new Material(new MaterialDescription(Texture.White));
+
         _renderable = new Renderable(mesh, _material);
     }
 
     protected override void Update(float dt)
     {
-        _value += dt;
+        _value += dt * 0.3f;
     }
 
     protected override void Draw()
@@ -59,6 +69,7 @@ public class PbrTest : TestBase
         };
 
         Matrix4x4 world = Matrix4x4.CreateScale(5, 1, 5) * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value);
+        //Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_value * 0.75f, _value, _value * 1.3f);
         //Matrix4x4 world = Matrix4x4.Identity;
         
         renderer.Draw(_renderable, world);
@@ -66,8 +77,8 @@ public class PbrTest : TestBase
 
         TextureBatcher batcher = Graphics.TextureBatcher;
         (string, Texture texture)[] textures = renderer.GetDebugTextures();
-
-        batcher.Draw(textures[0].texture, Vector2.Zero, Color.White);
+        
+        //batcher.Draw(textures[3].texture, Vector2.Zero, Color.White);
     }
 
     public PbrTest() : base("PBR Test") { }

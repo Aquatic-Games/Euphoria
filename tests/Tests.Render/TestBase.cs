@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render;
+using grabs.Core;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
 using grabs.Graphics.GL43;
@@ -12,7 +15,7 @@ namespace Tests.Render;
 
 public abstract unsafe class TestBase : IDisposable
 {
-    public const string FileBase = "/home/aqua";
+    public const string FileBase = "C:/Users/ollie";
     
     private Sdl _sdl;
     private string _title;
@@ -64,6 +67,11 @@ public abstract unsafe class TestBase : IDisposable
         if (_window == null)
             throw new Exception($"Failed to create SDL window: {_sdl.GetErrorS()}");
 
+        GrabsLog.LogMessage += (type, message) =>
+        {
+            Logger.Log((Logger.LogType) type, message);
+        };
+
         switch (api)
         {
             case GraphicsApi.D3D11:
@@ -99,6 +107,8 @@ public abstract unsafe class TestBase : IDisposable
         
         Initialize();
         
+        Stopwatch sw = Stopwatch.StartNew();
+        
         _alive = true;
         while (_alive)
         {
@@ -124,9 +134,12 @@ public abstract unsafe class TestBase : IDisposable
                     }
                 }
             }
+
+            float dt = (float) sw.Elapsed.TotalSeconds;
+            sw.Restart();
             
             ImGui.NewFrame();
-            Update(1 / 60.0f);
+            Update(dt);
             Draw();
             
             Graphics.Present();

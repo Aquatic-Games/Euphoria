@@ -56,7 +56,7 @@ public class Texture : IDisposable
         Size = size;
         
         DescriptorSet = Graphics.Device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
-            new DescriptorSetDescription(texture: GTexture));
+            new DescriptorSetDescription(texture: GTexture, sampler: Sampler));
 
         Id = _loadedTextures.AddItem(this);
     }
