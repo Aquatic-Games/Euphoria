@@ -11,6 +11,8 @@ public abstract class Component : IDisposable
     
     public virtual void Initialize() { }
 
+    public virtual void Tick(float dt) { }
+
     public virtual void Update(float dt) { }
 
     public virtual void Draw() { }

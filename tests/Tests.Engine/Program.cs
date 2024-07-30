@@ -12,7 +12,8 @@ GraphicsApi api = App.ShowGraphicsApiSelector();
 LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
 {
     WindowBorder = WindowBorder.Resizable,
-    Api = api
+    Api = api,
+    //TargetTicksPerSecond = 30
 };
 
 App.Run(options, new TestScene(), new TestApp());

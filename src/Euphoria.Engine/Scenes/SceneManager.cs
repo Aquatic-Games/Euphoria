@@ -31,6 +31,11 @@ public static class SceneManager
         _activeScene.Initialize();
     }
 
+    internal static void Tick(float dt)
+    {
+        _activeScene.Tick(dt);
+    }
+
     internal static void Update(float dt)
     {
         if (_sceneToSwitch != null)

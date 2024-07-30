@@ -59,6 +59,12 @@ public class Entity : IDisposable
             component.Initialize();
     }
 
+    public virtual void Tick(float dt)
+    {
+        foreach (Component component in _components)
+            component.Tick(dt);
+    }
+
     public virtual void Update(float dt)
     {
         foreach (Component component in _components)

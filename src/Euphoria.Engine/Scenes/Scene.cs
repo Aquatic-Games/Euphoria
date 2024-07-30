@@ -98,6 +98,12 @@ public class Scene : IDisposable
             entity.Initialize();
     }
 
+    public virtual void Tick(float dt)
+    {
+        foreach (Entity entity in _entities)
+            entity.Tick(dt);
+    }
+
     public virtual void Update(float dt)
     {
         foreach (Entity entity in _entities)

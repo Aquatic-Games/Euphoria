@@ -21,6 +21,10 @@ public struct LaunchOptions
 
     public GraphicsOptions GraphicsOptions;
 
+    public int TargetFramesPerSecond;
+
+    public int TargetTicksPerSecond;
+
     public LaunchOptions(string appName, Version appVersion)
     {
         AppName = appName;
@@ -33,5 +37,8 @@ public struct LaunchOptions
         Api = App.PickBestGraphicsApi();
         
         GraphicsOptions = GraphicsOptions.Default;
+
+        TargetFramesPerSecond = 0;
+        TargetTicksPerSecond = 60;
     }
 }

@@ -11,6 +11,11 @@ public class Application : IDisposable
         SceneManager.Initialize(initialScene);
     }
 
+    public virtual void Tick(float dt)
+    {
+        SceneManager.Tick(dt);
+    }
+
     public virtual void Update(float dt)
     {
         SceneManager.Update(dt);

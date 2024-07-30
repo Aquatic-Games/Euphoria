@@ -19,6 +19,10 @@ public static class App
 {
     private static double _targetDelta;
     private static int _targetFps;
+
+    private static double _targetTickDelta;
+    private static int _targetTicks;
+    private static double _tickDtAccumulator;
     
     public static string Name { get; private set; }
     public static Version Version { get; private set; }
@@ -32,10 +36,24 @@ public static class App
         set
         {
             _targetFps = value;
-            if (_targetFps == 0)
+            if (value == 0)
                 _targetDelta = 0;
             else
-                _targetDelta = 1.0 / _targetFps;
+                _targetDelta = 1.0 / value;
+        }
+    }
+
+    public static int TargetTicksPerSecond
+    {
+        get => _targetTicks;
+        set
+        {
+            _targetTicks = value;
+            // A value of 0 disables the fixed timestep.
+            if (value == 0)
+                _targetTickDelta = double.MaxValue;
+            else
+                _targetTickDelta = 1.0 / value;
         }
     }
     
@@ -57,6 +75,9 @@ public static class App
         Console.WriteLine("#####  #####  #      #   #  #####  #   #  #####  #   #          =---------------------=");
 
         Console.ForegroundColor = currentColor;
+
+        _targetDelta = 0;
+        _targetTickDelta = double.MaxValue;
     }
 
     public static void Run(in LaunchOptions options, Scene initialScene, Application application = null)
@@ -64,6 +85,8 @@ public static class App
         Name = options.AppName;
         Version = options.AppVersion;
         ReleaseConfig = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration.ToUpper() ?? "";
+        TargetFramesPerSecond = options.TargetFramesPerSecond;
+        TargetTicksPerSecond = options.TargetTicksPerSecond;
         
         Logger.Debug("Starting application.");
         Logger.Info($"Application: {options.AppName} v{options.AppVersion}, release config: {ReleaseConfig}");
@@ -132,10 +155,18 @@ public static class App
             Input.Update();
             Window.ProcessEvents();
 
-            float dt = (float) Metrics.TimeSinceLastFrame;
+            double delta = Metrics.TimeSinceLastFrame;
+            float dt = (float) delta;
             
             ImGuiController.Update(dt);
             EuphoriaDebug.Update();
+
+            _tickDtAccumulator += delta;
+            while (_tickDtAccumulator >= _targetTickDelta)
+            {
+                Application.Tick((float) _targetTickDelta);
+                _tickDtAccumulator -= _targetTickDelta;
+            }
             
             Application.Update(dt);
             Application.Draw();

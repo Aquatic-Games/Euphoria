@@ -17,7 +17,7 @@ public class TestScene : Scene
     
     public override void Initialize()
     {
-        App.TargetFramesPerSecond = 0;
+        //App.TargetFramesPerSecond = 0;
 
         _texture = new Texture($"{TestApp.FileBase}/Pictures/awesomeface.png");
 
