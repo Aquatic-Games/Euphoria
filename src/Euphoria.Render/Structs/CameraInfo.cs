@@ -2,11 +2,11 @@
 
 namespace Euphoria.Render.Renderers.Structs;
 
-public struct CameraInfo
+public readonly struct CameraInfo
 {
-    public Matrix4x4 Projection;
-    public Matrix4x4 View;
-    public Vector4 Position;
+    public readonly Matrix4x4 Projection;
+    public readonly Matrix4x4 View;
+    public readonly Vector4 Position;
 
     public CameraInfo(Matrix4x4 projection, Matrix4x4 view, Vector3 position)
     {

@@ -1,4 +1,5 @@
-﻿using grabs.Graphics;
+﻿using Euphoria.Math;
+using grabs.Graphics;
 
 namespace Euphoria.Render;
 
@@ -14,6 +15,8 @@ public struct MaterialDescription
 
     public Texture Occlusion;
 
+    public Color AlbedoColor;
+
     public RasterizerDescription Rasterizer;
     
     public DepthStencilDescription Depth;
@@ -27,6 +30,8 @@ public struct MaterialDescription
         Metallic = Texture.Black;
         Roughness = Texture.White;
         Occlusion = Texture.White;
+        
+        AlbedoColor = Color.White;
         
         Rasterizer = RasterizerDescription.CullClockwise;
         Depth = DepthStencilDescription.DepthLessEqual;

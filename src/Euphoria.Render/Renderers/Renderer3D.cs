@@ -6,6 +6,7 @@ using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Primitives;
 using Euphoria.Render.Renderers.Structs;
+using Euphoria.Render.Structs.Internal;
 using grabs.Graphics;
 using Buffer = grabs.Graphics.Buffer;
 using Color = Euphoria.Math.Color;
@@ -111,7 +112,7 @@ public class Renderer3D : IDisposable
         _cameraInfoSet =
             device.CreateDescriptorSet(CameraInfoLayout, new DescriptorSetDescription(buffer: _cameraInfoBuffer));
         
-        _drawInfoBuffer = device.CreateBuffer(BufferType.Constant, Matrix4x4.Identity, true);
+        _drawInfoBuffer = device.CreateBuffer(BufferType.Constant, new DrawInfo(), true);
         _drawInfoSet =
             device.CreateDescriptorSet(DrawInfoLayout, new DescriptorSetDescription(buffer: _drawInfoBuffer));
 
@@ -253,8 +254,9 @@ public class Renderer3D : IDisposable
         {
             Renderable renderable = tRenderable.Renderable;
             Material material = renderable.Material;
+            MaterialInfo info = material.MaterialInfo;
             
-            cl.UpdateBuffer(_drawInfoBuffer, 0, tRenderable.Transform);
+            cl.UpdateBuffer(_drawInfoBuffer, 0, new DrawInfo(tRenderable.Transform, info));
             cl.SetDescriptorSet(1, _drawInfoSet);
             cl.SetDescriptorSet(2, material.MatDescriptor);
             

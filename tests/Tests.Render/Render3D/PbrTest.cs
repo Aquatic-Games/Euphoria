@@ -54,7 +54,10 @@ public class PbrTest : TestBase
 
     protected override void Update(float dt)
     {
-        _value += dt * 0.3f;
+        _value += dt;
+
+        //_material.AlbedoColor = new Color(Color.White, (float.Sin(_value) + 1) * 0.5f);
+        _material.AlbedoColor = new Color(Color.White, 0.5f);
     }
 
     protected override void Draw()
@@ -68,7 +71,7 @@ public class PbrTest : TestBase
 
         renderer.Camera = new CameraInfo(projection, view, new Vector3(0, 1.5f, 2));
 
-        Matrix4x4 world = Matrix4x4.CreateScale(5, 1, 5) * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value);
+        Matrix4x4 world = Matrix4x4.CreateScale(5, 1, 5) * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, _value * 0.3f);
         //Matrix4x4 world = Matrix4x4.CreateFromYawPitchRoll(_value * 0.75f, _value, _value * 1.3f);
         //Matrix4x4 world = Matrix4x4.Identity;
         

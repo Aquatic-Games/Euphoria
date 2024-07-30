@@ -1,5 +1,8 @@
 ﻿using System;
+using Euphoria.Math;
 using Euphoria.Render.Renderers;
+using Euphoria.Render.Renderers.Structs;
+using Euphoria.Render.Structs.Internal;
 using grabs.Graphics;
 
 namespace Euphoria.Render;
@@ -15,6 +18,8 @@ public sealed class Material : IDisposable
     internal readonly Pipeline Pipeline;
     internal readonly DescriptorSet MatDescriptor;
 
+    public Color AlbedoColor;
+
     public Texture Albedo => _albedo;
 
     public Texture Normal => _normal;
@@ -25,6 +30,8 @@ public sealed class Material : IDisposable
 
     public Texture Occlusion => _occlusion;
 
+    internal MaterialInfo MaterialInfo => new MaterialInfo(AlbedoColor);
+
     public Material(in MaterialDescription description)
     {
         _albedo = description.Albedo;
@@ -32,6 +39,8 @@ public sealed class Material : IDisposable
         _metallic = description.Metallic;
         _roughness = description.Roughness;
         _occlusion = description.Occlusion;
+
+        AlbedoColor = description.AlbedoColor;
 
         Device device = Graphics.Device;
         Renderer3D renderer = Graphics.Renderer3D;

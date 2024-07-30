@@ -3,6 +3,7 @@
 #pragma debug
 
 #include "../Utils/Common.hlsli"
+#include "../Utils/Math.hlsli"
 
 struct VSInput
 {
@@ -40,6 +41,7 @@ cbuffer CameraInfo : register(b0, space0)
 cbuffer DrawInfo : register(b0, space1)
 {
     float4x4 World;
+    float4 AlbedoColor;
 }
 
 EE_SAMPLER2D(Albedo, 0, 2);
@@ -57,7 +59,7 @@ VSOutput VSMain(const in VSInput input)
     output.Position = mul(Projection, mul(View, worldSpace));
     output.WorldSpace = worldSpace.xyz;
     output.TexCoord = input.TexCoord;
-    output.Color = input.Color;
+    output.Color = input.Color * AlbedoColor;
 
     float3 T = normalize(mul((float3x3) World, input.Tangent));
     const float3 N = normalize(mul((float3x3) World, input.Normal));
@@ -77,6 +79,8 @@ PSOutput PSMain(const in VSOutput input)
     PSOutput output;
 
     const float4 albedoTex = EE_TEXTURE(Albedo, input.TexCoord) * input.Color;
+    clip(albedoTex.a - GetBayerValue(input.Position.xy));
+    
     float4 normalTex = EE_TEXTURE(Normal, input.TexCoord);
     // I believe SPIR-v cross makes DX shaders essentially behave like GL shaders, meaning that only the GL normal maps
     // are correct.
