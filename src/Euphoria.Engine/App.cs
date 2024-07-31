@@ -133,6 +133,9 @@ public static class App
         
         SetEngineTitle(0);
         
+        Logger.Debug("Initializing physics.");
+        Physics.Physics.Initialize();
+        
         Logger.Debug("Initializing metrics system.");
         Metrics.Initialize(SetEngineTitle);
         
@@ -164,6 +167,7 @@ public static class App
             _tickDtAccumulator += delta;
             while (_tickDtAccumulator >= _targetTickDelta)
             {
+                Physics.Physics.Tick(dt);
                 Application.Tick((float) _targetTickDelta);
                 _tickDtAccumulator -= _targetTickDelta;
             }

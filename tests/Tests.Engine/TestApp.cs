@@ -19,6 +19,8 @@ public class TestApp : Application
     public override void Initialize(Scene initialScene)
     {
         base.Initialize(initialScene);
+
+        //Graphics.VSyncMode = VSyncMode.Off;
         
         ImGuiRenderer imGui = Graphics.ImGuiRenderer;
         imGui.AddFont($"{FileBase}/Downloads/Russo_One/RussoOne-Regular.ttf", 14, "RussoOne");
