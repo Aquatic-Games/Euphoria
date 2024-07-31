@@ -27,6 +27,8 @@ public sealed class Renderable : IDisposable
 
     public Renderable(Mesh mesh, Material material, UpdateFlags updateFlags = UpdateFlags.None)
     {
+        Logger.Trace($"Creating renderable from mesh. vSize: {mesh.Vertices.Length} iSize: {mesh.Indices.Length} flags: {updateFlags}");
+        
         Device device = Graphics.Device;
         
         bool updatable = (updateFlags & UpdateFlags.Updatable) == UpdateFlags.Updatable;
@@ -42,6 +44,8 @@ public sealed class Renderable : IDisposable
     public Renderable(uint numVertices, uint numIndices, Material material,
         UpdateFlags updateFlags = UpdateFlags.Updatable)
     {
+        Logger.Trace($"Creating empty renderable. vSize: {numVertices} iSize: {numIndices} flags: {updateFlags}");
+        
         if ((updateFlags & UpdateFlags.Updatable) != UpdateFlags.Updatable)
             throw new Exception("Empty renderable must be marked with \"Updatable\" flag.");
 
@@ -59,6 +63,8 @@ public sealed class Renderable : IDisposable
 
     public void Update(Mesh mesh)
     {
+        Logger.Trace("Updating renderable.");
+        
         bool updatable = (UpdateFlags & UpdateFlags.Updatable) == UpdateFlags.Updatable;
         bool recreateBuffers = (UpdateFlags & UpdateFlags.NoRecreateBuffers) != UpdateFlags.NoRecreateBuffers;
         bool expandBuffers = (UpdateFlags & UpdateFlags.ExpandBuffers) == UpdateFlags.ExpandBuffers;

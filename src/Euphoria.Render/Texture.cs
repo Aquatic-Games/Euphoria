@@ -33,6 +33,9 @@ public class Texture : IDisposable
 
         TextureDescription desc = TextureDescription.Texture2D((uint) size.Width, (uint) size.Height, 0, format,
             TextureUsage.ShaderResource | TextureUsage.GenerateMips);
+        
+        Id = _loadedTextures.AddItem(this);
+        Logger.Trace($"Creating texture {Id}. ({size} {format})");
 
         if (data == null)
             GTexture = device.CreateTexture(desc);
@@ -44,8 +47,6 @@ public class Texture : IDisposable
 
         DescriptorSet = device.CreateDescriptorSet(Graphics.TextureDescriptorLayout,
             new DescriptorSetDescription(texture: GTexture, sampler: Sampler));
-
-        Id = _loadedTextures.AddItem(this);
     }
 
     internal Texture(GrabsTexture texture, Sampler sampler, Size<int> size, bool ownsTexture = true)
@@ -69,6 +70,8 @@ public class Texture : IDisposable
 
     public void Dispose()
     {
+        Logger.Trace($"Disposing texture {Id}.");
+        
         DescriptorSet.Dispose();
 
         if (_ownsTexture)
@@ -96,6 +99,7 @@ public class Texture : IDisposable
 
     public static void StoreTexture(string name, Texture texture)
     {
+        Logger.Trace($"Assigning name \"{name}\" to texture {texture.Id}.");
         _namedTextures[name] = texture.Id;
     }
 

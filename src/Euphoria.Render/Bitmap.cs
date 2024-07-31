@@ -1,4 +1,5 @@
 using System.IO;
+using Euphoria.Core;
 using Euphoria.Math;
 using grabs.Graphics;
 using StbImageSharp;
@@ -15,6 +16,8 @@ public class Bitmap
 
     public Bitmap(string path)
     {
+        Logger.Trace($"Loading image \"{path}\".");
+        
         using FileStream stream = File.OpenRead(path);
         ImageResult result = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
