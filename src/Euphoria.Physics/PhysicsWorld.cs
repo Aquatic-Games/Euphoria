@@ -27,6 +27,26 @@ public static class PhysicsWorld
             new SolveDescription(8, 1));
     }
 
+    public static Body CreateBody(BodyDescription description)
+    {
+        switch (description.BodyType)
+        {
+            case BodyType.Dynamic:
+            {
+                BepuPhysics.BodyDescription desc = BepuPhysics.BodyDescription.CreateDynamic()
+                
+                break;
+            }
+            
+            case BodyType.Kinematic:
+                break;
+            case BodyType.Static:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     public static void Tick(float dt)
     {
         Simulation.Timestep(dt, _threadDispatcher);
