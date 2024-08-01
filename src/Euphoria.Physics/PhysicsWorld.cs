@@ -1,7 +1,9 @@
 ﻿using BepuPhysics;
+using BepuPhysics.Collidables;
 using BepuUtilities;
 using BepuUtilities.Memory;
 using Euphoria.Physics.Callbacks;
+using IShape = Euphoria.Physics.Shapes.IShape;
 
 namespace Euphoria.Physics;
 
@@ -27,21 +29,29 @@ public static class PhysicsWorld
             new SolveDescription(8, 1));
     }
 
-    public static Body CreateBody(BodyDescription description)
+    public static Body CreateBody(BodyDescription description, IShape shape)
     {
+        BodyInertia inertia = shape.CalculateInertia(description.Mass);
+        TypedIndex index = shape.AddToSimulation(Simulation);
+        
         switch (description.BodyType)
         {
             case BodyType.Dynamic:
             {
-                BepuPhysics.BodyDescription desc = BepuPhysics.BodyDescription.CreateDynamic()
-                
-                break;
+                BepuPhysics.BodyDescription desc = BepuPhysics.BodyDescription.CreateDynamic(
+                    new RigidPose(description.Position, description.Rotation), inertia, index,
+                    new BodyActivityDescription(0.01f));
+
+                BodyHandle handle = Simulation.Bodies.Add(desc);
+                return new Body(new CollidableReference(CollidableMobility.Dynamic, handle));
             }
             
             case BodyType.Kinematic:
-                break;
+                throw new NotImplementedException();
+            
             case BodyType.Static:
-                break;
+                throw new NotImplementedException();
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
