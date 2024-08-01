@@ -16,4 +16,4 @@ LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
     //TargetTicksPerSecond = 30
 };
 
-App.Run(options, new TestScene(), new TestApp());
+App.Run(options, new PhysicsScene(), new TestApp());

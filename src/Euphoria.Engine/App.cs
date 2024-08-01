@@ -168,7 +168,7 @@ public static class App
             _tickDtAccumulator += delta;
             while (_tickDtAccumulator >= _targetTickDelta)
             {
-                PhysicsWorld.Tick(dt);
+                PhysicsWorld.Tick((float) _targetTickDelta);
                 Application.Tick((float) _targetTickDelta);
                 _tickDtAccumulator -= _targetTickDelta;
             }

@@ -1,4 +1,5 @@
-﻿using BepuPhysics;
+﻿using System.Numerics;
+using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuUtilities;
 using BepuUtilities.Memory;
@@ -17,10 +18,16 @@ public static class PhysicsWorld
     
     internal static Simulation Simulation;
 
+    public static Vector3 Gravity
+    {
+        get => _poseIntegratorCallbacks.Gravity;
+        set => _poseIntegratorCallbacks.Gravity = value;
+    }
+
     public static void Initialize()
     {
         _narrowPhaseCallbacks = new NarrowPhaseCallbacks();
-        _poseIntegratorCallbacks = new PoseIntegratorCallbacks();
+        _poseIntegratorCallbacks = new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0));
         
         _bufferPool = new BufferPool();
         _threadDispatcher = new ThreadDispatcher(Environment.ProcessorCount);
@@ -29,7 +36,7 @@ public static class PhysicsWorld
             new SolveDescription(8, 1));
     }
 
-    public static Body CreateBody(BodyDescription description, IShape shape)
+    public static Body CreateBody(in BodyDescription description, IShape shape)
     {
         BodyInertia inertia = shape.CalculateInertia(description.Mass);
         TypedIndex index = shape.AddToSimulation(Simulation);
