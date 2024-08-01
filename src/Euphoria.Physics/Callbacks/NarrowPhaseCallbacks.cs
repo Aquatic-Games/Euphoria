@@ -1,6 +1,7 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuPhysics.CollisionDetection;
+using BepuPhysics.Constraints;
 
 namespace Euphoria.Physics.Callbacks;
 
@@ -24,7 +25,10 @@ internal struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
     public bool ConfigureContactManifold<TManifold>(int workerIndex, CollidablePair pair, ref TManifold manifold,
         out PairMaterialProperties pairMaterial) where TManifold : unmanaged, IContactManifold<TManifold>
     {
-        throw new System.NotImplementedException();
+        pairMaterial.FrictionCoefficient = 1f;
+        pairMaterial.MaximumRecoveryVelocity = 2f;
+        pairMaterial.SpringSettings = new SpringSettings(10, 0);
+        return true;
     }
 
     public bool ConfigureContactManifold(int workerIndex, CollidablePair pair, int childIndexA, int childIndexB,

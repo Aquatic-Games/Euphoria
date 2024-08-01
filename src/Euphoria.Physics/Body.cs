@@ -13,7 +13,18 @@ public struct Body
         get
         {
             Simulation simulation = PhysicsWorld.Simulation;
-            return ref simulation.Bodies[Reference.BodyHandle].Pose.Position;
+            switch (Reference.Mobility)
+            {
+                case CollidableMobility.Dynamic:
+                case CollidableMobility.Kinematic:
+                    return ref simulation.Bodies[Reference.BodyHandle].Pose.Position;
+                
+                case CollidableMobility.Static:
+                    return ref simulation.Statics[Reference.StaticHandle].Pose.Position;
+                    
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 
@@ -22,7 +33,18 @@ public struct Body
         get
         {
             Simulation simulation = PhysicsWorld.Simulation;
-            return ref simulation.Bodies[Reference.BodyHandle].Pose.Orientation;
+            switch (Reference.Mobility)
+            {
+                case CollidableMobility.Dynamic:
+                case CollidableMobility.Kinematic:
+                    return ref simulation.Bodies[Reference.BodyHandle].Pose.Orientation;
+                
+                case CollidableMobility.Static:
+                    return ref simulation.Statics[Reference.StaticHandle].Pose.Orientation;
+                    
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 

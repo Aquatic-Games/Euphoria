@@ -40,14 +40,14 @@ public static class PhysicsWorld
     {
         BodyInertia inertia = shape.CalculateInertia(description.Mass);
         TypedIndex index = shape.AddToSimulation(Simulation);
+        RigidPose pose = new RigidPose(description.Position, description.Rotation);
         
         switch (description.BodyType)
         {
             case BodyType.Dynamic:
             {
-                BepuPhysics.BodyDescription desc = BepuPhysics.BodyDescription.CreateDynamic(
-                    new RigidPose(description.Position, description.Rotation), inertia, index,
-                    new BodyActivityDescription(0.01f));
+                BepuPhysics.BodyDescription desc =
+                    BepuPhysics.BodyDescription.CreateDynamic(pose, inertia, index, new BodyActivityDescription(0.01f));
 
                 BodyHandle handle = Simulation.Bodies.Add(desc);
                 return new Body(new CollidableReference(CollidableMobility.Dynamic, handle));
@@ -55,9 +55,14 @@ public static class PhysicsWorld
             
             case BodyType.Kinematic:
                 throw new NotImplementedException();
-            
+
             case BodyType.Static:
-                throw new NotImplementedException();
+            {
+                StaticDescription desc = new StaticDescription(pose, index);
+
+                StaticHandle handle = Simulation.Statics.Add(desc);
+                return new Body(new CollidableReference(handle));
+            }
             
             default:
                 throw new ArgumentOutOfRangeException();
