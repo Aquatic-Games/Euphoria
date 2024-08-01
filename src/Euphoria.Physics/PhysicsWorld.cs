@@ -1,12 +1,11 @@
-﻿using System;
-using BepuPhysics;
+﻿using BepuPhysics;
 using BepuUtilities;
 using BepuUtilities.Memory;
-using Euphoria.Engine.Physics.Callbacks;
+using Euphoria.Physics.Callbacks;
 
-namespace Euphoria.Engine.Physics;
+namespace Euphoria.Physics;
 
-public static class Physics
+public static class PhysicsWorld
 {
     private static NarrowPhaseCallbacks _narrowPhaseCallbacks;
     private static PoseIntegratorCallbacks _poseIntegratorCallbacks;
@@ -14,9 +13,9 @@ public static class Physics
     private static BufferPool _bufferPool;
     private static ThreadDispatcher _threadDispatcher;
     
-    public static Simulation Simulation;
+    internal static Simulation Simulation;
 
-    internal static void Initialize()
+    public static void Initialize()
     {
         _narrowPhaseCallbacks = new NarrowPhaseCallbacks();
         _poseIntegratorCallbacks = new PoseIntegratorCallbacks();
@@ -28,7 +27,7 @@ public static class Physics
             new SolveDescription(8, 1));
     }
 
-    internal static void Tick(float dt)
+    public static void Tick(float dt)
     {
         Simulation.Timestep(dt, _threadDispatcher);
     }

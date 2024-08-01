@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Math", "tests\Tests.M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "tests\Tests.Common\Tests.Common.csproj", "{A797E6A5-EBE0-492D-9766-29049EA67DB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Physics", "src\Euphoria.Physics\Euphoria.Physics.csproj", "{B21728D5-A0C4-436A-8A40-B1C6C50BE986}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +128,10 @@ Global
 		{A797E6A5-EBE0-492D-9766-29049EA67DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A797E6A5-EBE0-492D-9766-29049EA67DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A797E6A5-EBE0-492D-9766-29049EA67DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B21728D5-A0C4-436A-8A40-B1C6C50BE986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B21728D5-A0C4-436A-8A40-B1C6C50BE986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B21728D5-A0C4-436A-8A40-B1C6C50BE986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B21728D5-A0C4-436A-8A40-B1C6C50BE986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B6124373-549F-4A9D-8979-A48CBCB22C79} = {E1164F69-7032-446A-9DA8-23D0407C58B3}

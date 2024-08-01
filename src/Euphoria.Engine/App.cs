@@ -7,6 +7,7 @@ using Euphoria.Engine.Debugging;
 using Euphoria.Engine.Exceptions;
 using Euphoria.Engine.InputSystem;
 using Euphoria.Engine.Scenes;
+using Euphoria.Physics;
 using Euphoria.Render;
 using grabs.Graphics;
 using grabs.Graphics.D3D11;
@@ -134,7 +135,7 @@ public static class App
         SetEngineTitle(0);
         
         Logger.Debug("Initializing physics.");
-        Physics.Physics.Initialize();
+        PhysicsWorld.Initialize();
         
         Logger.Debug("Initializing metrics system.");
         Metrics.Initialize(SetEngineTitle);
@@ -167,7 +168,7 @@ public static class App
             _tickDtAccumulator += delta;
             while (_tickDtAccumulator >= _targetTickDelta)
             {
-                Physics.Physics.Tick(dt);
+                PhysicsWorld.Tick(dt);
                 Application.Tick((float) _targetTickDelta);
                 _tickDtAccumulator -= _targetTickDelta;
             }

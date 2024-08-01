@@ -2,7 +2,7 @@
 using BepuPhysics;
 using BepuUtilities;
 
-namespace Euphoria.Engine.Physics.Callbacks;
+namespace Euphoria.Physics.Callbacks;
 
 internal struct PoseIntegratorCallbacks : IPoseIntegratorCallbacks
 {

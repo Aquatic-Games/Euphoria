@@ -2,7 +2,7 @@
 using BepuPhysics.Collidables;
 using BepuPhysics.CollisionDetection;
 
-namespace Euphoria.Engine.Physics.Callbacks;
+namespace Euphoria.Physics.Callbacks;
 
 internal struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
 {
