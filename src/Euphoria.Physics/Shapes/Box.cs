@@ -17,8 +17,13 @@ public struct Box : IShape
         return BepuBox.ComputeInertia(mass);
     }
 
-    public TypedIndex AddToSimulation(Simulation simulation)
+    public TypedIndex AddToSimulation(Simulation simulation, in BodyDescription description)
     {
-        return simulation.Shapes.Add(BepuBox);
+        BepuPhysics.Collidables.Box box = BepuBox;
+        box.HalfWidth *= description.Scale.X;
+        box.HalfHeight *= description.Scale.Y;
+        box.HalfLength *= description.Scale.Z;
+        
+        return simulation.Shapes.Add(box);
     }
 }

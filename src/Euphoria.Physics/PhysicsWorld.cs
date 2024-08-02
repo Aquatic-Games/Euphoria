@@ -39,7 +39,7 @@ public static class PhysicsWorld
     public static Body CreateBody(in BodyDescription description, IShape shape)
     {
         BodyInertia inertia = shape.CalculateInertia(description.Mass);
-        TypedIndex index = shape.AddToSimulation(Simulation);
+        TypedIndex index = shape.AddToSimulation(Simulation, description);
         RigidPose pose = new RigidPose(description.Position, description.Rotation);
         
         switch (description.BodyType)

@@ -1,3 +1,4 @@
+using System;
 using Euphoria.Physics;
 using Euphoria.Physics.Shapes;
 
@@ -30,15 +31,20 @@ public class Rigidbody : Component
         BodyDescription description;
         
         if (_mass == 0)
-            description = BodyDescription.Static(Transform.Position, Transform.Rotation);
+            description = BodyDescription.Static(Transform.Position, Transform.Rotation, Transform.Scale);
         else
-            description = BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation);
+            description = BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation, Transform.Scale);
 
         _body = PhysicsWorld.CreateBody(description, Shape);
     }
 
     public override void Tick(float dt)
     {
+        if (Transform.Scale != _prevTransform.Scale)
+        {
+            throw new NotImplementedException();
+        }
+        
         if (_interpolate)
         {
             _prevTransform = _newTransform;
@@ -47,6 +53,7 @@ public class Rigidbody : Component
         }
         else
         {
+            _prevTransform = Transform;
             Transform.Position = _body.Position;
             Transform.Rotation = _body.Rotation;
         }

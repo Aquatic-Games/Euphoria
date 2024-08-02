@@ -26,9 +26,9 @@ public class PhysicsComponent : Component
     public override void Initialize()
     {
         if (_mass == 0)
-            _body = PhysicsWorld.CreateBody(BodyDescription.Static(Transform.Position, Transform.Rotation), _shape);
+            _body = PhysicsWorld.CreateBody(BodyDescription.Static(Transform.Position, Transform.Rotation, Transform.Scale), _shape);
         else
-            _body = PhysicsWorld.CreateBody(BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation), _shape);
+            _body = PhysicsWorld.CreateBody(BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation, Transform.Scale), _shape);
 
         _previousTransform = Transform;
         _currentTransform = Transform;

@@ -12,17 +12,20 @@ public struct BodyDescription
 
     public Quaternion Rotation;
 
-    public BodyDescription(BodyType bodyType, float mass, Vector3 position, Quaternion rotation)
+    public Vector3 Scale;
+
+    public BodyDescription(BodyType bodyType, float mass, Vector3 position, Quaternion rotation, Vector3 scale)
     {
         BodyType = bodyType;
         Mass = mass;
         Position = position;
         Rotation = rotation;
+        Scale = scale;
     }
 
-    public static BodyDescription Dynamic(float mass, Vector3 position, Quaternion rotation)
-        => new BodyDescription(BodyType.Dynamic, mass, position, rotation);
+    public static BodyDescription Dynamic(float mass, Vector3 position, Quaternion rotation, Vector3 scale)
+        => new BodyDescription(BodyType.Dynamic, mass, position, rotation, scale);
 
-    public static BodyDescription Static(Vector3 position, Quaternion rotation)
-        => new BodyDescription(BodyType.Static, 0, position, rotation);
+    public static BodyDescription Static(Vector3 position, Quaternion rotation, Vector3 scale)
+        => new BodyDescription(BodyType.Static, 0, position, rotation, scale);
 }

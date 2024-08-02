@@ -7,5 +7,5 @@ public interface IShape
 {
     internal BodyInertia CalculateInertia(float mass);
     
-    internal TypedIndex AddToSimulation(Simulation simulation);
+    internal TypedIndex AddToSimulation(Simulation simulation, in BodyDescription description);
 }
