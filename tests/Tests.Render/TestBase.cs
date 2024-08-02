@@ -15,7 +15,7 @@ namespace Tests.Render;
 
 public abstract unsafe class TestBase : IDisposable
 {
-    public const string FileBase = "C:/Users/ollie";
+    public const string FileBase = "/home/aqua";
     
     private Sdl _sdl;
     private string _title;

@@ -50,4 +50,15 @@ public struct Transform
     public Vector3 Up => Vector3.Transform(Vector3.UnitY, Rotation);
 
     public Vector3 Down => Vector3.Transform(-Vector3.UnitY, Rotation);
+
+    public static Transform Lerp(in Transform a, in Transform b, float amount)
+    {
+        return new Transform()
+        {
+            Position = Vector3.Lerp(a.Position, b.Position, amount),
+            Rotation = Quaternion.Lerp(a.Rotation, b.Rotation, amount),
+            Scale = Vector3.Lerp(a.Scale, b.Scale, amount),
+            Origin = Vector3.Lerp(a.Origin, b.Origin, amount)
+        };
+    }
 }

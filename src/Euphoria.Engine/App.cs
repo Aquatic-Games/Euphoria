@@ -31,6 +31,8 @@ public static class App
     
     public static bool IsRunning { get; private set; }
 
+    public static double TickInterpolation;
+
     public static int TargetFramesPerSecond
     {
         get => _targetFps;
@@ -172,6 +174,8 @@ public static class App
                 Application.Tick((float) _targetTickDelta);
                 _tickDtAccumulator -= _targetTickDelta;
             }
+
+            TickInterpolation = _tickDtAccumulator / _targetTickDelta;
             
             Application.Update(dt);
             Application.Draw();
@@ -213,6 +217,10 @@ public static class App
             buttons.Add(new MessageBox.Button("OpenGL", (int) GraphicsApi.OpenGL));
             message.AppendLine("- OpenGL: Legacy. Use if no other options work.");
         }
+
+        // No point showing the message if only one API is supported.
+        if (buttons.Count == 1)
+            return (GraphicsApi) buttons[0].Id;
         
         buttons.Add(new MessageBox.Button("Auto", int.MaxValue));
         message.Append("Press auto if you don't know which one to pick.");

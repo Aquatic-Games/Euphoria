@@ -23,15 +23,15 @@ public class PhysicsScene : Scene
         Material material = new Material(new MaterialDescription(Texture.White));
         
         Entity staticCube = new Entity("StaticCube",
-            new Transform(new Vector3(0, -2, 0), Quaternion.Identity, new Vector3(10, 1, 10), Vector3.Zero));
+            new Transform(new Vector3(0, -2, 0), Quaternion.Identity, new Vector3(20, 1, 20), Vector3.Zero));
         staticCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        staticCube.AddComponent(new PhysicsComponent(new Box(10, 1, 10), 0));
+        staticCube.AddComponent(new PhysicsComponent(new Box(20, 1, 20), 0));
         
         AddEntity(staticCube);
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1000; i++)
         {
-            Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3(0, 15 + i, 0)));
+            Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3((i % 20) - 10, 15 + i, (i % 20) - 10)));
             dynamicCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
             dynamicCube.AddComponent(new PhysicsComponent(new Box(1, 1, 1), 1));
             

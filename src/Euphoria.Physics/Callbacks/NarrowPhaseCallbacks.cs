@@ -27,7 +27,7 @@ internal struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
     {
         pairMaterial.FrictionCoefficient = 1f;
         pairMaterial.MaximumRecoveryVelocity = 2f;
-        pairMaterial.SpringSettings = new SpringSettings(10, 0);
+        pairMaterial.SpringSettings = new SpringSettings(30, 1);
         return true;
     }
 
