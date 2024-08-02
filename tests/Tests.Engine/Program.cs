@@ -13,7 +13,7 @@ LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
 {
     WindowBorder = WindowBorder.Resizable,
     Api = api,
-    TargetTicksPerSecond = 60,
+    TargetTicksPerSecond = 10,
     TargetFramesPerSecond = 0
 };
 

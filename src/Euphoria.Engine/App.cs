@@ -31,7 +31,7 @@ public static class App
     
     public static bool IsRunning { get; private set; }
 
-    public static double TickInterpolation;
+    public static double TickInterpolation { get; private set; }
 
     public static int TargetFramesPerSecond
     {
