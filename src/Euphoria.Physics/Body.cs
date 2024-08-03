@@ -6,21 +6,23 @@ namespace Euphoria.Physics;
 
 public struct Body
 {
-    public readonly CollidableReference Reference;
+    private readonly CollidableReference _collidable;
+
+    public ulong Id => _collidable.Packed;
 
     public ref Vector3 Position
     {
         get
         {
             Simulation simulation = PhysicsWorld.Simulation;
-            switch (Reference.Mobility)
+            switch (_collidable.Mobility)
             {
                 case CollidableMobility.Dynamic:
                 case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[Reference.BodyHandle].Pose.Position;
+                    return ref simulation.Bodies[_collidable.BodyHandle].Pose.Position;
                 
                 case CollidableMobility.Static:
-                    return ref simulation.Statics[Reference.StaticHandle].Pose.Position;
+                    return ref simulation.Statics[_collidable.StaticHandle].Pose.Position;
                     
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -33,14 +35,14 @@ public struct Body
         get
         {
             Simulation simulation = PhysicsWorld.Simulation;
-            switch (Reference.Mobility)
+            switch (_collidable.Mobility)
             {
                 case CollidableMobility.Dynamic:
                 case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[Reference.BodyHandle].Pose.Orientation;
+                    return ref simulation.Bodies[_collidable.BodyHandle].Pose.Orientation;
                 
                 case CollidableMobility.Static:
-                    return ref simulation.Statics[Reference.StaticHandle].Pose.Orientation;
+                    return ref simulation.Statics[_collidable.StaticHandle].Pose.Orientation;
                     
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -48,8 +50,8 @@ public struct Body
         }
     }
 
-    public Body(CollidableReference reference)
+    public Body(CollidableReference collidable)
     {
-        Reference = reference;
+        _collidable = collidable;
     }
 }

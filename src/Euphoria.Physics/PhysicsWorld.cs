@@ -3,7 +3,8 @@ using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuUtilities;
 using BepuUtilities.Memory;
-using Euphoria.Physics.Callbacks;
+using Euphoria.Physics.Internal;
+using Euphoria.Physics.Internal.Callbacks;
 using IShape = Euphoria.Physics.Shapes.IShape;
 
 namespace Euphoria.Physics;
@@ -67,6 +68,23 @@ public static class PhysicsWorld
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public static bool Raycast(Vector3 position, Vector3 direction, float maxDistance, out RayHit hit)
+    {
+        RayHitHandler hitHandler = new RayHitHandler();
+        Simulation.RayCast(position, direction, maxDistance, ref hitHandler);
+
+        if (hitHandler.HasHit)
+        {
+            Vector3 hitPos = position + (direction * hitHandler.Distance);
+            
+            hit = new RayHit(new Body(hitHandler.Collidable), hitPos, hitHandler.Normal);
+            return true;
+        }
+
+        hit = new RayHit();
+        return false;
     }
 
     public static void Tick(float dt)

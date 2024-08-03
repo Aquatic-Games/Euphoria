@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Euphoria.Engine.Entities;
 using Euphoria.Engine.Entities.Components;
 using Euphoria.Engine.Scenes;
@@ -58,5 +59,18 @@ public class PhysicsScene : Scene
             
             AddEntity(dynamicCube);
         }
+    }
+
+    public override void Tick(float dt)
+    {
+        base.Tick(dt);
+
+        if (PhysicsWorld.Raycast(Camera.Transform.Position, Camera.Transform.Forward, 100, out RayHit hit))
+        {
+            Console.WriteLine(
+                $"Yes! Hit body {hit.Body.Id}, position: {hit.Body.Position} (HitPos: {hit.Position}, Normal: {hit.Normal})");
+        }
+        else
+            Console.WriteLine("Nope");
     }
 }
