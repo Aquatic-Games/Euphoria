@@ -1,4 +1,5 @@
 using System;
+using Euphoria.Engine.Scenes;
 using Euphoria.Physics;
 using Euphoria.Physics.Shapes;
 
@@ -36,6 +37,8 @@ public class Rigidbody : Component
             description = BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation, Transform.Scale);
 
         _body = PhysicsWorld.CreateBody(description, Shape);
+        // TODO: These types of functions should be directly in the component so we don't need to get the active scene each time.
+        SceneManager.ActiveScene.BodyIdToEntity.Add(_body.Id, Entity);
     }
 
     public override void Tick(float dt)

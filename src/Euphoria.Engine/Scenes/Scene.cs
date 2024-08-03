@@ -16,6 +16,9 @@ public class Scene : IDisposable
     private List<Entity> _entities;
     private Dictionary<string, Entity> _entityPointers;
     private bool _hasInitialized;
+
+    // TODO: A better way to do this please! I don't like this much.
+    public readonly Dictionary<ulong, Entity> BodyIdToEntity;
     
     public Camera Camera
     {
@@ -32,6 +35,7 @@ public class Scene : IDisposable
     {
         _entities = new List<Entity>();
         _entityPointers = new Dictionary<string, Entity>();
+        BodyIdToEntity = new Dictionary<ulong, Entity>();
 
         AddEntity(new Camera("Camera", new Transform(), 75));
     }
