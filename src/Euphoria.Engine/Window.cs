@@ -73,6 +73,9 @@ public static unsafe class Window
         set => _sdl.SetClipboardText(value);
     }
 
+    public static bool Focused =>
+        (_sdl.GetWindowFlags(_window) & (uint) WindowFlags.InputFocus) == (uint) WindowFlags.InputFocus;
+
     internal static void Create(in WindowInfo info, GraphicsApi api)
     {
         _userTitle = info.Title;
@@ -150,6 +153,8 @@ public static unsafe class Window
 
     internal static void ProcessEvents()
     {
+        bool active = Focused;
+        
         Event winEvent;
         while (_sdl.PollEvent(&winEvent) != 0)
         {
@@ -175,6 +180,9 @@ public static unsafe class Window
 
                 case EventType.Keydown:
                 {
+                    if (!active)
+                        break;
+                    
                     KeyboardEvent keyboard = winEvent.Key;
 
                     if (keyboard.Repeat == 0)
@@ -192,6 +200,9 @@ public static unsafe class Window
 
                 case EventType.Mousebuttondown:
                 {
+                    if (!active)
+                        break;
+                    
                     MouseButtonEvent button = winEvent.Button;
                     MouseButtonDown((MouseButton) button.Button);
                     break;
@@ -206,6 +217,9 @@ public static unsafe class Window
 
                 case EventType.Mousemotion:
                 {
+                    if (!active)
+                        break;
+                    
                     MouseMotionEvent motion = winEvent.Motion;
                     MouseMove(new Vector2(motion.X, motion.Y), new Vector2(motion.Xrel, motion.Yrel));
                     break;
@@ -213,6 +227,9 @@ public static unsafe class Window
 
                 case EventType.Mousewheel:
                 {
+                    if (!active)
+                        break;
+                    
                     MouseWheelEvent wheel = winEvent.Wheel;
                     MouseScroll(new Vector2(wheel.X, wheel.Y));
                     break;
@@ -220,6 +237,9 @@ public static unsafe class Window
 
                 case EventType.Textinput:
                 {
+                    if (!active)
+                        break;
+                    
                     TextInputEvent input = winEvent.Text;
                     for (int i = 0; input.Text[i] != 0; i++)
                         TextInput((char) input.Text[i]);

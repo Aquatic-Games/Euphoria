@@ -75,27 +75,10 @@ public class PhysicsScene : Scene
         {
             //Console.WriteLine(
             //    $"Yes! Hit Entity '{hit.Entity().Name}', Position: {hit.Entity().Transform.Position} (HitPos: {hit.Position}, Normal: {hit.Normal})");
-
-            Vector3 forward = hit.Normal;
-            Vector3 right = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, forward));
-            Vector3 up = Vector3.Normalize(Vector3.Cross(forward, right));
-            
-            Matrix4x4 dir = Matrix4x4.Identity;
-            dir.M11 = -right.X;
-            dir.M12 = up.X;
-            dir.M13 = forward.X;
-            
-            dir.M21 = right.Y;
-            dir.M22 = up.Y;
-            dir.M23 = forward.Y;
-            
-            dir.M31 = right.Z;
-            dir.M32 = up.Z;
-            dir.M33 = forward.Z;
             
             ref Transform transform = ref GetEntity("HitCube").Transform;
             transform.Position = hit.Position;
-            transform.Rotation = Quaternion.Identity;
+            transform.Rotation = hit.Entity().Transform.Rotation;
         }
         //else
             //Console.WriteLine("Nope");
