@@ -55,7 +55,8 @@ public class PhysicsScene : Scene
         for (int i = 0; i < 100; i++)
         {
             Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3((i % 20) - 10, 15 + i, (i % 20) - 10)));
-            dynamicCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
+            dynamicCube.AddComponent(new HighlightComponent());
+            dynamicCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), new Material(new MaterialDescription(Texture.White))));
             dynamicCube.AddComponent(new Rigidbody(new Box(1, 1, 1), 1, interpolation));
             
             AddEntity(dynamicCube);
@@ -79,6 +80,9 @@ public class PhysicsScene : Scene
             ref Transform transform = ref GetEntity("HitCube").Transform;
             transform.Position = hit.Position;
             transform.Rotation = hit.Entity().Transform.Rotation;
+
+            if (hit.Entity().TryGetComponent(out HighlightComponent highlight))
+                highlight.Highlight = true;
         }
         //else
             //Console.WriteLine("Nope");

@@ -48,6 +48,25 @@ public class Entity : IDisposable
             throw new Exception($"Component of type {component.GetType()} has already been added to the entity.");
     }
 
+    public bool TryGetComponent<T>(out T component) where T : Component
+    {
+        component = null;
+        
+        if (!_componentPointers.TryGetValue(typeof(T), out Component comp))
+            return false;
+
+        component = (T) comp;
+        return true;
+    }
+
+    public T GetComponent<T>() where T : Component
+    {
+        if (!TryGetComponent(out T component))
+            throw new Exception($"Entity does not contain component of type {component.GetType()}.");
+
+        return component;
+    }
+
     public virtual void Initialize()
     {
         if (_hasInitialized)
