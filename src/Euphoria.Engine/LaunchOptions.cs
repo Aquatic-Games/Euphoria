@@ -10,16 +10,10 @@ public struct LaunchOptions
     public string AppName;
 
     public Version AppVersion;
+
+    public WindowInfo Window;
     
-    public string WindowTitle;
-    
-    public Size<int> WindowSize;
-
-    public WindowBorder WindowBorder;
-
-    public GraphicsApi Api;
-
-    public GraphicsOptions GraphicsOptions;
+    public GraphicsInfo Graphics;
 
     public int TargetFramesPerSecond;
 
@@ -30,13 +24,8 @@ public struct LaunchOptions
         AppName = appName;
         AppVersion = appVersion;
 
-        WindowTitle = appName;
-        WindowSize = new Size<int>(1280, 720);
-        WindowBorder = WindowBorder.Fixed;
-
-        Api = App.PickBestGraphicsApi();
-        
-        GraphicsOptions = GraphicsOptions.Default;
+        Window = WindowInfo.Default with { Title = appName };
+        Graphics = GraphicsInfo.Default;
 
         TargetFramesPerSecond = 0;
         TargetTicksPerSecond = 60;

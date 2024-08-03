@@ -90,6 +90,8 @@ public static class App
         ReleaseConfig = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration.ToUpper() ?? "";
         TargetFramesPerSecond = options.TargetFramesPerSecond;
         TargetTicksPerSecond = options.TargetTicksPerSecond;
+
+        GraphicsApi api = options.Graphics.Api;
         
         Logger.Debug("Starting application.");
         Logger.Info($"Application: {options.AppName} v{options.AppVersion}, release config: {ReleaseConfig}");
@@ -106,16 +108,19 @@ public static class App
         Application = application ?? new Application();
 
         Logger.Trace("Creating window.");
-        Window.Create(options);
+        Window.Create(options.Window, api);
 
-        Logger.Debug($"Selected API: {options.Api}");
+        Logger.Debug($"Selected API: {api}");
+
+        GraphicsSettings settings = options.Graphics.Settings;
+        int adapterIndex = options.Graphics.AdapterIndex;
         
-        switch (options.Api)
+        switch (api)
         {
             case GraphicsApi.D3D11:
                 Logger.Trace("Creating D3D11 graphics.");
-                Graphics.Initialize(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels,
-                    options.GraphicsOptions);
+                Graphics.Create(new D3D11Instance(), new D3D11Surface(Window.Hwnd), Window.SizeInPixels, settings,
+                    adapterIndex);
                 break;
             
             case GraphicsApi.OpenGL:
@@ -123,8 +128,8 @@ public static class App
                 Window.CreateGLContext(out Action<int> presentFunc, out Func<string, nint> getProcAddressFunc);
                 
                 Logger.Trace("Creating GL graphics.");
-                Graphics.Initialize(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc),
-                    Window.SizeInPixels, options.GraphicsOptions);
+                Graphics.Create(new GL43Instance(getProcAddressFunc), new GL43Surface(presentFunc), Window.SizeInPixels,
+                    settings, adapterIndex);
                 break;
             
             default:
@@ -184,7 +189,7 @@ public static class App
         }
         
         Application.Dispose();
-        Graphics.Deinitialize();
+        Graphics.Destroy();
         Window.Destroy();
     }
 

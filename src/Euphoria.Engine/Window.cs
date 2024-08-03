@@ -73,9 +73,9 @@ public static unsafe class Window
         set => _sdl.SetClipboardText(value);
     }
 
-    internal static void Create(in LaunchOptions options)
+    internal static void Create(in WindowInfo info, GraphicsApi api)
     {
-        _userTitle = options.WindowTitle;
+        _userTitle = info.Title;
         
         _sdl = Sdl.GetApi();
 
@@ -84,7 +84,7 @@ public static unsafe class Window
 
         WindowFlags flags = WindowFlags.Shown;
         
-        switch (options.Api)
+        switch (api)
         {
             case GraphicsApi.D3D11:
                 break;
@@ -100,7 +100,7 @@ public static unsafe class Window
                 throw new ArgumentOutOfRangeException();
         }
         
-        switch (options.WindowBorder)
+        switch (info.Border)
         {
             case WindowBorder.Fixed:
                 break;
@@ -114,13 +114,13 @@ public static unsafe class Window
                 throw new ArgumentOutOfRangeException();
         }
 
-        _window = _sdl.CreateWindow(options.WindowTitle, Sdl.WindowposCentered, Sdl.WindowposCentered,
-            options.WindowSize.Width, options.WindowSize.Height, (uint) flags);
+        _window = _sdl.CreateWindow(info.Title, Sdl.WindowposCentered, Sdl.WindowposCentered,
+            info.Size.Width, info.Size.Height, (uint) flags);
 
         if (_window == null)
             throw new Exception("Failed to create SDL window.");
 
-        if (options.Api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
+        if (api is GraphicsApi.OpenGL or GraphicsApi.OpenGLES)
         {
             _glContext = _sdl.GLCreateContext(_window);
             _sdl.GLMakeCurrent(_window, _glContext);

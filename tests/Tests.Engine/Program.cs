@@ -11,10 +11,8 @@ GraphicsApi api = App.ShowGraphicsApiSelector();
 
 LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
 {
-    WindowBorder = WindowBorder.Resizable,
-    Api = api,
-    TargetTicksPerSecond = 10,
-    TargetFramesPerSecond = 0
+    Window = WindowInfo.Default with { Border = WindowBorder.Resizable },
+    Graphics = GraphicsInfo.DefaultWithApi(api)/* with { AdapterIndex = 1 }*/
 };
 
 App.Run(options, new PhysicsScene(), new TestApp());

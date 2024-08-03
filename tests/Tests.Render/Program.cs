@@ -9,7 +9,7 @@ using Tests.Render.TestTextureBatcher;
 Logger.AttachConsole();
 
 Size<int> size = new Size<int>(1280, 720);
-GraphicsOptions options = GraphicsOptions.Default;
+GraphicsSettings settings = GraphicsSettings.Default;
 
 using TestBase test = new PbrTest();
-test.Run(size, GraphicsApi.D3D11, options);
+test.Run(size, GraphicsApi.D3D11, settings);

@@ -35,7 +35,7 @@ public abstract unsafe class TestBase : IDisposable
 
     protected virtual void Draw() { }
 
-    public void Run(Size<int> size, GraphicsApi api, GraphicsOptions options)
+    public void Run(Size<int> size, GraphicsApi api, GraphicsSettings settings)
     {
         _sdl = Sdl.GetApi();
 
@@ -83,7 +83,7 @@ public abstract unsafe class TestBase : IDisposable
 
                 Surface surface = new D3D11Surface(sysWmInfo.Info.Win.Hwnd);
 
-                Graphics.Initialize(instance, surface, size, options);
+                Graphics.Create(instance, surface, size, settings);
                 break;
             }
 
@@ -99,7 +99,7 @@ public abstract unsafe class TestBase : IDisposable
                     _sdl.GLSwapWindow(_window);
                 });
 
-                Graphics.Initialize(instance, surface, size, options);
+                Graphics.Create(instance, surface, size, settings);
 
                 break;
             }
@@ -148,7 +148,7 @@ public abstract unsafe class TestBase : IDisposable
 
     public virtual void Dispose()
     {
-        Graphics.Deinitialize();
+        Graphics.Destroy();
         
         if (_glContext != null)
             _sdl.GLDeleteContext(_glContext);

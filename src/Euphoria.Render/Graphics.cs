@@ -66,18 +66,26 @@ public static class Graphics
         }
     }
 
-    public static void Initialize(Instance instance, Surface surface, Size<int> size, GraphicsOptions options, Adapter? adapter = null)
+    public static void Create(Instance instance, Surface surface, Size<int> size, GraphicsSettings settings, int adapterIndex = 0)
     {
         Instance = instance;
         _size = size;
 
         TexturesQueuedForMipGeneration = new HashSet<GrabsTexture>();
-
-        // TOO MANY ADAPTERS
+        
         Adapter[] adapters = Instance.EnumerateAdapters();
-        Adapter currentAdapter = adapters[adapter?.Index ?? 0];
         Logger.Debug($"EnumerateAdapters:\n    {string.Join('\n', adapters).Replace("\n", "\n    ")}");
-        Logger.Info($"Using adapter {currentAdapter.Name}");
+        
+        Logger.Info($"Selected adapter index: {adapterIndex}");
+
+        if (adapterIndex >= adapters.Length)
+        {
+            Logger.Warn($"Adapter index was {adapterIndex}, but only {adapters.Length} adapters are present. The value has been set to 0.");
+            adapterIndex = 0;
+        }
+
+        Adapter adapter = adapters[adapterIndex];
+        Logger.Info($"Using adapter '{adapter.Name}'");
         
         Logger.Trace("Creating device.");
         Device = Instance.CreateDevice(surface, adapter);
@@ -107,10 +115,10 @@ public static class Graphics
         Logger.Trace("Creating IMGUI renderer.");
         ImGuiRenderer = new ImGuiRenderer(Device, size);
         
-        Logger.Debug($"Render type: {options.RenderType}");
-        RenderType = options.RenderType;
+        Logger.Debug($"Render type: {settings.RenderType}");
+        RenderType = settings.RenderType;
 
-        if (options.RenderType == RenderType.Normal)
+        if (settings.RenderType == RenderType.Normal)
         {
             Logger.Trace("Creating 3D renderer.");
             Renderer3D = new Renderer3D(Device, size);
@@ -176,7 +184,10 @@ public static class Graphics
         ImGuiRenderer.Resize(size);
     }
 
-    public static void Deinitialize()
+    public static Adapter[] GetAdapters()
+        => Instance.EnumerateAdapters();
+
+    public static void Destroy()
     {
         Renderer3D?.Dispose();
         ImGuiRenderer.Dispose();
