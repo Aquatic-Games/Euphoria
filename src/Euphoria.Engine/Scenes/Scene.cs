@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Euphoria.Core;
 using Euphoria.Engine.Entities;
-using Euphoria.Math;
 using Euphoria.Render;
 using Euphoria.Render.Renderers.Structs;
 
@@ -10,15 +9,16 @@ namespace Euphoria.Engine.Scenes;
 
 public class Scene : IDisposable
 {
-    // Use that Entities are heap allocated to our advantage.
-    // The List is what is iterated through, as its iteration performance is fast.
-    // The dictionary is what is used for lookup.
-    private List<Entity> _entities;
-    private Dictionary<string, Entity> _entityPointers;
+    private Entity[] _entities;
+    private Dictionary<string, int> _entityPointers;
+    private int _numEntities;
+    
     private bool _hasInitialized;
 
     // TODO: A better way to do this please! I don't like this much.
     public readonly Dictionary<ulong, Entity> BodyIdToEntity;
+
+    public int NumEntities => _numEntities;
     
     public Camera Camera
     {
@@ -31,10 +31,10 @@ public class Scene : IDisposable
         }
     }
 
-    public Scene()
+    protected Scene(int entityAlloc = 16)
     {
-        _entities = new List<Entity>();
-        _entityPointers = new Dictionary<string, Entity>();
+        _entities = new Entity[entityAlloc];
+        _entityPointers = new Dictionary<string, int>();
         BodyIdToEntity = new Dictionary<ulong, Entity>();
 
         AddEntity(new Camera("Camera", new Transform(), 75));
@@ -42,10 +42,19 @@ public class Scene : IDisposable
 
     public bool TryAddEntity(Entity entity)
     {
-        if (!_entityPointers.TryAdd(entity.Name, entity))
+        if (_entityPointers.ContainsKey(entity.Name))
             return false;
-        
-        _entities.Add(entity);
+
+        int index = _numEntities++;
+        if (index >= _entities.Length)
+        {
+            int newLength = _entities.Length << 1;
+            Logger.Trace($"Resizing entities array to size {newLength}.");
+            Array.Resize(ref _entities, _entities.Length << 1);
+        }
+
+        _entities[index] = entity;
+        _entityPointers.Add(entity.Name, index);
         
         if (_hasInitialized)
             entity.Initialize();
@@ -64,7 +73,13 @@ public class Scene : IDisposable
 
     public bool TryGetEntity(string name, out Entity entity)
     {
-        return _entityPointers.TryGetValue(name, out entity);
+        entity = null;
+        
+        if (!_entityPointers.TryGetValue(name, out int index))
+            return false;
+
+        entity = _entities[index];
+        return true;
     }
 
     public bool TryGetEntity<T>(string name, out T entity) where T : Entity
@@ -98,26 +113,26 @@ public class Scene : IDisposable
 
         _hasInitialized = true;
         
-        foreach (Entity entity in _entities)
-            entity.Initialize();
+        for (int i = 0; i < _numEntities; i++)
+            _entities[i].Initialize();
     }
 
     public virtual void Tick(float dt)
     {
-        foreach (Entity entity in _entities)
-            entity.Tick(dt);
+        for (int i = 0; i < _numEntities; i++)
+            _entities[i].Tick(dt);
     }
 
     public virtual void Update(float dt)
     {
-        foreach (Entity entity in _entities)
-            entity.Update(dt);
+        for (int i = 0; i < _numEntities; i++)
+            _entities[i].Update(dt);
     }
 
     public virtual void Draw()
     {
-        foreach (Entity entity in _entities)
-            entity.Draw();
+        for (int i = 0; i < _numEntities; i++)
+            _entities[i].Draw();
         
         Camera camera = Camera;
         Graphics.Renderer3D.Camera = new CameraInfo(camera.ProjectionMatrix, camera.ViewMatrix, camera.Transform.Position);
@@ -125,7 +140,7 @@ public class Scene : IDisposable
 
     public virtual void Dispose()
     {
-        foreach (Entity entity in _entities)
-            entity.Dispose();
+        for (int i = 0; i < _numEntities; i++)
+            _entities[i].Dispose();
     }
 }

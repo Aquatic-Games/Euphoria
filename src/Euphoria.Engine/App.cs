@@ -185,6 +185,8 @@ public static class App
             Application.Update(dt);
             Application.Draw();
             
+            EuphoriaDebug.Draw();
+            
             Graphics.Present();
         }
         

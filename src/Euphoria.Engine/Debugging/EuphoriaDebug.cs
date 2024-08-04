@@ -39,4 +39,10 @@ public static class EuphoriaDebug
             ImGui.End();
         }
     }
+
+    internal static void Draw()
+    {
+        foreach (IDebugTab tab in Tabs)
+            tab.Draw();
+    }
 }
