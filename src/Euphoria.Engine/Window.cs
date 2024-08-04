@@ -77,6 +77,20 @@ public static unsafe class Window
         set => _sdl.SetClipboardText(value);
     }
 
+    public static FullscreenMode FullscreenMode
+    {
+        set
+        {
+            _sdl.SetWindowFullscreen(_window, value switch
+            {
+                FullscreenMode.Windowed => 0,
+                FullscreenMode.Fullscreen => (uint) WindowFlags.Fullscreen,
+                FullscreenMode.Borderless => (uint) WindowFlags.FullscreenDesktop,
+                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            });
+        }
+    }
+
     public static bool Focused =>
         (_sdl.GetWindowFlags(_window) & (uint) WindowFlags.InputFocus) == (uint) WindowFlags.InputFocus;
 

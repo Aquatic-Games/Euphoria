@@ -28,7 +28,9 @@ public class DebugConsole : IDebugTab
         Commands = new Dictionary<string, ICommand>();
         AddCommand(new HelpCommand());
         AddCommand(new DebugDisplayInfoCommand());
+        
         AddCommand(new SetWindowSizeCommand());
+        AddCommand(new SetWindowFullscreenCommand());
     }
     
     public void Update()
