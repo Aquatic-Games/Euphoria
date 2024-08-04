@@ -17,6 +17,8 @@ public static class Input
     private static Vector2 _mousePosition;
     private static Vector2 _mouseDelta;
 
+    public static bool UIWantsFocus;
+
     static Input()
     {
         _keysDown = new HashSet<Key>();
@@ -70,6 +72,7 @@ public static class Input
         _frameButtons.Clear();
         
         _mouseDelta = Vector2.Zero;
+        UIWantsFocus = false;
     }
 
     private static void OnKeyDown(Key key)

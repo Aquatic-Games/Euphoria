@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Euphoria.Engine.InputSystem;
 using Euphoria.Render;
 using ImGuiNET;
 
@@ -34,6 +35,9 @@ internal static class ImGuiController
 
         ImGuiIOPtr io = ImGui.GetIO();
         io.DeltaTime = dt;
+
+        if (io.WantCaptureMouse || io.WantCaptureKeyboard)
+            Input.UIWantsFocus = true;
         
         ImGui.NewFrame();
     }

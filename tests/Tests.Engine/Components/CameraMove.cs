@@ -12,6 +12,9 @@ public class CameraMove : Component
     
     public override void Update(float dt)
     {
+        if (Input.UIWantsFocus)
+            return;
+        
         float speed = 5 * dt;
 
         if (Input.IsKeyDown(Key.W))

@@ -41,6 +41,8 @@ public static class EuphoriaDebug
         if (!IsOpen)
             return;
 
+        Input.UIWantsFocus = true;
+
         if (ImGui.Begin("Debug", ref IsOpen))
         {
             if (ImGui.BeginTabBar("debugTabs"))
