@@ -12,14 +12,15 @@ namespace Euphoria.Engine.Debugging;
 public class StatsTab : IDebugTab
 {
     private StringBuilder _debugText;
-    private int _debugVerbosity;
+    
+    public static int DebugVerbosity;
     
     public string TabName => "Stats";
 
     public StatsTab()
     {
         _debugText = new StringBuilder();
-        _debugVerbosity = 0;
+        DebugVerbosity = 0;
     }
     
     public void Update()
@@ -27,8 +28,8 @@ public class StatsTab : IDebugTab
         ImGui.Text($"App name: {App.Name}");
         ImGui.Text($"App version: {App.Version}");
 
-        ImGui.InputInt("Debug Verbosity", ref _debugVerbosity);
-        _debugVerbosity = int.Clamp(_debugVerbosity, 0, 2);
+        ImGui.InputInt("Debug Verbosity", ref DebugVerbosity);
+        DebugVerbosity = int.Clamp(DebugVerbosity, 0, 2);
         
         ImGui.Separator();
         
@@ -41,7 +42,7 @@ public class StatsTab : IDebugTab
 
     public void Draw()
     {
-        if (_debugVerbosity == 0)
+        if (DebugVerbosity == 0)
             return;
         
         _debugText.Clear();
@@ -51,7 +52,7 @@ public class StatsTab : IDebugTab
         _debugText.AppendLine(
             $"FPS: {Metrics.FramesPerSecond} (dt: {double.Round(Metrics.TimeSinceLastFrame * 1000, 1)})");
 
-        if (_debugVerbosity >= 2)
+        if (DebugVerbosity >= 2)
         {
             _debugText.AppendLine($"Entities: {activeScene.NumEntities}");
         }

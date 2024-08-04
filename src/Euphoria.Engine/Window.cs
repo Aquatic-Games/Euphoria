@@ -43,7 +43,11 @@ public static unsafe class Window
 
             return new Size<int>(w, h);
         }
-        set => _sdl.SetWindowSize(_window, value.Width, value.Height);
+        set
+        {
+            _sdl.SetWindowSize(_window, value.Width, value.Height);
+            _sdl.SetWindowPosition(_window, Sdl.WindowposCentered, Sdl.WindowposCentered);
+        }
     }
 
     public static Size<int> SizeInPixels
@@ -170,7 +174,7 @@ public static unsafe class Window
                             CloseRequested();
                             break;
 
-                        case WindowEventID.Resized:
+                        case WindowEventID.SizeChanged:
                             Resized(new Size<int>(window.Data1, window.Data2));
                             break;
                     }
