@@ -79,6 +79,18 @@ public static unsafe class Window
 
     public static FullscreenMode FullscreenMode
     {
+        get
+        {
+            WindowFlags flags = (WindowFlags) _sdl.GetWindowFlags(_window);
+
+            if ((flags & WindowFlags.FullscreenDesktop) == WindowFlags.FullscreenDesktop)
+                return FullscreenMode.Borderless;
+
+            if ((flags & WindowFlags.Fullscreen) == WindowFlags.Fullscreen)
+                return FullscreenMode.Fullscreen;
+
+            return FullscreenMode.Windowed;
+        }
         set
         {
             _sdl.SetWindowFullscreen(_window, value switch
@@ -88,6 +100,51 @@ public static unsafe class Window
                 FullscreenMode.Borderless => (uint) WindowFlags.FullscreenDesktop,
                 _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
             });
+        }
+    }
+
+    public static CursorMode CursorMode
+    {
+        get
+        {
+            bool visible = _sdl.ShowCursor(-1) != 0;
+            bool relative = _sdl.GetRelativeMouseMode() == SdlBool.True;
+            bool grab = _sdl.GetWindowGrab(_window) == SdlBool.True;
+
+            if (relative)
+                return CursorMode.Locked;
+            if (grab)
+                return CursorMode.Grabbed;
+
+            return visible ? CursorMode.Visible : CursorMode.Hidden;
+        }
+        set
+        {
+            switch (value)
+            {
+                case CursorMode.Visible:
+                    _sdl.SetRelativeMouseMode(SdlBool.False);
+                    _sdl.SetWindowGrab(_window, SdlBool.False);
+                    _sdl.ShowCursor(Sdl.Enable);
+                    break;
+                case CursorMode.Hidden:
+                    _sdl.SetRelativeMouseMode(SdlBool.False);
+                    _sdl.SetWindowGrab(_window, SdlBool.False);
+                    _sdl.ShowCursor(Sdl.Disable);
+                    break;
+                case CursorMode.Grabbed:
+                    _sdl.SetRelativeMouseMode(SdlBool.False);
+                    _sdl.SetWindowGrab(_window, SdlBool.True);
+                    _sdl.ShowCursor(Sdl.Enable);
+                    break;
+                case CursorMode.Locked:
+                    _sdl.SetRelativeMouseMode(SdlBool.True);
+                    _sdl.SetWindowGrab(_window, SdlBool.True);
+                    _sdl.ShowCursor(Sdl.Disable);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
+            }
         }
     }
 
