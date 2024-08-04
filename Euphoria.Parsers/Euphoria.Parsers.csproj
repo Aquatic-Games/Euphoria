@@ -4,11 +4,6 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <Nullable>disable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="BepuPhysics" Version="2.5.0-beta.23" />
-    </ItemGroup>
 
 </Project>

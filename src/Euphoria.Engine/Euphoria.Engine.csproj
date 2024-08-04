@@ -22,4 +22,8 @@
       <PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Configs\" />
+    </ItemGroup>
+
 </Project>

@@ -177,20 +177,22 @@ public static unsafe class Window
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
-        switch (info.Border)
+
+        flags |= info.Border switch
         {
-            case WindowBorder.Fixed:
-                break;
-            case WindowBorder.Resizable:
-                flags |= WindowFlags.Resizable;
-                break;
-            case WindowBorder.Borderless:
-                flags |= WindowFlags.Borderless;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            WindowBorder.Fixed => WindowFlags.None,
+            WindowBorder.Resizable => WindowFlags.Resizable,
+            WindowBorder.Borderless => WindowFlags.Borderless,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        flags |= info.FullscreenMode switch
+        {
+            FullscreenMode.Windowed => WindowFlags.None,
+            FullscreenMode.Fullscreen => WindowFlags.Fullscreen,
+            FullscreenMode.Borderless => WindowFlags.FullscreenDesktop,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         _window = _sdl.CreateWindow(info.Title, Sdl.WindowposCentered, Sdl.WindowposCentered,
             info.Size.Width, info.Size.Height, (uint) flags);
