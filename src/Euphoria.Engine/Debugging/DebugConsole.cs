@@ -67,7 +67,7 @@ public class DebugConsole : IDebugTab
             if (!string.IsNullOrWhiteSpace(text))
             {
                 string cmdName = GetCommand(text, out string[] args);
-                Write($"# {cmdName}", Color.DarkSalmon);
+                Write($"# {text}", Color.DarkSalmon);
 
                 if (Commands.TryGetValue(cmdName, out ICommand command))
                 {
@@ -77,7 +77,7 @@ public class DebugConsole : IDebugTab
                         Write(error, Color.Red);
                 }
                 else
-                    Write("Command not found.", Color.Red);
+                    Write($"Command \"{cmdName}\" not found.", Color.Red);
             }
         }
     }

@@ -13,7 +13,7 @@ public class StatsTab : IDebugTab
 {
     private StringBuilder _debugText;
     
-    public static int DebugVerbosity;
+    public int DebugVerbosity;
     
     public string TabName => "Stats";
 

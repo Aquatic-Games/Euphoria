@@ -10,7 +10,7 @@ public class DebugDisplayInfoCommand : ICommand
     
     public void Execute(DebugConsole console, object[] args)
     {
-        StatsTab.DebugVerbosity = (int) args[0];
+        EuphoriaDebug.GetTab<StatsTab>().DebugVerbosity = (int) args[0];
         console.Write($"Set debug info level to {args[0]}");
     }
 }
