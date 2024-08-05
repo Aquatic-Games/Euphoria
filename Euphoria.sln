@@ -46,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "tests\Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Physics", "src\Euphoria.Physics\Euphoria.Physics.csproj", "{B21728D5-A0C4-436A-8A40-B1C6C50BE986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Parsers", "Euphoria.Parsers\Euphoria.Parsers.csproj", "{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Parsers", "src\Euphoria.Parsers\Euphoria.Parsers.csproj", "{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
