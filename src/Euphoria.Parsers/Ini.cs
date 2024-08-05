@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Euphoria.Parsers;
 
 public sealed class Ini
 {
-    public Dictionary<string, Item> Items;
+    public Group DefaultGroup;
     
     public Dictionary<string, Group> Groups;
 
     public Ini()
     {
-        Items = new Dictionary<string, Item>();
+        DefaultGroup = new Group();
         Groups = new Dictionary<string, Group>();
     }
     
-    public Ini(Dictionary<string, Item> items, Dictionary<string, Group> groups)
+    public Ini(Group defaultGroup, Dictionary<string, Group> groups)
     {
-        Items = items;
+        DefaultGroup = defaultGroup;
         Groups = groups;
     }
 
@@ -27,7 +28,7 @@ public sealed class Ini
         string[] splitIni = ini.Trim().Split("\n");
 
         int lineNum = 0;
-        Items = new Dictionary<string, Item>();
+        DefaultGroup = new Group();
         Groups = new Dictionary<string, Group>();
         Group currentGroup = new Group();
 
@@ -49,7 +50,7 @@ public sealed class Ini
                     throw new Exception($"Line {lineNum}: Expected ']'.");
 
                 if (currentGroup.Name == "" && currentGroup.Items.Count > 0)
-                    Items = currentGroup.Items;
+                    DefaultGroup = currentGroup;
                 else if (currentGroup.Name != "")
                     Groups.TryAdd(currentGroup.Name, currentGroup);
 
@@ -96,19 +97,26 @@ public sealed class Ini
                     currentGroup.Items.Add(key, new Item(ItemType.String, value.Trim('\'', '"')));
             }
         }
-        
+
         if (currentGroup.Name == "" && currentGroup.Items.Count > 0)
-            Items = currentGroup.Items;
+            DefaultGroup = currentGroup;
         else if (currentGroup.Name != "")
             Groups.TryAdd(currentGroup.Name, currentGroup);
+    }
+
+    public void AddGroup(Group group)
+        => Groups.Add(group.Name, group);
+
+    public bool TryGetGroup(string name, out Group group)
+    {
+        return Groups.TryGetValue(name, out group);
     }
 
     public string Serialize(SerializeFlags flags = SerializeFlags.SpacesBetweenGroups)
     {
         StringBuilder builder = new StringBuilder();
         
-        if (Items != null)
-            AddItems(ref builder, Items, flags);
+        AddItems(ref builder, DefaultGroup.Items, flags);
 
         if (Groups != null)
         {
@@ -191,6 +199,90 @@ public sealed class Ini
         {
             Name = name;
             Items = items;
+        }
+
+        public void AddItem(string name, Item item)
+            => Items.Add(name, item);
+
+        public bool TryGetItem(string name, Type itemType, out object item)
+        {
+            item = default;
+
+            if (!Items.TryGetValue(name, out Item dictItem))
+                return false;
+
+            switch (dictItem.Type)
+            {
+                case ItemType.Null:
+                    break;
+                
+                case ItemType.String:
+                    if (itemType.IsEnum)
+                    {
+                        if (!Enum.TryParse(itemType, (string) dictItem.Value, true, out object result))
+                            return false;
+
+                        item = result;
+
+                        break;
+                    }
+                    
+                    if (itemType != typeof(string))
+                        return false;
+
+                    item = dictItem.Value;
+                    
+                    break;
+                
+                case ItemType.Number:
+                    object newType = Convert.ChangeType(dictItem.Value, itemType);
+
+                    if (newType == null)
+                        return false;
+
+                    item = newType;
+                    
+                    break;
+                
+                case ItemType.Boolean:
+                    if (itemType != typeof(bool))
+                        return false;
+
+                    item = dictItem.Value;
+                    
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            return true;
+        }
+
+        public bool TryGetItem<T>(string name, out T item)
+        {
+            if (!TryGetItem(name, typeof(T), out object objItem))
+            {
+                item = default;
+                return false;
+            }
+
+            item = (T) objItem;
+            return true;
+        }
+
+        public T GetItemOrDefault<T>(string name)
+        {
+            Type itemType = typeof(T);
+
+            Type t;
+            if ((t = Nullable.GetUnderlyingType(itemType)) != null)
+                itemType = t;
+
+            if (!TryGetItem(name, itemType, out object item))
+                return default;
+
+            return (T) item;
         }
     }
 

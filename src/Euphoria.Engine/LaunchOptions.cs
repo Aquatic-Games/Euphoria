@@ -32,15 +32,18 @@ public struct LaunchOptions
         TargetTicksPerSecond = 60;
     }
 
-    public static LaunchOptions FromConfig(EuphoriaConfig config, string appName, Version appVersion)
+    public void ApplyConfig(EuphoriaConfig config)
     {
-        LaunchOptions options = new LaunchOptions(appName, appVersion);
-        options.Window.Size = config.Display.Size;
-        options.Window.FullscreenMode = config.Display.FullscreenMode;
+        if (config.Display is { } display)
+        {
+            Window.Size = display.Size ?? Window.Size;
+            Window.FullscreenMode = display.FullscreenMode ?? Window.FullscreenMode;
+        }
 
-        options.Graphics.Api = config.Graphics.Api;
-        options.Graphics.AdapterIndex = config.Graphics.Adapter;
-
-        return options;
+        if (config.Graphics is { } graphics)
+        {
+            Graphics.Api = graphics.Api ?? Graphics.Api;
+            Graphics.AdapterIndex = graphics.Adapter ?? Graphics.AdapterIndex;
+        }
     }
 }

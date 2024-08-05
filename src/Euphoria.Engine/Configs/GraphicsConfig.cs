@@ -7,11 +7,11 @@ namespace Euphoria.Engine.Configs;
 
 public struct GraphicsConfig : ISerializableConfig<GraphicsConfig>
 {
-    public GraphicsApi Api;
+    public GraphicsApi? Api;
 
-    public int Adapter;
+    public int? Adapter;
 
-    public GraphicsConfig(GraphicsApi api, int adapter)
+    public GraphicsConfig(GraphicsApi? api, int? adapter)
     {
         Api = api;
         Adapter = adapter;
@@ -26,12 +26,17 @@ public struct GraphicsConfig : ISerializableConfig<GraphicsConfig>
         }));
     }
 
-    public static GraphicsConfig FromIni(Ini ini)
+    public static bool TryFromIni(Ini ini, out GraphicsConfig config)
     {
-        Ini.Group group = ini.Groups["Graphics"];
-        GraphicsApi api = Enum.Parse<GraphicsApi>((string) group.Items["Api"].Value);
-        int adapter = (int) (double) group.Items["Adapter"].Value;
+        config = default;
+        
+        if (!ini.TryGetGroup("Graphics", out Ini.Group group))
+            return false;
+        
+        GraphicsApi? api = group.GetItemOrDefault<GraphicsApi?>("Api");
+        int? adapter = group.GetItemOrDefault<int?>("Adapter");
 
-        return new GraphicsConfig(api, adapter);
+        config = new GraphicsConfig(api, adapter);
+        return true;
     }
 }

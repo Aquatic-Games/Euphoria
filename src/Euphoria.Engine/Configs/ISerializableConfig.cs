@@ -2,9 +2,9 @@
 
 namespace Euphoria.Engine.Configs;
 
-public interface ISerializableConfig<out T>
+public interface ISerializableConfig<T>
 {
     public void WriteIni(Ini ini);
 
-    public static abstract T FromIni(Ini ini);
+    public static abstract bool TryFromIni(Ini ini, out T config);
 }

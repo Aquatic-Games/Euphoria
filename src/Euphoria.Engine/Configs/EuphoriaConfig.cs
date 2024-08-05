@@ -8,11 +8,11 @@ namespace Euphoria.Engine.Configs;
 
 public class EuphoriaConfig : IConfig<EuphoriaConfig>
 {
-    public DisplayConfig Display;
+    public DisplayConfig? Display;
 
-    public GraphicsConfig Graphics;
+    public GraphicsConfig? Graphics;
 
-    public EuphoriaConfig(DisplayConfig display, GraphicsConfig graphics)
+    public EuphoriaConfig(DisplayConfig? display, GraphicsConfig? graphics)
     {
         Display = display;
         Graphics = graphics;
@@ -38,8 +38,8 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
 
     public virtual void WriteIni(Ini ini)
     {
-        Display.WriteIni(ini);
-        Graphics.WriteIni(ini);
+        Display?.WriteIni(ini);
+        Graphics?.WriteIni(ini);
     }
 
     public void Save(string path)
@@ -54,12 +54,17 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
 
     public static EuphoriaConfig CurrentConfig { get; set; }
 
-    public static EuphoriaConfig FromIni(Ini ini)
+    public static bool TryFromIni(Ini ini, out EuphoriaConfig config)
     {
-        DisplayConfig display = DisplayConfig.FromIni(ini);
-        GraphicsConfig graphics = GraphicsConfig.FromIni(ini);
+        config = new EuphoriaConfig(null, null);
 
-        return new EuphoriaConfig(display, graphics);
+        if (DisplayConfig.TryFromIni(ini, out DisplayConfig display))
+            config.Display = display;
+
+        if (GraphicsConfig.TryFromIni(ini, out GraphicsConfig graphics))
+            config.Graphics = graphics;
+        
+        return true;
     }
 
     public static bool TryLoadFromFile(string path, out EuphoriaConfig config)
@@ -81,7 +86,6 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
             return false;
         }
 
-        config = FromIni(ini);
-        return true;
+        return TryFromIni(ini, out config);
     }
 }
