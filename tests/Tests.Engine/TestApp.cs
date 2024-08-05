@@ -1,5 +1,6 @@
 ﻿using System;
 using Euphoria.Engine;
+using Euphoria.Engine.Configs;
 using Euphoria.Engine.Debugging;
 using Euphoria.Engine.InputSystem;
 using Euphoria.Engine.Scenes;
@@ -55,5 +56,11 @@ public class TestApp : Application
             Window.CursorMode = CursorMode.Visible;
         else
             Window.CursorMode = CursorMode.Locked;
+    }
+
+    public override void Dispose()
+    {
+        EuphoriaConfig config = EuphoriaConfig.CreateFromCurrentSettings();
+        config.Save("Config.cfg");
     }
 }

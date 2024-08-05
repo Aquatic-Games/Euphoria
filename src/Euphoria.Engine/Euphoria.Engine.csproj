@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Euphoria.Parsers\Euphoria.Parsers.csproj" />
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.D3D11\grabs.Graphics.D3D11.csproj" />
       <ProjectReference Include="..\..\lib\grabs\src\grabs.Graphics.GL43\grabs.Graphics.GL43.csproj" />
       <ProjectReference Include="..\Euphoria.Audio\Euphoria.Audio.csproj" />
@@ -20,10 +21,6 @@
     <ItemGroup>
       <PackageReference Include="ImGui.NET" Version="1.90.8.1" />
       <PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Configs\" />
     </ItemGroup>
 
 </Project>
