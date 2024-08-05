@@ -13,6 +13,8 @@ internal struct RayHitHandler : IRayHitHandler
 
     public Vector3 Normal;
 
+    public int ChildIndex;
+
     public CollidableReference Collidable;
 
     public RayHitHandler()
@@ -41,6 +43,7 @@ internal struct RayHitHandler : IRayHitHandler
         
         Distance = t;
         Normal = normal;
+        ChildIndex = childIndex;
         Collidable = collidable;
     }
 }

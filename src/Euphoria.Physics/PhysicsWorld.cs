@@ -79,8 +79,8 @@ public static class PhysicsWorld
         if (hitHandler.HasHit)
         {
             Vector3 hitPos = position + (direction * hitHandler.Distance);
-            
-            hit = new RayHit(new Body(hitHandler.Collidable), hitPos, hitHandler.Normal);
+
+            hit = new RayHit(new Body(hitHandler.Collidable), hitPos, hitHandler.Normal, hitHandler.ChildIndex);
             return true;
         }
 

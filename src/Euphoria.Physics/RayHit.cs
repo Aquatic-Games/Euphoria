@@ -10,10 +10,13 @@ public readonly struct RayHit
 
     public readonly Vector3 Normal;
 
-    public RayHit(Body body, Vector3 position, Vector3 normal)
+    public readonly int ChildIndex;
+
+    public RayHit(Body body, Vector3 position, Vector3 normal, int childIndex)
     {
         Body = body;
         Position = position;
         Normal = normal;
+        ChildIndex = childIndex;
     }
 }

@@ -8,11 +8,8 @@ using Tests.Engine.Scenes;
 
 Logger.AttachConsole();
 
-LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1))
-{
-    Window = WindowInfo.Default with { Border = WindowBorder.Resizable },
-    Graphics = GraphicsInfo.Default /* with { AdapterIndex = 1 }*/
-};
+LaunchOptions options = new LaunchOptions("EuphoriaTests", new Version(0, 1));
+options.Window.Border = WindowBorder.Resizable;
 
 if (EuphoriaConfig.TryLoadFromFile("Config.cfg", out EuphoriaConfig config))
 {
