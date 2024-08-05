@@ -39,6 +39,8 @@ public static class Graphics
     public static ImGuiRenderer ImGuiRenderer { get; private set; }
 
     public static GraphicsApi Api => Instance.Api;
+    
+    public static Adapter Adapter { get; private set; }
 
     public static Size<int> Size => _size;
 
@@ -85,6 +87,7 @@ public static class Graphics
         }
 
         Adapter adapter = adapters[adapterIndex];
+        Adapter = adapter;
         Logger.Info($"Using adapter '{adapter.Name}'");
         
         Logger.Trace("Creating device.");

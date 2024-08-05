@@ -30,7 +30,7 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
         GraphicsConfig graphics = new GraphicsConfig()
         {
             Api = Render.Graphics.Api,
-            Adapter = 0
+            Adapter = (int) Render.Graphics.Adapter.Index
         };
 
         return new EuphoriaConfig(display, graphics);
