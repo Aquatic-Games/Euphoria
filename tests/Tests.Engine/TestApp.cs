@@ -22,7 +22,11 @@ public class TestApp : Application
     public override void Initialize(Scene initialScene)
     {
         InputScene mainInputScene = new InputScene("Main");
-        mainInputScene.Actions.Add("MoveForward", new ButtonAction(new KeyBinding(Key.W), new KeyBinding(Key.I)));
+
+        mainInputScene.Actions.Add("Move",
+            new DualAxisAction(new AxisAction([new KeyBinding(Key.D)], [new KeyBinding(Key.A)]),
+                new AxisAction([new KeyBinding(Key.W)], [new KeyBinding(Key.S)])));
+        
         Input.AddInputScene("Main", mainInputScene);
         Input.SetInputScene("Main");
         

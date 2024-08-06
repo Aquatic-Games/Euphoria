@@ -11,11 +11,11 @@ public class CameraMove : Component
 {
     private Vector3 _rotation;
 
-    private ButtonAction _moveForward;
+    private DualAxisAction _move;
 
     public override void Initialize()
     {
-        _moveForward = (ButtonAction) Input.GetInputScene("Main").Actions["MoveForward"];
+        _move = (DualAxisAction) Input.GetInputScene("Main").Actions["Move"];
     }
 
     public override void Update(float dt)
@@ -25,14 +25,8 @@ public class CameraMove : Component
         
         float speed = 5 * dt;
 
-        if (_moveForward.IsDown)
-            Transform.Position += Transform.Forward * speed;
-        if (Input.IsKeyDown(Key.S))
-            Transform.Position += Transform.Backward * speed;
-        if (Input.IsKeyDown(Key.A))
-            Transform.Position += Transform.Left * speed;
-        if (Input.IsKeyDown(Key.D))
-            Transform.Position += Transform.Right * speed;
+        Transform.Position += Transform.Forward * _move.Value.Y * speed;
+        Transform.Position += Transform.Right * _move.Value.X * speed;
 
         if (Input.IsKeyDown(Key.Space))
             Transform.Position += Transform.Up * speed;

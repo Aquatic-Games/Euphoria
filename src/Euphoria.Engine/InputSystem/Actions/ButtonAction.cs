@@ -6,10 +6,10 @@ namespace Euphoria.Engine.InputSystem.Actions;
 public class ButtonAction : IInputAction
 {
     public IInputBinding[] Bindings;
-    
-    public bool IsDown { get; private set; }
-    
-    public bool IsPressed { get; private set; }
+
+    public bool IsDown;
+
+    public bool IsPressed;
 
     public ButtonAction(params IInputBinding[] bindings)
     {
