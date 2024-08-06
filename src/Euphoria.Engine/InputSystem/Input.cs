@@ -12,7 +12,8 @@ public static class Input
     private static HashSet<MouseButton> _buttonsDown;
     private static HashSet<MouseButton> _frameButtons;
 
-    private static Dictionary<Type, InputScene> _inputScenes;
+    private static Dictionary<string, InputScene> _inputScenes;
+    private static InputScene _currentInputScene;
 
     private static Vector2 _mousePosition;
     private static Vector2 _mouseDelta;
@@ -27,7 +28,7 @@ public static class Input
         _buttonsDown = new HashSet<MouseButton>();
         _frameButtons = new HashSet<MouseButton>();
 
-        _inputScenes = new Dictionary<Type, InputScene>();
+        _inputScenes = new Dictionary<string, InputScene>();
     }
 
     public static Vector2 MousePosition => _mousePosition;
@@ -42,18 +43,20 @@ public static class Input
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
 
-    public static void AddInputScene(InputScene scene)
+    public static void AddInputScene(string name, InputScene scene)
     {
-        _inputScenes.Add(scene.GetType(), scene);
+        _inputScenes.Add(name, scene);
     }
 
-    public static void SetInputScene<T>() where T : InputScene
+    public static void SetInputScene(string name)
     {
-        
+        _currentInputScene = _inputScenes[name];
+        if (_currentInputScene.CursorMode is { } cursorMode)
+            Window.CursorMode = cursorMode;
     }
-    
-    public static T GetInputScene<T>() where T : InputScene
-        => (T) _inputScenes[typeof(T)];
+
+    public static InputScene GetInputScene(string name)
+        => _inputScenes[name];
     
     internal static void Initialize()
     {
@@ -73,6 +76,8 @@ public static class Input
         
         _mouseDelta = Vector2.Zero;
         UIWantsFocus = false;
+        
+        _currentInputScene?.Update();
     }
 
     private static void OnKeyDown(Key key)

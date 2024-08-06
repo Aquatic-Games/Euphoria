@@ -3,13 +3,21 @@ using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities.Components;
 using Euphoria.Engine.InputSystem;
+using Euphoria.Engine.InputSystem.Actions;
 
 namespace Tests.Engine.Components;
 
 public class CameraMove : Component
 {
     private Vector3 _rotation;
-    
+
+    private ButtonAction _moveForward;
+
+    public override void Initialize()
+    {
+        _moveForward = (ButtonAction) Input.GetInputScene("Main").Actions["MoveForward"];
+    }
+
     public override void Update(float dt)
     {
         if (Input.UIWantsFocus)
@@ -17,7 +25,7 @@ public class CameraMove : Component
         
         float speed = 5 * dt;
 
-        if (Input.IsKeyDown(Key.W))
+        if (_moveForward.IsDown)
             Transform.Position += Transform.Forward * speed;
         if (Input.IsKeyDown(Key.S))
             Transform.Position += Transform.Backward * speed;
