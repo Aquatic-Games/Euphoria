@@ -5,23 +5,32 @@ namespace Euphoria.Engine.InputSystem.Actions;
 
 public class DualAxisAction : IInputAction
 {
-    public AxisAction X;
+    public IInputBinding[] XBindings;
 
-    public AxisAction Y;
+    public IInputBinding[] YBindings;
 
     public Vector2 Value;
 
-    public DualAxisAction(AxisAction x, AxisAction y)
+    public DualAxisAction(IInputBinding[] xBindings, IInputBinding[] yBindings)
     {
-        X = x;
-        Y = y;
+        XBindings = xBindings;
+        YBindings = yBindings;
     }
 
     public void Update()
     {
-        X.Update();
-        Y.Update();
+        Value = Vector2.Zero;
 
-        Value = new Vector2(X.Value, Y.Value);
+        foreach (IInputBinding binding in XBindings)
+        {
+            binding.Update();
+            Value.X += binding.Value;
+        }
+
+        foreach (IInputBinding binding in YBindings)
+        {
+            binding.Update();
+            Value.Y += binding.Value;
+        }
     }
 }

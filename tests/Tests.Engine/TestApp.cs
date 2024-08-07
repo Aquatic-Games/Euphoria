@@ -24,8 +24,7 @@ public class TestApp : Application
         InputScene mainInputScene = new InputScene("Main");
 
         mainInputScene.Actions.Add("Move",
-            new DualAxisAction(new AxisAction([new KeyBinding(Key.D)], [new KeyBinding(Key.A)]),
-                new AxisAction([new KeyBinding(Key.W)], [new KeyBinding(Key.S)])));
+            new DualAxisAction([new DualKeyBinding(Key.D, Key.A)], [new DualKeyBinding(Key.W, Key.S)]));
         
         Input.AddInputScene("Main", mainInputScene);
         Input.SetInputScene("Main");

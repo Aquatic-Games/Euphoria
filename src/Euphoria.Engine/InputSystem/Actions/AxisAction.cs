@@ -4,34 +4,23 @@ namespace Euphoria.Engine.InputSystem.Actions;
 
 public class AxisAction : IInputAction
 {
-    public IInputBinding[] Positive;
-
-    public IInputBinding[] Negative;
+    public IInputBinding[] Bindings;
 
     public float Value;
 
-    public AxisAction(IInputBinding[] positive, IInputBinding[] negative)
+    public AxisAction(params IInputBinding[] bindings)
     {
-        Positive = positive;
-        Negative = negative;
+        Bindings = bindings;
     }
 
     public void Update()
     {
         Value = 0;
         
-        foreach (IInputBinding binding in Positive)
+        foreach (IInputBinding binding in Bindings)
         {
             binding.Update();
             Value += binding.Value;
         }
-
-        foreach (IInputBinding binding in Negative)
-        {
-            binding.Update();
-            Value -= binding.Value;
-        }
-
-        Value = float.Clamp(Value, -1, 1);
     }
 }
