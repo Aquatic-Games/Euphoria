@@ -3,6 +3,8 @@ using Euphoria.Engine;
 using Euphoria.Engine.Configs;
 using Euphoria.Engine.Debugging;
 using Euphoria.Engine.InputSystem;
+using Euphoria.Engine.InputSystem.Actions;
+using Euphoria.Engine.InputSystem.Bindings;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;
 using Euphoria.Render.Renderers;
@@ -19,6 +21,14 @@ public class TestApp : Application
     
     public override void Initialize(Scene initialScene)
     {
+        InputScene mainInputScene = new InputScene("Main");
+
+        mainInputScene.Actions.Add("Move",
+            new DualAxisAction([new DualKeyBinding(Key.D, Key.A)], [new DualKeyBinding(Key.W, Key.S)]));
+        
+        Input.AddInputScene("Main", mainInputScene);
+        Input.SetInputScene("Main");
+        
         base.Initialize(initialScene);
 
         //Graphics.VSyncMode = VSyncMode.Off;
