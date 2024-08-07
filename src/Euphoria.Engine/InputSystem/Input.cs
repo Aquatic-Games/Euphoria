@@ -16,6 +16,7 @@ public static class Input
 
     private static Vector2 _mousePosition;
     private static Vector2 _mouseDelta;
+    private static Vector2 _scrollDelta;
 
     public static bool UIWantsFocus;
 
@@ -33,6 +34,8 @@ public static class Input
     public static Vector2 MousePosition => _mousePosition;
 
     public static Vector2 MouseDelta => _mouseDelta;
+
+    public static Vector2 ScrollDelta => _scrollDelta;
 
     public static bool IsKeyDown(Key key) => _keysDown.Contains(key);
 
@@ -64,6 +67,7 @@ public static class Input
         Window.MouseButtonUp += OnMouseButtonUp;
         
         Window.MouseMove += OnMouseMove;
+        Window.MouseScroll += OnMouseScroll;
     }
 
     internal static void Update()
@@ -72,6 +76,7 @@ public static class Input
         _frameButtons.Clear();
         
         _mouseDelta = Vector2.Zero;
+        _scrollDelta = Vector2.Zero;
         UIWantsFocus = false;
     }
 
@@ -93,15 +98,20 @@ public static class Input
         _frameButtons.Add(button);
     }
     
+    private static void OnMouseButtonUp(MouseButton button)
+    {
+        _buttonsDown.Remove(button);
+        _frameButtons.Remove(button);
+    }
+    
     private static void OnMouseMove(Vector2 position, Vector2 delta)
     {
         _mousePosition = position;
         _mouseDelta += delta;
     }
-
-    private static void OnMouseButtonUp(MouseButton button)
+    
+    private static void OnMouseScroll(Vector2 scroll)
     {
-        _buttonsDown.Remove(button);
-        _frameButtons.Remove(button);
+        _scrollDelta += scroll;
     }
 }
