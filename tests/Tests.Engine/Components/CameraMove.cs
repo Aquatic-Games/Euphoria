@@ -12,10 +12,14 @@ public class CameraMove : Component
     private Vector3 _rotation;
 
     private DualAxisAction _move;
+    private DualAxisAction _look;
 
     public override void Initialize()
     {
-        _move = (DualAxisAction) Input.GetInputScene("Main").Actions["Move"];
+        InputScene mainScene = Input.GetInputScene("Main");
+
+        _move = mainScene.GetAction<DualAxisAction>("Move");
+        _look = mainScene.GetAction<DualAxisAction>("Look");
     }
 
     public override void Update(float dt)
@@ -33,9 +37,7 @@ public class CameraMove : Component
         if (Input.IsKeyDown(Key.LeftControl))
             Transform.Position += Transform.Down * speed;
 
-        const float mouseSpeed = 0.01f;
-
-        _rotation += new Vector3(-Input.MouseDelta * mouseSpeed, 0);
+        _rotation += new Vector3(_look.Value, 0);
         _rotation.Y = float.Clamp(_rotation.Y, -MathF.PI / 2, MathF.PI / 2);
 
         Transform.Rotation = Quaternion.CreateFromYawPitchRoll(_rotation.X, _rotation.Y, _rotation.Z);

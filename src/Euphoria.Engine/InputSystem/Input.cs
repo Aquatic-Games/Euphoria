@@ -76,7 +76,10 @@ public static class Input
         
         _mouseDelta = Vector2.Zero;
         UIWantsFocus = false;
-        
+    }
+
+    internal static void PostUpdate()
+    {
         _currentInputScene?.Update();
     }
 

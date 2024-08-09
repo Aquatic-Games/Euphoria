@@ -23,9 +23,8 @@ public class TestApp : Application
     {
         InputScene mainInputScene = new InputScene("Main");
 
-        mainInputScene.Actions.Add("Move",
-            new DualAxisAction(new DirectionalBinding(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A),
-                new KeyBinding(Key.D))));
+        mainInputScene.Actions.Add("Move", new DualAxisAction(new DirectionalBinding(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
+        mainInputScene.Actions.Add("Look", new DualAxisAction(new MouseBinding(0.5f), new DirectionalBinding(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
         
         Input.AddInputScene("Main", mainInputScene);
         Input.SetInputScene("Main");

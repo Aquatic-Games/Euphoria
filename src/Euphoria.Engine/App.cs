@@ -165,6 +165,8 @@ public static class App
             
             Input.Update();
             Window.ProcessEvents();
+            // TODO: This way of updating is terrible. Everything needs to be manually updated. Implementation only, but this could be better.
+            Input.PostUpdate();
 
             double delta = Metrics.TimeSinceLastFrame;
             float dt = (float) delta;

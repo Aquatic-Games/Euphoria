@@ -18,6 +18,9 @@ public class InputScene
         Actions = new Dictionary<string, IInputAction>();
     }
 
+    public T GetAction<T>(string name) where T : IInputAction
+        => (T) Actions[name];
+
     public void Update()
     {
         foreach ((_, IInputAction action) in Actions)
