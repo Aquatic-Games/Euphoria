@@ -7,6 +7,4 @@ public interface IInputBinding<TValue>
     public bool IsPressed { get; }
     
     public TValue Value { get; }
-
-    public void Update();
 }

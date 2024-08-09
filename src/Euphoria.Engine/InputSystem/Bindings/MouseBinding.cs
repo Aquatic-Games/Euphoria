@@ -10,8 +10,17 @@ public struct MouseBinding : IInputBinding<Vector2>
     public bool IsDown => false;
 
     public bool IsPressed => false;
-    
-    public Vector2 Value { get; private set; }
+
+    public Vector2 Value
+    {
+        get
+        {
+            Vector2 mouseDelta = -Input.MouseDelta;
+            //mouseDelta.Y = -mouseDelta.Y;
+        
+            return mouseDelta * _sensitivity;
+        }
+    }
 
     public float Sensitivity
     {
@@ -27,13 +36,5 @@ public struct MouseBinding : IInputBinding<Vector2>
     public MouseBinding(float sensitivity)
     {
         Sensitivity = sensitivity;
-    }
-
-    public void Update()
-    {
-        Vector2 mouseDelta = -Input.MouseDelta;
-        //mouseDelta.Y = -mouseDelta.Y;
-        
-        Value = mouseDelta * _sensitivity;
     }
 }

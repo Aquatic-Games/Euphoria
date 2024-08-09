@@ -19,9 +19,6 @@ public class DualAxisAction : IInputAction
         Value = Vector2.Zero;
 
         foreach (IInputBinding<Vector2> binding in Bindings)
-        {
-            binding.Update();
             Value += binding.Value;
-        }
     }
 }
