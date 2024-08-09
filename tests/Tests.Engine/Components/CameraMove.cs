@@ -11,15 +11,17 @@ public class CameraMove : Component
 {
     private Vector3 _rotation;
 
-    private DualAxisAction _move;
-    private DualAxisAction _look;
+    private DirectionalAction _move;
+    private AxisAction _jumpCrouch;
+    private DirectionalAction _look;
 
     public override void Initialize()
     {
         InputScene mainScene = Input.GetInputScene("Main");
 
-        _move = mainScene.GetAction<DualAxisAction>("Move");
-        _look = mainScene.GetAction<DualAxisAction>("Look");
+        _move = mainScene.GetAction<DirectionalAction>("Move");
+        _jumpCrouch = mainScene.GetAction<AxisAction>("JumpCrouch");
+        _look = mainScene.GetAction<DirectionalAction>("Look");
     }
 
     public override void Update(float dt)
@@ -31,11 +33,7 @@ public class CameraMove : Component
 
         Transform.Position += Transform.Forward * _move.Value.Y * speed;
         Transform.Position += Transform.Right * _move.Value.X * speed;
-
-        if (Input.IsKeyDown(Key.Space))
-            Transform.Position += Transform.Up * speed;
-        if (Input.IsKeyDown(Key.LeftControl))
-            Transform.Position += Transform.Down * speed;
+        Transform.Position += Transform.Up * _jumpCrouch.Value * speed;
 
         _rotation += new Vector3(_look.Value, 0);
         _rotation.Y = float.Clamp(_rotation.Y, -MathF.PI / 2, MathF.PI / 2);

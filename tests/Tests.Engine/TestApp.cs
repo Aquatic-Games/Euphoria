@@ -23,8 +23,9 @@ public class TestApp : Application
     {
         InputScene mainInputScene = new InputScene("Main");
 
-        mainInputScene.Actions.Add("Move", new DualAxisAction(new DirectionalBinding(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
-        mainInputScene.Actions.Add("Look", new DualAxisAction(new MouseBinding(0.5f), new DirectionalBinding(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
+        mainInputScene.Actions.Add("Move", new DirectionalAction(new DirectionalBinding(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
+        mainInputScene.Actions.Add("JumpCrouch", new AxisAction(new AxisBinding(new KeyBinding(Key.Space), new KeyBinding(Key.LeftControl))));
+        mainInputScene.Actions.Add("Look", new DirectionalAction(new MouseBinding(0.5f), new DirectionalBinding(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
         
         Input.AddInputScene("Main", mainInputScene);
         Input.SetInputScene("Main");
