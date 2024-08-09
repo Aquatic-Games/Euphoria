@@ -2,7 +2,7 @@
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct KeyBinding : IInputBinding
+public struct KeyBinding : IInputBinding<float>
 {
     public Key Key;
     
