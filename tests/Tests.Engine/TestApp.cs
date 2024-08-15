@@ -21,14 +21,16 @@ public class TestApp : Application
     
     public override void Initialize(Scene initialScene)
     {
-        ActionSet mainActionSet = new ActionSet("Main");
-
+        ActionSet uiActionSet = new ActionSet("UI", CursorMode.Visible);
+        Input.AddActionSet("UI", uiActionSet);
+        
+        ActionSet mainActionSet = new ActionSet("Main", CursorMode.Locked);
         mainActionSet.Actions.Add("Move", new DirectionalAction(new DirectionalBinding(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
         mainActionSet.Actions.Add("Jump", new ButtonAction(new KeyBinding(Key.Space)));
         mainActionSet.Actions.Add("Crouch", new ButtonAction(new KeyBinding(Key.LeftControl)));
         mainActionSet.Actions.Add("Look", new DirectionalAction(new MouseBinding(0.5f), new DirectionalBinding(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
-        
         Input.AddActionSet("Main", mainActionSet);
+        
         Input.SetActiveActionSet(mainActionSet);
         
         base.Initialize(initialScene);
@@ -65,9 +67,9 @@ public class TestApp : Application
             App.Close();
 
         if (Input.UIWantsFocus)
-            Window.CursorMode = CursorMode.Visible;
+            Input.SetActiveActionSet(Input.GetActionSet("UI"));
         else
-            Window.CursorMode = CursorMode.Locked;
+            Input.SetActiveActionSet(Input.GetActionSet("Main"));
     }
 
     public override void Dispose()

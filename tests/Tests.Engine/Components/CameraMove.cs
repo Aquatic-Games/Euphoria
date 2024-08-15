@@ -28,9 +28,6 @@ public class CameraMove : Component
 
     public override void Update(float dt)
     {
-        if (Input.UIWantsFocus)
-            return;
-        
         float speed = 5 * dt;
 
         Transform.Position += Transform.Forward * _move.Value.Y * speed;

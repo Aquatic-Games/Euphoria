@@ -12,16 +12,17 @@ public class ActionSet
 
     public readonly Dictionary<string, IInputAction> Actions;
 
-    public ActionSet(string friendlyName)
+    public ActionSet(string friendlyName, CursorMode? cursorMode = null)
     {
         FriendlyName = friendlyName;
         Actions = new Dictionary<string, IInputAction>();
+        CursorMode = cursorMode;
     }
 
     public T GetAction<T>(string name) where T : IInputAction
         => (T) Actions[name];
 
-    public void Update()
+    public virtual void Update()
     {
         foreach ((_, IInputAction action) in Actions)
             action.Update();

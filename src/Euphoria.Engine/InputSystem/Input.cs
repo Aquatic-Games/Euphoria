@@ -54,7 +54,7 @@ public static class Input
     public static void SetActiveActionSet(ActionSet set)
     {
         _currentActionSet = set;
-        if (_currentActionSet.CursorMode is { } cursorMode)
+        if (_currentActionSet?.CursorMode is { } cursorMode)
             Window.CursorMode = cursorMode;
     }
 
