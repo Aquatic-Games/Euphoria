@@ -12,6 +12,11 @@ public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInp
 
     public TBinding Right;
 
+    public BindingType Type => Up switch
+    {
+        KeyBinding k => BindingType.Key2D
+    };
+    
     public bool IsDown => Up.IsDown || Down.IsDown || Left.IsDown || Right.IsDown;
 
     public bool IsPressed => Up.IsPressed || Down.IsPressed || Left.IsPressed || Right.IsPressed;

@@ -1,4 +1,6 @@
-﻿namespace Euphoria.Engine.InputSystem.Bindings;
+﻿using System;
+
+namespace Euphoria.Engine.InputSystem.Bindings;
 
 public struct Binding1D<TBinding> : IInputBinding<float> where TBinding : IInputBinding<bool>
 {
@@ -6,6 +8,12 @@ public struct Binding1D<TBinding> : IInputBinding<float> where TBinding : IInput
 
     public TBinding Negative;
 
+    public BindingType Type => Positive switch
+    {
+        KeyBinding k => BindingType.Key1D,
+        _ => throw new ArgumentOutOfRangeException()
+    };
+    
     public bool IsDown => Positive.IsDown || Negative.IsDown;
 
     public bool IsPressed => Positive.IsPressed || Negative.IsPressed;

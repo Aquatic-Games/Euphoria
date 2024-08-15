@@ -6,6 +6,8 @@ public struct KeyBinding : IInputBinding<bool>
 {
     public Key Key;
 
+    public BindingType Type => BindingType.Key;
+    
     public bool IsDown => Input.IsKeyDown(Key);
 
     public bool IsPressed => Input.IsKeyPressed(Key);

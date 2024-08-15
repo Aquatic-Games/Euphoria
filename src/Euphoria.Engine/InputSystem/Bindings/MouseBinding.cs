@@ -6,6 +6,8 @@ namespace Euphoria.Engine.InputSystem.Bindings;
 public struct MouseBinding : IInputBinding<Vector2>
 {
     private float _sensitivity;
+
+    public BindingType Type => BindingType.Mouse;
     
     public bool IsDown => false;
 
