@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace Euphoria.Engine.InputSystem;
@@ -60,6 +61,12 @@ public static class Input
 
     public static ActionSet GetActionSet(string name)
         => _actionSets[name];
+
+    public static IEnumerable<(string name, ActionSet set)> GetAllActionSets()
+    {
+        foreach ((string name, ActionSet set) in _actionSets)
+            yield return (name, set);
+    }
     
     internal static void Initialize()
     {

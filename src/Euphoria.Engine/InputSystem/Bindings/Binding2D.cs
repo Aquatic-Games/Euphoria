@@ -48,4 +48,7 @@ public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInp
         Left = left;
         Right = right;
     }
+
+    public string AsConfigString()
+        => $"Up:{Up.AsConfigString()};Down:{Down.AsConfigString()};Left:{Left.AsConfigString()};Right:{Right.AsConfigString()}";
 }

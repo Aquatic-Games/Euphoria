@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Euphoria.Core;
+using Euphoria.Engine.InputSystem;
+using Euphoria.Engine.InputSystem.Actions;
 using Euphoria.Parsers;
 using Euphoria.Render;
 
@@ -12,10 +15,13 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
 
     public GraphicsConfig? Graphics;
 
-    public EuphoriaConfig(DisplayConfig? display, GraphicsConfig? graphics)
+    public InputConfig? Input;
+
+    public EuphoriaConfig(DisplayConfig? display, GraphicsConfig? graphics, InputConfig? input)
     {
         Display = display;
         Graphics = graphics;
+        Input = input;
     }
 
     public static EuphoriaConfig CreateFromCurrentSettings()
@@ -33,13 +39,25 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
             Adapter = (int) Render.Graphics.Adapter.Index
         };
 
-        return new EuphoriaConfig(display, graphics);
+        Dictionary<string, InputAction> flattenedActions = new Dictionary<string, InputAction>();
+        foreach ((string setName, ActionSet set) in InputSystem.Input.GetAllActionSets())
+        {
+            foreach ((string actionName, InputAction action) in set.Actions)
+            {
+                flattenedActions.Add($"{setName}.{actionName}", action);
+            }
+        }
+
+        InputConfig input = new InputConfig(flattenedActions);
+        
+        return new EuphoriaConfig(display, graphics, input);
     }
 
     public virtual void WriteIni(Ini ini)
     {
         Display?.WriteIni(ini);
         Graphics?.WriteIni(ini);
+        Input?.WriteIni(ini);
     }
 
     public void Save(string path)
@@ -56,7 +74,7 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
 
     public static bool TryFromIni(Ini ini, out EuphoriaConfig config)
     {
-        config = new EuphoriaConfig(null, null);
+        config = new EuphoriaConfig(null, null, null);
 
         if (DisplayConfig.TryFromIni(ini, out DisplayConfig display))
             config.Display = display;

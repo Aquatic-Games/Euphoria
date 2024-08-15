@@ -1,21 +1,26 @@
-﻿using Euphoria.Engine.InputSystem.Bindings;
+﻿using System;
+using System.Text;
+using Euphoria.Engine.InputSystem.Bindings;
 
 namespace Euphoria.Engine.InputSystem.Actions;
 
-public class ButtonAction : IInputAction
+public class ButtonAction : InputAction
 {
-    public IInputBinding<bool>[] Bindings;
+    public readonly IInputBinding<bool>[] Bindings;
 
     public bool IsDown;
     
     public bool IsPressed;
+
+    protected override IInputBindingBase[] BaseBindings =>
+        Array.ConvertAll(Bindings, binding => (IInputBindingBase) binding);
 
     public ButtonAction(params IInputBinding<bool>[] bindings)
     {
         Bindings = bindings;
     }
     
-    public void Update()
+    public override void Update()
     {
         IsDown = false;
         IsPressed = false;

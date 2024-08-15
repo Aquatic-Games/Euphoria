@@ -195,6 +195,11 @@ public sealed class Ini
             Items = new Dictionary<string, Item>();
         }
 
+        public Group(string name) : this()
+        {
+            Name = name;
+        }
+
         public Group(string name, Dictionary<string, Item> items)
         {
             Name = name;

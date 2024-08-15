@@ -18,4 +18,7 @@ public struct KeyBinding : IInputBinding<bool>
     {
         Key = key;
     }
+
+    public string AsConfigString()
+        => Key.ToString();
 }

@@ -38,4 +38,7 @@ public struct Binding1D<TBinding> : IInputBinding<float> where TBinding : IInput
         Positive = positive;
         Negative = negative;
     }
+
+    public string AsConfigString()
+        => $"Positive:{Positive.AsConfigString()};Negative:{Negative.AsConfigString()}";
 }

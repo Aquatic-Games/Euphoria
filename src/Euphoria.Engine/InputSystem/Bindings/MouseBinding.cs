@@ -39,4 +39,7 @@ public struct MouseBinding : IInputBinding<Vector2>
     {
         Sensitivity = sensitivity;
     }
+
+    public string AsConfigString()
+        => $"Sensitivity:{Sensitivity}";
 }
