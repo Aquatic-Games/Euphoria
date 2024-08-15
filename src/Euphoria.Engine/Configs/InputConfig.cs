@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Euphoria.Engine.InputSystem.Actions;
+using Euphoria.Engine.InputSystem;
 using Euphoria.Parsers;
 
 namespace Euphoria.Engine.Configs;

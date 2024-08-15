@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Euphoria.Core;
 using Euphoria.Engine.InputSystem;
-using Euphoria.Engine.InputSystem.Actions;
 using Euphoria.Parsers;
 using Euphoria.Render;
 

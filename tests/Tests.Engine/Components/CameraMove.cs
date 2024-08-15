@@ -3,7 +3,6 @@ using System.Numerics;
 using Euphoria.Engine;
 using Euphoria.Engine.Entities.Components;
 using Euphoria.Engine.InputSystem;
-using Euphoria.Engine.InputSystem.Actions;
 
 namespace Tests.Engine.Components;
 

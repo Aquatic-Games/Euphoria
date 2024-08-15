@@ -3,7 +3,6 @@ using Euphoria.Engine;
 using Euphoria.Engine.Configs;
 using Euphoria.Engine.Debugging;
 using Euphoria.Engine.InputSystem;
-using Euphoria.Engine.InputSystem.Actions;
 using Euphoria.Engine.InputSystem.Bindings;
 using Euphoria.Engine.Scenes;
 using Euphoria.Render;

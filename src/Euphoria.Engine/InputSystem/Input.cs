@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Euphoria.Core;
-using Euphoria.Engine.InputSystem.Actions;
 
 namespace Euphoria.Engine.InputSystem;
 

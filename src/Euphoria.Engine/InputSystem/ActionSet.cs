@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Euphoria.Engine.InputSystem.Actions;
 
 namespace Euphoria.Engine.InputSystem;
 

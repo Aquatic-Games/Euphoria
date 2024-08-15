@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Euphoria.Engine.Configs;
 using Euphoria.Engine.InputSystem.Bindings;
-using Euphoria.Parsers;
 
-namespace Euphoria.Engine.InputSystem.Actions;
+namespace Euphoria.Engine.InputSystem;
 
 public class InputAction
 {
