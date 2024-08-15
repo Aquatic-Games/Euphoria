@@ -18,7 +18,7 @@ public class CameraMove : Component
 
     public override void Initialize()
     {
-        InputScene mainScene = Input.GetInputScene("Main");
+        ActionSet mainScene = Input.GetActionSet("Main");
 
         _move = mainScene.GetAction<DirectionalAction>("Move");
         _jump = mainScene.GetAction<ButtonAction>("Jump");

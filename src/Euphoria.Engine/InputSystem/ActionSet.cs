@@ -4,7 +4,7 @@ using Euphoria.Engine.InputSystem.Actions;
 
 namespace Euphoria.Engine.InputSystem;
 
-public class InputScene
+public class ActionSet
 {
     public readonly string FriendlyName;
 
@@ -12,7 +12,7 @@ public class InputScene
 
     public readonly Dictionary<string, IInputAction> Actions;
 
-    public InputScene(string friendlyName)
+    public ActionSet(string friendlyName)
     {
         FriendlyName = friendlyName;
         Actions = new Dictionary<string, IInputAction>();

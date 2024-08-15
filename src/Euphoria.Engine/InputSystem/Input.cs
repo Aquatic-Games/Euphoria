@@ -12,8 +12,8 @@ public static class Input
     private static HashSet<MouseButton> _buttonsDown;
     private static HashSet<MouseButton> _frameButtons;
 
-    private static Dictionary<string, InputScene> _inputScenes;
-    private static InputScene _currentInputScene;
+    private static Dictionary<string, ActionSet> _actionSets;
+    private static ActionSet _currentActionSet;
 
     private static Vector2 _mousePosition;
     private static Vector2 _mouseDelta;
@@ -29,7 +29,7 @@ public static class Input
         _buttonsDown = new HashSet<MouseButton>();
         _frameButtons = new HashSet<MouseButton>();
 
-        _inputScenes = new Dictionary<string, InputScene>();
+        _actionSets = new Dictionary<string, ActionSet>();
     }
 
     public static Vector2 MousePosition => _mousePosition;
@@ -46,20 +46,20 @@ public static class Input
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
 
-    public static void AddInputScene(string name, InputScene scene)
+    public static void AddActionSet(string name, ActionSet set)
     {
-        _inputScenes.Add(name, scene);
+        _actionSets.Add(name, set);
     }
 
-    public static void SetInputScene(string name)
+    public static void SetActiveActionSet(ActionSet set)
     {
-        _currentInputScene = _inputScenes[name];
-        if (_currentInputScene.CursorMode is { } cursorMode)
+        _currentActionSet = set;
+        if (_currentActionSet.CursorMode is { } cursorMode)
             Window.CursorMode = cursorMode;
     }
 
-    public static InputScene GetInputScene(string name)
-        => _inputScenes[name];
+    public static ActionSet GetActionSet(string name)
+        => _actionSets[name];
     
     internal static void Initialize()
     {
@@ -83,9 +83,9 @@ public static class Input
         UIWantsFocus = false;
     }
 
-    internal static void PostUpdate()
+    internal static void UpdateActionSet()
     {
-        _currentInputScene?.Update();
+        _currentActionSet?.Update();
     }
 
     private static void OnKeyDown(Key key)
