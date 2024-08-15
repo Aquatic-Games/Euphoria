@@ -32,7 +32,8 @@ public class TestApp : Application
         mainActionSet.Actions.Add("Exit", new InputAction(new KeyBinding(Key.Escape)));
         Input.AddActionSet("Main", mainActionSet);
         
-        Input.LoadActionsConfig(EuphoriaConfig.CurrentConfig.Input.Value.FlattenedActions);
+        if (EuphoriaConfig.CurrentConfig != null && EuphoriaConfig.CurrentConfig.Input.HasValue)
+            Input.LoadActionsConfig(EuphoriaConfig.CurrentConfig.Input.Value.FlattenedActions);
         Input.SetActiveActionSet(mainActionSet);
         
         base.Initialize(initialScene);

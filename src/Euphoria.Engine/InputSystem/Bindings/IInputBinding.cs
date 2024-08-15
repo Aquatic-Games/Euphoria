@@ -22,8 +22,8 @@ public interface IInputBinding
 
         BindingType type;
 
-        if (entries[0].Trim().StartsWith("Type:"))
-            type = Enum.Parse<BindingType>(entries[0]["Type:".Length..], true);
+        if (entries[0].Trim().ToLower().StartsWith("type:"))
+            type = Enum.Parse<BindingType>(entries[0]["type:".Length..], true);
         else
         {
             throw new Exception(

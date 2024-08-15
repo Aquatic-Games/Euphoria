@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Euphoria.Core;
 using Euphoria.Engine.InputSystem;
 using Euphoria.Parsers;
 
@@ -29,7 +31,16 @@ public struct InputConfig : ISerializableConfig<InputConfig>
         Dictionary<string, InputAction> flattenedActions = new Dictionary<string, InputAction>();
 
         foreach ((string name, Ini.Item item) in group.Items)
-            flattenedActions.Add(name, InputAction.FromString((string) item.Value));
+        {
+            try
+            {
+                flattenedActions.Add(name, InputAction.FromString((string) item.Value));
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Parsing input action failed: {e.Message}");
+            }
+        }
 
         config = new InputConfig(flattenedActions);
         return true;
