@@ -25,6 +25,13 @@ public struct InputConfig : ISerializableConfig<InputConfig>
 
     public static bool TryFromIni(Ini ini, out InputConfig config)
     {
-        throw new System.NotImplementedException();
+        Ini.Group group = ini.Groups["Input"];
+        Dictionary<string, InputAction> flattenedActions = new Dictionary<string, InputAction>();
+
+        foreach ((string name, Ini.Item item) in group.Items)
+            flattenedActions.Add(name, InputAction.FromString((string) item.Value));
+
+        config = new InputConfig(flattenedActions);
+        return true;
     }
 }

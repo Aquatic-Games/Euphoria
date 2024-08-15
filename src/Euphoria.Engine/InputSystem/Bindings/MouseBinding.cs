@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct MouseBinding : IInputBinding<Vector2>
+public struct MouseBinding : IInputBinding
 {
     private float _sensitivity;
 
@@ -13,14 +13,14 @@ public struct MouseBinding : IInputBinding<Vector2>
 
     public bool IsPressed => false;
 
-    public Vector2 Value
+    public Vector3 Value
     {
         get
         {
             Vector2 mouseDelta = -Input.MouseDelta;
             //mouseDelta.Y = -mouseDelta.Y;
         
-            return mouseDelta * _sensitivity;
+            return new Vector3(mouseDelta * _sensitivity, 0);
         }
     }
 
@@ -40,6 +40,6 @@ public struct MouseBinding : IInputBinding<Vector2>
         Sensitivity = sensitivity;
     }
 
-    public string AsConfigString()
+    public string AsString()
         => $"Sensitivity:{Sensitivity}";
 }

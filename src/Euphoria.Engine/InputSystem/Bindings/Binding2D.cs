@@ -2,7 +2,7 @@
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInputBinding<bool>
+public struct Binding2D<TBinding> : IInputBinding where TBinding : IInputBinding
 {
     public TBinding Up;
 
@@ -21,21 +21,14 @@ public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInp
 
     public bool IsPressed => Up.IsPressed || Down.IsPressed || Left.IsPressed || Right.IsPressed;
 
-    public Vector2 Value
+    public Vector3 Value
     {
         get
         {
-            Vector2 value = Vector2.Zero;
-            const float amount = 1.0f;
+            Vector3 value = Vector3.Zero;
 
-            if (Up.IsDown)
-                value.Y += amount;
-            if (Down.IsDown)
-                value.Y -= amount;
-            if (Left.IsDown)
-                value.X -= amount;
-            if (Right.IsDown)
-                value.X += amount;
+            value.Y = Up.Value.X - Down.Value.X;
+            value.X = Right.Value.X - Left.Value.X;
 
             return value;
         }
@@ -49,6 +42,6 @@ public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInp
         Right = right;
     }
 
-    public string AsConfigString()
-        => $"Up:{Up.AsConfigString()};Down:{Down.AsConfigString()};Left:{Left.AsConfigString()};Right:{Right.AsConfigString()}";
+    public string AsString()
+        => $"Up:{Up.AsString()};Down:{Down.AsString()};Left:{Left.AsString()};Right:{Right.AsString()}";
 }

@@ -81,6 +81,9 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
 
         if (GraphicsConfig.TryFromIni(ini, out GraphicsConfig graphics))
             config.Graphics = graphics;
+
+        if (InputConfig.TryFromIni(ini, out InputConfig input))
+            config.Input = input;
         
         return true;
     }

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct Binding1D<TBinding> : IInputBinding<float> where TBinding : IInputBinding<bool>
+public struct Binding1D : IInputBinding
 {
-    public TBinding Positive;
+    public IInputBinding Positive;
 
-    public TBinding Negative;
+    public IInputBinding Negative;
 
     public BindingType Type => Positive switch
     {
@@ -18,27 +19,14 @@ public struct Binding1D<TBinding> : IInputBinding<float> where TBinding : IInput
 
     public bool IsPressed => Positive.IsPressed || Negative.IsPressed;
     
-    public float Value
-    {
-        get
-        {
-            float value = 0;
-            const float amount = 1;
-            if (Positive.IsDown)
-                value += amount;
-            if (Negative.IsDown)
-                value -= amount;
+    public Vector3 Value => new(Positive.Value.X - Negative.Value.X);
 
-            return value;
-        }
-    }
-
-    public Binding1D(TBinding positive, TBinding negative)
+    public Binding1D(IInputBinding positive, IInputBinding negative)
     {
         Positive = positive;
         Negative = negative;
     }
 
-    public string AsConfigString()
-        => $"Positive:{Positive.AsConfigString()};Negative:{Negative.AsConfigString()}";
+    public string AsString()
+        => $"Positive:{Positive.AsString()};Negative:{Negative.AsString()}";
 }

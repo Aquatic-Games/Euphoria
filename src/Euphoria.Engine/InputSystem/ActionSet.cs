@@ -19,8 +19,8 @@ public class ActionSet
         CursorMode = cursorMode;
     }
 
-    public T GetAction<T>(string name) where T : InputAction
-        => (T) Actions[name];
+    public InputAction GetAction(string name)
+        => Actions[name];
 
     public virtual void Update()
     {
