@@ -2,19 +2,19 @@
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct DirectionalBinding : IInputBinding<Vector2>
+public struct Binding2D<TBinding> : IInputBinding<Vector2> where TBinding : IInputBinding<bool>
 {
-    public IInputBinding<float> Up;
+    public TBinding Up;
 
-    public IInputBinding<float> Down;
+    public TBinding Down;
 
-    public IInputBinding<float> Left;
+    public TBinding Left;
 
-    public IInputBinding<float> Right;
-    
-    public bool IsDown { get; }
-    
-    public bool IsPressed { get; }
+    public TBinding Right;
+
+    public bool IsDown => Up.IsDown || Down.IsDown || Left.IsDown || Right.IsDown;
+
+    public bool IsPressed => Up.IsPressed || Down.IsPressed || Left.IsPressed || Right.IsPressed;
 
     public Vector2 Value
     {
@@ -36,7 +36,7 @@ public struct DirectionalBinding : IInputBinding<Vector2>
         }
     }
 
-    public DirectionalBinding(IInputBinding<float> up, IInputBinding<float> down, IInputBinding<float> left, IInputBinding<float> right)
+    public Binding2D(TBinding up, TBinding down, TBinding left, TBinding right)
     {
         Up = up;
         Down = down;

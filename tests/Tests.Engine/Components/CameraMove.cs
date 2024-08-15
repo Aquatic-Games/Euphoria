@@ -11,19 +11,19 @@ public class CameraMove : Component
 {
     private Vector3 _rotation;
 
-    private DirectionalAction _move;
+    private Action2D _move;
     private ButtonAction _jump;
     private ButtonAction _crouch;
-    private DirectionalAction _look;
+    private Action2D _look;
 
     public override void Initialize()
     {
         ActionSet mainScene = Input.GetActionSet("Main");
 
-        _move = mainScene.GetAction<DirectionalAction>("Move");
+        _move = mainScene.GetAction<Action2D>("Move");
         _jump = mainScene.GetAction<ButtonAction>("Jump");
         _crouch = mainScene.GetAction<ButtonAction>("Crouch");
-        _look = mainScene.GetAction<DirectionalAction>("Look");
+        _look = mainScene.GetAction<Action2D>("Look");
     }
 
     public override void Update(float dt)

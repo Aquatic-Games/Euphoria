@@ -2,7 +2,7 @@
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct KeyBinding : IInputBinding<float>
+public struct KeyBinding : IInputBinding<bool>
 {
     public Key Key;
 
@@ -10,7 +10,7 @@ public struct KeyBinding : IInputBinding<float>
 
     public bool IsPressed => Input.IsKeyPressed(Key);
 
-    public float Value => IsDown ? 1 : 0;
+    public bool Value => IsDown;
 
     public KeyBinding(Key key)
     {

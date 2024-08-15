@@ -4,13 +4,13 @@ namespace Euphoria.Engine.InputSystem.Actions;
 
 public class ButtonAction : IInputAction
 {
-    public IInputBinding<float>[] Bindings;
+    public IInputBinding<bool>[] Bindings;
 
     public bool IsDown;
     
     public bool IsPressed;
 
-    public ButtonAction(params IInputBinding<float>[] bindings)
+    public ButtonAction(params IInputBinding<bool>[] bindings)
     {
         Bindings = bindings;
     }
@@ -20,7 +20,7 @@ public class ButtonAction : IInputAction
         IsDown = false;
         IsPressed = false;
         
-        foreach (IInputBinding<float> binding in Bindings)
+        foreach (IInputBinding<bool> binding in Bindings)
         {
             if (binding.IsDown)
                 IsDown = true;

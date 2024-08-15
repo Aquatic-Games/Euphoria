@@ -3,13 +3,13 @@ using Euphoria.Engine.InputSystem.Bindings;
 
 namespace Euphoria.Engine.InputSystem.Actions;
 
-public class DirectionalAction : IInputAction
+public class Action2D : IInputAction
 {
     public readonly IInputBinding<Vector2>[] Bindings;
 
     public Vector2 Value;
 
-    public DirectionalAction(params IInputBinding<Vector2>[] bindings)
+    public Action2D(params IInputBinding<Vector2>[] bindings)
     {
         Bindings = bindings;
     }

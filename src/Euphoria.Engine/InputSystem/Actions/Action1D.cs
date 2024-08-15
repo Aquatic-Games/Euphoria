@@ -2,13 +2,13 @@
 
 namespace Euphoria.Engine.InputSystem.Actions;
 
-public class AxisAction : IInputAction
+public class Action1D : IInputAction
 {
     public readonly IInputBinding<float>[] Bindings;
 
     public float Value;
 
-    public AxisAction(params IInputBinding<float>[] bindings)
+    public Action1D(params IInputBinding<float>[] bindings)
     {
         Bindings = bindings;
     }
