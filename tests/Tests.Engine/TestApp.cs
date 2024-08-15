@@ -21,16 +21,19 @@ public class TestApp : Application
     
     public override void Initialize(Scene initialScene)
     {
-        ActionSet uiActionSet = new ActionSet("UI", CursorMode.Visible);
+        ActionSet uiActionSet = new ActionSet("UI", CursorMode.Visible, false);
+        uiActionSet.Actions.Add("ExitMenu", new InputAction(new KeyBinding(Key.Escape)));
         Input.AddActionSet("UI", uiActionSet);
         
         ActionSet mainActionSet = new ActionSet("Main", CursorMode.Locked);
+        mainActionSet.Actions.Add("Look", new InputAction(new MouseBinding(0.5f), new Binding2D<KeyBinding>(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
         mainActionSet.Actions.Add("Move", new InputAction(new Binding2D<KeyBinding>(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
         mainActionSet.Actions.Add("Jump", new InputAction(new KeyBinding(Key.Space)));
         mainActionSet.Actions.Add("Crouch", new InputAction(new KeyBinding(Key.LeftControl)));
-        mainActionSet.Actions.Add("Look", new InputAction(new MouseBinding(0.5f), new Binding2D<KeyBinding>(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
+        mainActionSet.Actions.Add("Exit", new InputAction(new KeyBinding(Key.Escape)));
         Input.AddActionSet("Main", mainActionSet);
         
+        Input.LoadActionsConfig(EuphoriaConfig.CurrentConfig.Input.Value.FlattenedActions);
         Input.SetActiveActionSet(mainActionSet);
         
         base.Initialize(initialScene);
@@ -63,8 +66,11 @@ public class TestApp : Application
     {
         base.Update(dt);
         
-        if (Input.IsKeyPressed(Key.Escape))
+        if (Input.GetActionSet("Main").GetAction("Exit").IsPressed)
             App.Close();
+
+        if (Input.GetActionSet("UI").GetAction("ExitMenu").IsPressed)
+            EuphoriaDebug.IsOpen = false;
 
         if (Input.UIWantsFocus)
             Input.SetActiveActionSet(Input.GetActionSet("UI"));

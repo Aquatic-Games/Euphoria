@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Euphoria.Core;
+using Euphoria.Engine.InputSystem.Actions;
 
 namespace Euphoria.Engine.InputSystem;
 
@@ -46,6 +48,31 @@ public static class Input
     public static bool IsMouseButtonDown(MouseButton button) => _buttonsDown.Contains(button);
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
+
+    public static void LoadActionsConfig(Dictionary<string, InputAction> actions)
+    {
+        foreach ((string name, InputAction action) in actions)
+        {
+            int dotIndex = name.IndexOf('.');
+
+            string setName = name[..dotIndex].Trim();
+            string actionName = name[(dotIndex + 1)..].Trim();
+
+            if (!_actionSets.TryGetValue(setName, out ActionSet set))
+            {
+                Logger.Warn($"Action set '{setName}' does not exist, but was found in the config.");
+                continue;
+            }
+
+            if (!set.Actions.ContainsKey(actionName))
+            {
+                Logger.Warn($"Action '{actionName}' does not exist in set '{setName}', but was found in the config.");
+                continue;
+            }
+
+            set.Actions[actionName] = action;
+        }
+    }
 
     public static void AddActionSet(string name, ActionSet set)
     {

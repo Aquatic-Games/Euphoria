@@ -42,6 +42,9 @@ public class EuphoriaConfig : IConfig<EuphoriaConfig>
         Dictionary<string, InputAction> flattenedActions = new Dictionary<string, InputAction>();
         foreach ((string setName, ActionSet set) in InputSystem.Input.GetAllActionSets())
         {
+            if (!set.Save)
+                continue;
+            
             foreach ((string actionName, InputAction action) in set.Actions)
             {
                 flattenedActions.Add($"{setName}.{actionName}", action);

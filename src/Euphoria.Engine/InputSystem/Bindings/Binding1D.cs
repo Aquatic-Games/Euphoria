@@ -3,11 +3,11 @@ using System.Numerics;
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
-public struct Binding1D : IInputBinding
+public struct Binding1D<TBinding> : IInputBinding where TBinding : IInputBinding
 {
-    public IInputBinding Positive;
+    public TBinding Positive;
 
-    public IInputBinding Negative;
+    public TBinding Negative;
 
     public BindingType Type => Positive switch
     {
@@ -21,7 +21,7 @@ public struct Binding1D : IInputBinding
     
     public Vector3 Value => new(Positive.Value.X - Negative.Value.X);
 
-    public Binding1D(IInputBinding positive, IInputBinding negative)
+    public Binding1D(TBinding positive, TBinding negative)
     {
         Positive = positive;
         Negative = negative;

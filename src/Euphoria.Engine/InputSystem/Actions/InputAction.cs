@@ -45,7 +45,7 @@ public class InputAction
     {
         _value = Vector3.Zero;
         _isDown = false;
-        _isPressed = true;
+        _isPressed = false;
 
         foreach (IInputBinding binding in Bindings)
         {
@@ -97,6 +97,11 @@ public class InputAction
                 IInputBinding binding = IInputBinding.FromString(bindString.Trim());
                 bindings.Add(binding);
             }
+        }
+        else
+        {
+            IInputBinding binding = IInputBinding.FromString(@string.Trim());
+            bindings.Add(binding);
         }
 
         return new InputAction(bindings);
