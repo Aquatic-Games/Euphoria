@@ -3,11 +3,11 @@ using BepuPhysics.Collidables;
 
 namespace Euphoria.Physics.Shapes;
 
-public struct Box : IShape
+public struct BoxShape : IShape
 {
     public BepuPhysics.Collidables.Box BepuBox;
     
-    public Box(float width, float height, float depth)
+    public BoxShape(float width, float height, float depth)
     {
         BepuBox = new BepuPhysics.Collidables.Box(width, height, depth);
     }

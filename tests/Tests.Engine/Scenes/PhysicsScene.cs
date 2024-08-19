@@ -29,27 +29,27 @@ public class PhysicsScene : Scene
         Entity staticCube = new Entity("StaticCube",
             new Transform(new Vector3(0, -2, 0), Quaternion.Identity, new Vector3(25, 1, 25), Vector3.Zero));
         staticCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        staticCube.AddComponent(new Rigidbody(new Box(1, 1, 1), 0, false));
+        staticCube.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(staticCube);
 
         Entity wall1 = new Entity("Wall1", new Transform(new Vector3(-12.5f, 0, 0)) { Scale = new Vector3(1, 10, 25) });
         wall1.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        wall1.AddComponent(new Rigidbody(new Box(1, 1, 1), 0, false));
+        wall1.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall1);
         
         Entity wall2 = new Entity("Wall2", new Transform(new Vector3(12.5f, 0, 0)) { Scale = new Vector3(1, 10, 25) });
         wall2.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        wall2.AddComponent(new Rigidbody(new Box(1, 1, 1), 0, false));
+        wall2.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall2);
         
         Entity wall3 = new Entity("Wall3", new Transform(new Vector3(0, 0, -12.5f)) { Scale = new Vector3(25, 10, 1) });
         wall3.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        wall3.AddComponent(new Rigidbody(new Box(1, 1, 1), 0, false));
+        wall3.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall3);
         
         Entity wall4 = new Entity("Wall4", new Transform(new Vector3(0, 0, 12.5f)) { Scale = new Vector3(25, 10, 1) });
         wall4.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), material));
-        wall4.AddComponent(new Rigidbody(new Box(1, 1, 1), 0, false));
+        wall4.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall4);
 
         for (int i = 0; i < 100; i++)
@@ -57,7 +57,7 @@ public class PhysicsScene : Scene
             Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3((i % 20) - 10, 15 + i, (i % 20) - 10)));
             dynamicCube.AddComponent(new HighlightComponent());
             dynamicCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), new Material(new MaterialDescription(Texture.White))));
-            dynamicCube.AddComponent(new Rigidbody(new Box(1, 1, 1), 1, interpolation));
+            dynamicCube.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 1, interpolation));
             
             AddEntity(dynamicCube);
         }
