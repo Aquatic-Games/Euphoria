@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Euphoria.Core;
+using Euphoria.Engine.Configs;
 
 namespace Euphoria.Engine.InputSystem;
 
@@ -48,10 +49,12 @@ public static class Input
 
     public static bool IsMouseButtonPressed(MouseButton button) => _frameButtons.Contains(button);
 
-    public static void LoadActionsConfig(Dictionary<string, InputAction> actions)
+    public static void LoadInputConfig(InputConfig config)
     {
-        foreach ((string name, InputAction action) in actions)
+        foreach ((string name, InputAction action) in config.FlattenedActions)
         {
+            Logger.Trace($"Loading action '{name}'.");
+            
             int dotIndex = name.IndexOf('.');
 
             string setName = name[..dotIndex].Trim();
@@ -63,13 +66,13 @@ public static class Input
                 continue;
             }
 
-            if (!set.Actions.ContainsKey(actionName))
+            if (!set.Actions.TryGetValue(actionName, out InputAction setAction))
             {
                 Logger.Warn($"Action '{actionName}' does not exist in set '{setName}', but was found in the config.");
                 continue;
             }
 
-            set.Actions[actionName] = action;
+            setAction.Bindings = action.Bindings;
         }
     }
 

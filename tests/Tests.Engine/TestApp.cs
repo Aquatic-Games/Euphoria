@@ -33,7 +33,7 @@ public class TestApp : Application
         Input.AddActionSet("Main", mainActionSet);
         
         if (EuphoriaConfig.CurrentConfig != null && EuphoriaConfig.CurrentConfig.Input.HasValue)
-            Input.LoadActionsConfig(EuphoriaConfig.CurrentConfig.Input.Value.FlattenedActions);
+            Input.LoadInputConfig(EuphoriaConfig.CurrentConfig.Input.Value);
         Input.SetActiveActionSet(mainActionSet);
         
         base.Initialize(initialScene);

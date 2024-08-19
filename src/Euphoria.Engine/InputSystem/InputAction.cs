@@ -11,7 +11,7 @@ public class InputAction
     private bool _isDown;
     private bool _isPressed;
     
-    public readonly List<IInputBinding> Bindings;
+    public List<IInputBinding> Bindings;
 
     public bool IsDown => _isDown;
 
