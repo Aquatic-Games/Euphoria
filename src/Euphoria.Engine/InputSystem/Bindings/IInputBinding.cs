@@ -34,8 +34,11 @@ public interface IInputBinding
         {
             case BindingType.Key:
                 return new KeyBinding(Enum.Parse<Key>(entries[1], true));
-
+            
             case BindingType.Mouse:
+                return new MouseBinding(Enum.Parse<MouseButton>(entries[1], true));
+
+            case BindingType.MouseMove:
             {
                 float sensitivity = 1;
                 
@@ -55,7 +58,7 @@ public interface IInputBinding
                     }
                 }
 
-                return new MouseBinding(sensitivity);
+                return new MouseMoveBinding(sensitivity);
             }
 
             case BindingType.Key1D:

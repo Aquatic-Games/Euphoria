@@ -1,45 +1,24 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Euphoria.Engine.InputSystem.Bindings;
 
 public struct MouseBinding : IInputBinding
 {
-    private float _sensitivity;
-
+    public MouseButton Button;
+    
     public BindingType Type => BindingType.Mouse;
-    
-    public bool IsDown => false;
 
-    public bool IsPressed => false;
+    public bool IsDown => Input.IsMouseButtonDown(Button);
 
-    public Vector3 Value
-    {
-        get
-        {
-            Vector2 mouseDelta = -Input.MouseDelta;
-            //mouseDelta.Y = -mouseDelta.Y;
-        
-            return new Vector3(mouseDelta * _sensitivity, 0);
-        }
-    }
+    public bool IsPressed => Input.IsMouseButtonPressed(Button);
 
-    public float Sensitivity
-    {
-        get => float.RadiansToDegrees(_sensitivity);
-        set => _sensitivity = float.DegreesToRadians(value);
-    }
+    public Vector3 Value => new Vector3(IsDown ? 1 : 0);
 
-    public MouseBinding()
+    public MouseBinding(MouseButton button)
     {
-        Sensitivity = 1.0f;
-    }
-    
-    public MouseBinding(float sensitivity)
-    {
-        Sensitivity = sensitivity;
+        Button = button;
     }
 
     public string AsString()
-        => $"Sensitivity:{Sensitivity}";
+        => Button.ToString();
 }
