@@ -3,7 +3,7 @@ using BepuPhysics.Collidables;
 
 namespace Euphoria.Physics.Shapes;
 
-public struct CapsuleShape : IShape
+public class CapsuleShape : IShape
 {
     private Capsule _capsule;
 

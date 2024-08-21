@@ -219,7 +219,7 @@ public sealed class Ini
             switch (dictItem.Type)
             {
                 case ItemType.Null:
-                    break;
+                    return false;
                 
                 case ItemType.String:
                     if (itemType.IsEnum)

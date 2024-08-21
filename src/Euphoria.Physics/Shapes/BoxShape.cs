@@ -3,9 +3,9 @@ using BepuPhysics.Collidables;
 
 namespace Euphoria.Physics.Shapes;
 
-public struct BoxShape : IShape
+public class BoxShape : IShape
 {
-    public BepuPhysics.Collidables.Box BepuBox;
+    public Box BepuBox;
     
     public BoxShape(float width, float height, float depth)
     {
@@ -19,7 +19,7 @@ public struct BoxShape : IShape
 
     public TypedIndex AddToSimulation(Simulation simulation, in BodyDescription description)
     {
-        BepuPhysics.Collidables.Box box = BepuBox;
+        Box box = BepuBox;
         box.HalfWidth *= description.Scale.X;
         box.HalfHeight *= description.Scale.Y;
         box.HalfLength *= description.Scale.Z;
