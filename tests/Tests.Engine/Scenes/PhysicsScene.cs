@@ -53,12 +53,12 @@ public class PhysicsScene : Scene
         wall4.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall4);
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 100; i++)
         {
             Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3((i % 20) - 10, 15 + i, (i % 20) - 10)));
             dynamicCube.AddComponent(new HighlightComponent());
             dynamicCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices), new Material(new MaterialDescription(Texture.White))));
-            dynamicCube.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 1, interpolation));
+            dynamicCube.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 1, interpolation/*, CollisionType.Ghost*/));
             
             AddEntity(dynamicCube);
         }

@@ -9,6 +9,7 @@ namespace Euphoria.Engine.Entities.Components;
 public class Rigidbody : Component
 {
     private readonly float _mass;
+    private CollisionType _collisionType;
     private readonly bool _interpolate;
 
     private Transform _prevTransform;
@@ -22,11 +23,12 @@ public class Rigidbody : Component
 
     public ref Vector3 AngularVelocity => ref _body.AngularVelocity;
     
-    public Rigidbody(IShape shape, float mass, bool interpolate = true)
+    public Rigidbody(IShape shape, float mass, bool interpolate = true, CollisionType collisionType = CollisionType.Solid)
     {
         Shape = shape;
         _mass = mass;
         _interpolate = interpolate;
+        _collisionType = collisionType;
     }
     
     public void Teleport(Vector3 position)
@@ -54,9 +56,9 @@ public class Rigidbody : Component
         BodyDescription description;
         
         if (_mass == 0)
-            description = BodyDescription.Static(Transform.Position, Transform.Rotation, Transform.Scale);
+            description = BodyDescription.Static(Transform.Position, Transform.Rotation, Transform.Scale, _collisionType);
         else
-            description = BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation, Transform.Scale);
+            description = BodyDescription.Dynamic(_mass, Transform.Position, Transform.Rotation, Transform.Scale, _collisionType);
 
         _body = PhysicsWorld.CreateBody(description, Shape);
         // TODO: These types of functions should be directly in the component so we don't need to get the active scene each time.

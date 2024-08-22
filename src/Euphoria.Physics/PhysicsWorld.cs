@@ -43,6 +43,8 @@ public static class PhysicsWorld
         BodyInertia inertia = shape.CalculateInertia(description.Mass);
         TypedIndex index = shape.AddToSimulation(Simulation, description);
         RigidPose pose = new RigidPose(description.Position, description.Rotation);
+
+        CollidableReference reference;
         
         switch (description.BodyType)
         {
@@ -52,7 +54,8 @@ public static class PhysicsWorld
                     BepuPhysics.BodyDescription.CreateDynamic(pose, inertia, index, new BodyActivityDescription(0.01f));
 
                 BodyHandle handle = Simulation.Bodies.Add(desc);
-                return new Body(new CollidableReference(CollidableMobility.Dynamic, handle));
+                reference = new CollidableReference(CollidableMobility.Dynamic, handle);
+                break;
             }
             
             case BodyType.Kinematic:
@@ -63,12 +66,16 @@ public static class PhysicsWorld
                 StaticDescription desc = new StaticDescription(pose, index);
 
                 StaticHandle handle = Simulation.Statics.Add(desc);
-                return new Body(new CollidableReference(handle));
+                reference = new CollidableReference(handle);
+                break;
             }
             
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        _narrowPhaseCallbacks.CollisionTypes.Allocate(reference) = description.CollisionType;
+        return new Body(reference);
     }
 
     public static bool Raycast(Vector3 position, Vector3 direction, float maxDistance, out RayHit hit)

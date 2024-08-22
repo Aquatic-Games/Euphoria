@@ -7,14 +7,22 @@ namespace Euphoria.Physics.Internal.Callbacks;
 
 internal struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
 {
+    public CollidableProperty<CollisionType> CollisionTypes;
+
+    public NarrowPhaseCallbacks()
+    {
+        CollisionTypes = new CollidableProperty<CollisionType>();
+    }
+    
     public void Initialize(Simulation simulation)
     {
-        
+        CollisionTypes.Initialize(simulation);
     }
 
     public bool AllowContactGeneration(int workerIndex, CollidableReference a, CollidableReference b, ref float speculativeMargin)
     {
-        return a.Mobility == CollidableMobility.Dynamic || b.Mobility == CollidableMobility.Dynamic;
+        return (a.Mobility == CollidableMobility.Dynamic || b.Mobility == CollidableMobility.Dynamic) &&
+               (CollisionTypes[a] == CollisionType.Solid && CollisionTypes[b] == CollisionType.Solid);
     }
 
     public bool AllowContactGeneration(int workerIndex, CollidablePair pair, int childIndexA, int childIndexB)
