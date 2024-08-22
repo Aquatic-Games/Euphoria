@@ -11,7 +11,35 @@ public struct Body
 
     public ulong Id => _collidable.Packed;
 
-    public ref Vector3 Position
+    public Vector3 Position
+    {
+        get
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            return GetPose(simulation, _collidable).Position;
+        }
+        set
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            GetPose(simulation, _collidable).Position = value;
+        }
+    }
+
+    public Quaternion Rotation
+    {
+        get
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            return GetPose(simulation, _collidable).Orientation;
+        }
+        set
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            GetPose(simulation, _collidable).Orientation = value;
+        }
+    }
+
+    public Vector3 LinearVelocity
     {
         get
         {
@@ -20,50 +48,28 @@ public struct Body
             {
                 case CollidableMobility.Dynamic:
                 case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[_collidable.BodyHandle].Pose.Position;
+                    return simulation.Bodies[_collidable.BodyHandle].Velocity.Linear;
                 
                 case CollidableMobility.Static:
-                    return ref simulation.Statics[_collidable.StaticHandle].Pose.Position;
+                    return Vector3.Zero;
                     
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-    }
-
-    public ref Quaternion Rotation
-    {
-        get
+        set
         {
             Simulation simulation = PhysicsWorld.Simulation;
+            
             switch (_collidable.Mobility)
             {
                 case CollidableMobility.Dynamic:
                 case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[_collidable.BodyHandle].Pose.Orientation;
+                    simulation.Bodies[_collidable.BodyHandle].Velocity.Linear = value;
+                    break;
                 
                 case CollidableMobility.Static:
-                    return ref simulation.Statics[_collidable.StaticHandle].Pose.Orientation;
-                    
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
-
-    public ref Vector3 LinearVelocity
-    {
-        get
-        {
-            Simulation simulation = PhysicsWorld.Simulation;
-            switch (_collidable.Mobility)
-            {
-                case CollidableMobility.Dynamic:
-                case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[_collidable.BodyHandle].Velocity.Linear;
-                
-                case CollidableMobility.Static:
-                    throw new NotSupportedException();
+                    break;
                     
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -71,7 +77,7 @@ public struct Body
         }
     }
     
-    public ref Vector3 AngularVelocity
+    public Vector3 AngularVelocity
     {
         get
         {
@@ -80,10 +86,28 @@ public struct Body
             {
                 case CollidableMobility.Dynamic:
                 case CollidableMobility.Kinematic:
-                    return ref simulation.Bodies[_collidable.BodyHandle].Velocity.Angular;
+                    return simulation.Bodies[_collidable.BodyHandle].Velocity.Angular;
                 
                 case CollidableMobility.Static:
-                    throw new NotSupportedException();
+                    return Vector3.Zero;
+                    
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        set
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            
+            switch (_collidable.Mobility)
+            {
+                case CollidableMobility.Dynamic:
+                case CollidableMobility.Kinematic:
+                    simulation.Bodies[_collidable.BodyHandle].Velocity.Linear = value;
+                    break;
+                
+                case CollidableMobility.Static:
+                    break;
                     
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -94,5 +118,29 @@ public struct Body
     public Body(CollidableReference collidable)
     {
         _collidable = collidable;
+    }
+
+    public void UpdateBounds()
+    {
+        Simulation simulation = PhysicsWorld.Simulation;
+        BodyReference reference = simulation.Bodies[_collidable.BodyHandle];
+        reference.Awake = true;
+        reference.UpdateBounds();
+    }
+
+    private static ref RigidPose GetPose(Simulation simulation, CollidableReference collidable)
+    {
+        switch (collidable.Mobility)
+        {
+            case CollidableMobility.Dynamic:
+            case CollidableMobility.Kinematic:
+                return ref simulation.Bodies[collidable.BodyHandle].Pose;
+                
+            case CollidableMobility.Static:
+                return ref simulation.Statics[collidable.StaticHandle].Pose;
+                    
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

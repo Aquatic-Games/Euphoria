@@ -23,9 +23,17 @@ public class Rigidbody : Component
     
     public readonly IShape Shape;
 
-    public ref Vector3 LinearVelocity => ref _body.LinearVelocity;
+    public Vector3 LinearVelocity
+    {
+        get => _body.LinearVelocity;
+        set => _body.LinearVelocity = value;
+    }
 
-    public ref Vector3 AngularVelocity => ref _body.AngularVelocity;
+    public Vector3 AngularVelocity
+    {
+        get => _body.AngularVelocity;
+        set => _body.AngularVelocity = value;
+    }
     
     public Rigidbody(IShape shape, float mass, bool interpolate = true, CollisionType collisionType = CollisionType.Solid)
     {
@@ -42,12 +50,14 @@ public class Rigidbody : Component
     public void Teleport(Vector3 position)
     {
         _body.Position = position;
+        _body.UpdateBounds();
     }
 
     public void Teleport(Vector3 position, Quaternion rotation)
     {
         _body.Position = position;
         _body.Rotation = rotation;
+        _body.UpdateBounds();
     }
 
     public void ResetVelocity()
