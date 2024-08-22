@@ -12,6 +12,8 @@ namespace Euphoria.Physics;
 
 public static class PhysicsWorld
 {
+    public static event OnBodyContact BodyContact = delegate { };
+
     private static NarrowPhaseCallbacks _narrowPhaseCallbacks;
     private static PoseIntegratorCallbacks _poseIntegratorCallbacks;
     
@@ -28,7 +30,7 @@ public static class PhysicsWorld
 
     public static void Initialize()
     {
-        _narrowPhaseCallbacks = new NarrowPhaseCallbacks();
+        _narrowPhaseCallbacks = new NarrowPhaseCallbacks(ContactGenerationCallback);
         _poseIntegratorCallbacks = new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0));
         
         _bufferPool = new BufferPool();
@@ -99,4 +101,11 @@ public static class PhysicsWorld
     {
         Simulation.Timestep(dt, ThreadDispatcher);
     }
+
+    private static void ContactGenerationCallback(CollidableReference a, CollidableReference b)
+    {
+        BodyContact.Invoke(new Body(a), new Body(b));
+    }
+
+    public delegate void OnBodyContact(Body a, Body b);
 }

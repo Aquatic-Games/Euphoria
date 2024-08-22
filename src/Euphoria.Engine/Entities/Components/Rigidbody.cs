@@ -8,9 +8,13 @@ namespace Euphoria.Engine.Entities.Components;
 
 public class Rigidbody : Component
 {
+    public event OnCollisionDetected CollisionDetected;
+    
     private readonly float _mass;
-    private CollisionType _collisionType;
+    private readonly CollisionType _collisionType;
     private readonly bool _interpolate;
+
+    private bool _isCollisionDetectedCallbackUsed;
 
     private Transform _prevTransform;
     private Transform _newTransform;
@@ -29,6 +33,10 @@ public class Rigidbody : Component
         _mass = mass;
         _interpolate = interpolate;
         _collisionType = collisionType;
+
+        // No point interpolating statics.
+        if (_mass == 0)
+            _interpolate = false;
     }
     
     public void Teleport(Vector3 position)
@@ -88,9 +96,35 @@ public class Rigidbody : Component
 
     public override void Update(float dt)
     {
+        // Optimization: Only link the body contact callback if the collision detected callback is *actually* used.
+        if (CollisionDetected != null && !_isCollisionDetectedCallbackUsed)
+        {
+            _isCollisionDetectedCallbackUsed = true;
+            PhysicsWorld.BodyContact += OnContact;
+        }
+        
         if (!_interpolate)
             return;
         
         Transform = Transform.Lerp(_prevTransform, _newTransform, (float) App.TickInterpolation);
     }
+
+    private void OnContact(Body a, Body b)
+    {
+        if (a.Id == _body.Id)
+        {
+            CollisionDetected?.Invoke(SceneManager.ActiveScene.BodyIdToEntity[b.Id]);
+            return;
+        }
+        
+        if (b.Id == _body.Id)
+            CollisionDetected?.Invoke(SceneManager.ActiveScene.BodyIdToEntity[a.Id]);
+    }
+
+    public override void Dispose()
+    {
+        PhysicsWorld.BodyContact -= OnContact;
+    }
+
+    public delegate void OnCollisionDetected(Entity entity);
 }
