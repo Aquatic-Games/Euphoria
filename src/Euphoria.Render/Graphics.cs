@@ -199,6 +199,7 @@ public static class Graphics
         Font.DisposeAllFonts();
         // TODO: This seems to cause an access violation exception if no text is rendered. Not sure why.
         //Font.FreeType.Dispose();
+        Material.DisposeAllMaterials();
         Texture.DisposeAllTextures();
         
         DefaultSampler.Dispose();

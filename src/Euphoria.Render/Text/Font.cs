@@ -209,6 +209,7 @@ public class Font : IDisposable
 
     public static void StoreFont(string name, Font font)
     {
+        Logger.Trace($"Assigning name \"{name}\" to font {font.Id}.");
         _namedFonts[name] = font.Id;
     }
 
@@ -220,8 +221,13 @@ public class Font : IDisposable
 
     public static void DisposeAllFonts()
     {
+        Logger.Debug("Disposing all fonts.");
+        
         foreach ((_, Font font) in _loadedFonts.Items)
             font.Dispose();
+        
+        _loadedFonts.Items.Clear();
+        _namedFonts.Clear();
     }
 
     public static readonly Font Roboto;

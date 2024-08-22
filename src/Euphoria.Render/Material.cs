@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Euphoria.Core;
 using Euphoria.Math;
 using Euphoria.Render.Renderers;
 using Euphoria.Render.Renderers.Structs;
@@ -18,6 +20,8 @@ public sealed class Material : IDisposable
     internal readonly Pipeline Pipeline;
     internal readonly DescriptorSet MatDescriptor;
 
+    public readonly ulong Id;
+
     public Color AlbedoColor;
 
     public float MetallicColor;
@@ -34,6 +38,8 @@ public sealed class Material : IDisposable
 
     public Texture Occlusion => _occlusion;
 
+    public MaterialDescription Description { get; }
+
     internal MaterialInfo MaterialInfo => new MaterialInfo(AlbedoColor, MetallicColor, RoughnessColor);
 
     public Material(in MaterialDescription description)
@@ -48,6 +54,11 @@ public sealed class Material : IDisposable
         MetallicColor = description.MetallicColor;
         RoughnessColor = description.RoughnessColor;
 
+        Description = description;
+
+        Id = _loadedMaterials.AddItem(this);
+        Logger.Trace($"Creating material {Id}.");
+        
         Device device = Graphics.Device;
         Renderer3D renderer = Graphics.Renderer3D;
         
@@ -72,4 +83,47 @@ public sealed class Material : IDisposable
         MatDescriptor.Dispose();
         Pipeline.Dispose();
     }
+
+    private static ItemIdCollection<Material> _loadedMaterials;
+    private static Dictionary<string, ulong> _namedMaterials;
+
+    static Material()
+    {
+        _loadedMaterials = new ItemIdCollection<Material>();
+        _namedMaterials = new Dictionary<string, ulong>();
+        
+        Logger.Trace("Creating default materials.");
+        Default = new Material(new MaterialDescription(Texture.White));
+    }
+
+    public static void StoreMaterial(string name, Material material)
+    {
+        Logger.Trace($"Assigning name \"{name}\" to material {material.Id}");
+        _namedMaterials[name] = material.Id;
+    }
+
+    public static Material GetMaterial(ulong id)
+        => _loadedMaterials[id];
+
+    public static Material GetMaterial(string name)
+        => _loadedMaterials[_namedMaterials[name]];
+
+    public IEnumerable<Material> GetAllMaterials()
+    {
+        foreach ((_, Material material) in _loadedMaterials.Items)
+            yield return material;
+    }
+
+    public static void DisposeAllMaterials()
+    {
+        Logger.Debug("Disposing all materials.");
+        
+        foreach ((_, Material material) in _loadedMaterials.Items)
+            material.Dispose();
+        
+        _loadedMaterials.Items.Clear();
+        _namedMaterials.Clear();
+    }
+
+    public static readonly Material Default;
 }

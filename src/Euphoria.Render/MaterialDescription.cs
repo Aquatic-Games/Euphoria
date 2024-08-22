@@ -28,13 +28,13 @@ public struct MaterialDescription
     public PrimitiveType PrimitiveType;
 
     public MaterialDescription(Texture albedo, Texture normal = null, Texture metallic = null, Texture roughness = null,
-        Texture occlusion = null, Color? albedoColor = null, float metallicColor = 0.0f, float roughnessColor = 1.0f,
+        Texture occlusion = null, Color? albedoColor = null, float metallicColor = 1.0f, float roughnessColor = 1.0f,
         RasterizerDescription? rasterizer = null, DepthStencilDescription? depth = null,
         PrimitiveType primitiveType = PrimitiveType.TriangleList)
     {
         Albedo = albedo;
         Normal = normal ?? Texture.EmptyNormal;
-        Metallic = metallic ?? Texture.White;
+        Metallic = metallic ?? Texture.Black;
         Roughness = roughness ?? Texture.White;
         Occlusion = occlusion ?? Texture.White;
         

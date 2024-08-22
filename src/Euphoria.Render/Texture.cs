@@ -117,8 +117,13 @@ public class Texture : IDisposable
 
     public static void DisposeAllTextures()
     {
+        Logger.Debug("Disposing all textures.");
+        
         foreach ((_, Texture texture) in _loadedTextures.Items)
             texture.Dispose();
+        
+        _loadedTextures.Items.Clear();
+        _namedTextures.Clear();
     }
 
     public static readonly Texture White;
