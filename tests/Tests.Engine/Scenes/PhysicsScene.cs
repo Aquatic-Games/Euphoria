@@ -20,6 +20,7 @@ public class PhysicsScene : Scene
 
         Camera.Transform.Position.Z = 3;
         Camera.AddComponent(new CameraMove());
+        Camera.AddComponent(new InteractComponent());
 
         Cube cube = new Cube();
         Material material = new Material(new MaterialDescription(Texture.White));
@@ -52,7 +53,7 @@ public class PhysicsScene : Scene
         wall4.AddComponent(new Rigidbody(new BoxShape(1, 1, 1), 0, false));
         AddEntity(wall4);
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1; i++)
         {
             Entity dynamicCube = new Entity($"DynamicCube{i}", new Transform(new Vector3((i % 20) - 10, 15 + i, (i % 20) - 10)));
             dynamicCube.AddComponent(new HighlightComponent());
@@ -66,25 +67,5 @@ public class PhysicsScene : Scene
         hitCube.AddComponent(new MeshRenderer(new Mesh(cube.Vertices, cube.Indices),
             new Material(new MaterialDescription(Texture.White)) { AlbedoColor = Color.Red }));
         AddEntity(hitCube);
-    }
-
-    public override void Update(float dt)
-    {
-        base.Update(dt);
-        
-        if (PhysicsWorld.Raycast(Camera.Transform.Position, Camera.Transform.Forward, 100, out RayHit hit))
-        {
-            //Console.WriteLine(
-            //    $"Yes! Hit Entity '{hit.Entity().Name}', Position: {hit.Entity().Transform.Position} (HitPos: {hit.Position}, Normal: {hit.Normal})");
-            
-            ref Transform transform = ref GetEntity("HitCube").Transform;
-            transform.Position = hit.Position;
-            transform.Rotation = hit.Entity().Transform.Rotation;
-
-            if (hit.Entity().TryGetComponent(out HighlightComponent highlight))
-                highlight.Highlight = true;
-        }
-        //else
-            //Console.WriteLine("Nope");
     }
 }

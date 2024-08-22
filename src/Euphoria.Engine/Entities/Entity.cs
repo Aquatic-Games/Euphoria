@@ -67,6 +67,9 @@ public class Entity : IDisposable
         return component;
     }
 
+    public bool HasComponent<T>() where T : Component
+        => _componentPointers.ContainsKey(typeof(T));
+
     public virtual void Initialize()
     {
         if (_hasInitialized)

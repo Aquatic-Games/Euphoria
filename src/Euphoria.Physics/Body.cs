@@ -51,6 +51,46 @@ public struct Body
         }
     }
 
+    public ref Vector3 LinearVelocity
+    {
+        get
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            switch (_collidable.Mobility)
+            {
+                case CollidableMobility.Dynamic:
+                case CollidableMobility.Kinematic:
+                    return ref simulation.Bodies[_collidable.BodyHandle].Velocity.Linear;
+                
+                case CollidableMobility.Static:
+                    throw new NotSupportedException();
+                    
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+    
+    public ref Vector3 AngularVelocity
+    {
+        get
+        {
+            Simulation simulation = PhysicsWorld.Simulation;
+            switch (_collidable.Mobility)
+            {
+                case CollidableMobility.Dynamic:
+                case CollidableMobility.Kinematic:
+                    return ref simulation.Bodies[_collidable.BodyHandle].Velocity.Angular;
+                
+                case CollidableMobility.Static:
+                    throw new NotSupportedException();
+                    
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+
     public Body(CollidableReference collidable)
     {
         _collidable = collidable;

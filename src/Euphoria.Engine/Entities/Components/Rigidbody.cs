@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Euphoria.Engine.Scenes;
 using Euphoria.Physics;
 using Euphoria.Physics.Shapes;
@@ -16,12 +17,33 @@ public class Rigidbody : Component
     private Body _body;
     
     public readonly IShape Shape;
+
+    public ref Vector3 LinearVelocity => ref _body.LinearVelocity;
+
+    public ref Vector3 AngularVelocity => ref _body.AngularVelocity;
     
     public Rigidbody(IShape shape, float mass, bool interpolate = true)
     {
         Shape = shape;
         _mass = mass;
         _interpolate = interpolate;
+    }
+    
+    public void Teleport(Vector3 position)
+    {
+        _body.Position = position;
+    }
+
+    public void Teleport(Vector3 position, Quaternion rotation)
+    {
+        _body.Position = position;
+        _body.Rotation = rotation;
+    }
+
+    public void ResetVelocity()
+    {
+        LinearVelocity = Vector3.Zero;
+        AngularVelocity = Vector3.Zero;
     }
 
     public override void Initialize()

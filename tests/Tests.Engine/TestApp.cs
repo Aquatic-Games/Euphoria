@@ -29,6 +29,7 @@ public class TestApp : Application
         mainActionSet.Actions.Add("Move", new InputAction(new Binding2D<KeyBinding>(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
         mainActionSet.Actions.Add("Jump", new InputAction(new KeyBinding(Key.Space)));
         mainActionSet.Actions.Add("Crouch", new InputAction(new KeyBinding(Key.LeftControl)));
+        mainActionSet.Actions.Add("Interact", new InputAction(new KeyBinding(Key.E)));
         mainActionSet.Actions.Add("Exit", new InputAction(new KeyBinding(Key.Escape)));
         Input.AddActionSet("Main", mainActionSet);
         
