@@ -17,24 +17,33 @@ public struct MaterialDescription
 
     public Color AlbedoColor;
 
+    public float MetallicColor;
+
+    public float RoughnessColor;
+
     public RasterizerDescription Rasterizer;
     
     public DepthStencilDescription Depth;
 
     public PrimitiveType PrimitiveType;
 
-    public MaterialDescription(Texture albedo)
+    public MaterialDescription(Texture albedo, Texture normal = null, Texture metallic = null, Texture roughness = null,
+        Texture occlusion = null, Color? albedoColor = null, float metallicColor = 0.0f, float roughnessColor = 1.0f,
+        RasterizerDescription? rasterizer = null, DepthStencilDescription? depth = null,
+        PrimitiveType primitiveType = PrimitiveType.TriangleList)
     {
         Albedo = albedo;
-        Normal = Texture.EmptyNormal;
-        Metallic = Texture.Black;
-        Roughness = Texture.White;
-        Occlusion = Texture.White;
+        Normal = normal ?? Texture.EmptyNormal;
+        Metallic = metallic ?? Texture.White;
+        Roughness = roughness ?? Texture.White;
+        Occlusion = occlusion ?? Texture.White;
         
-        AlbedoColor = Color.White;
+        AlbedoColor = albedoColor ?? Color.White;
+        MetallicColor = metallicColor;
+        RoughnessColor = roughnessColor;
         
-        Rasterizer = RasterizerDescription.CullClockwise;
-        Depth = DepthStencilDescription.DepthLessEqual;
-        PrimitiveType = PrimitiveType.TriangleList;
+        Rasterizer = rasterizer ?? RasterizerDescription.CullClockwise;
+        Depth = depth ?? DepthStencilDescription.DepthLessEqual;
+        PrimitiveType = primitiveType;
     }
 }

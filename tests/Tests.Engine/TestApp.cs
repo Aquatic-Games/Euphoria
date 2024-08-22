@@ -25,7 +25,7 @@ public class TestApp : Application
         Input.AddActionSet("UI", uiActionSet);
         
         ActionSet mainActionSet = new ActionSet("Main", CursorMode.Locked);
-        mainActionSet.Actions.Add("Look", new InputAction(new MouseBinding(0.5f), new Binding2D<KeyBinding>(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
+        mainActionSet.Actions.Add("Look", new InputAction(new MouseMoveBinding(0.5f), new Binding2D<KeyBinding>(new KeyBinding(Key.Up), new KeyBinding(Key.Down), new KeyBinding(Key.Left), new KeyBinding(Key.Right))));
         mainActionSet.Actions.Add("Move", new InputAction(new Binding2D<KeyBinding>(new KeyBinding(Key.W), new KeyBinding(Key.S), new KeyBinding(Key.A), new KeyBinding(Key.D))));
         mainActionSet.Actions.Add("Jump", new InputAction(new KeyBinding(Key.Space)));
         mainActionSet.Actions.Add("Crouch", new InputAction(new KeyBinding(Key.LeftControl)));

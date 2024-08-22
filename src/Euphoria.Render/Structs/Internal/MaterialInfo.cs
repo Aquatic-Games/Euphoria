@@ -8,8 +8,16 @@ internal readonly struct MaterialInfo
 {
     public readonly Color AlbedoColor;
 
-    public MaterialInfo(Color albedoColor)
+    public readonly float MetallicColor;
+
+    public readonly float RoughnessColor;
+
+    private readonly double _padding;
+
+    public MaterialInfo(Color albedoColor, float metallicColor, float roughnessColor)
     {
         AlbedoColor = albedoColor;
+        MetallicColor = metallicColor;
+        RoughnessColor = roughnessColor;
     }
 }

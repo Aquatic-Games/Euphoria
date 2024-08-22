@@ -20,6 +20,10 @@ public sealed class Material : IDisposable
 
     public Color AlbedoColor;
 
+    public float MetallicColor;
+
+    public float RoughnessColor;
+
     public Texture Albedo => _albedo;
 
     public Texture Normal => _normal;
@@ -30,7 +34,7 @@ public sealed class Material : IDisposable
 
     public Texture Occlusion => _occlusion;
 
-    internal MaterialInfo MaterialInfo => new MaterialInfo(AlbedoColor);
+    internal MaterialInfo MaterialInfo => new MaterialInfo(AlbedoColor, MetallicColor, RoughnessColor);
 
     public Material(in MaterialDescription description)
     {
@@ -41,6 +45,8 @@ public sealed class Material : IDisposable
         _occlusion = description.Occlusion;
 
         AlbedoColor = description.AlbedoColor;
+        MetallicColor = description.MetallicColor;
+        RoughnessColor = description.RoughnessColor;
 
         Device device = Graphics.Device;
         Renderer3D renderer = Graphics.Renderer3D;

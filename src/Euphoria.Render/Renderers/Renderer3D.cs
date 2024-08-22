@@ -86,7 +86,7 @@ public class Renderer3D : IDisposable
                 ShaderStage.VertexPixel)));
         DrawInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(new DescriptorBindingDescription(0, DescriptorType.ConstantBuffer,
-                ShaderStage.Vertex)));
+                ShaderStage.VertexPixel)));
         
         MaterialInfoLayout = device.CreateDescriptorLayout(
             new DescriptorLayoutDescription(

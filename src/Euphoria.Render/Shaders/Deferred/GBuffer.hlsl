@@ -4,6 +4,7 @@
 
 #include "../Utils/Common.hlsli"
 #include "../Utils/Math.hlsli"
+#include "../Lighting/Material.hlsli"
 
 struct VSInput
 {
@@ -41,7 +42,7 @@ cbuffer CameraInfo : register(b0, space0)
 cbuffer DrawInfo : register(b0, space1)
 {
     float4x4 World;
-    float4 AlbedoColor;
+    Material DrawMat;
 }
 
 EE_SAMPLER2D(Albedo, 0, 2);
@@ -59,7 +60,7 @@ VSOutput VSMain(const in VSInput input)
     output.Position = mul(Projection, mul(View, worldSpace));
     output.WorldSpace = worldSpace.xyz;
     output.TexCoord = input.TexCoord;
-    output.Color = input.Color * AlbedoColor;
+    output.Color = input.Color * DrawMat.AlbedoColor;
 
     float3 T = normalize(mul((float3x3) World, input.Tangent));
     const float3 N = normalize(mul((float3x3) World, input.Normal));
@@ -97,7 +98,7 @@ PSOutput PSMain(const in VSOutput input)
     output.Albedo = float4(albedoTex.rgb, 1.0);
     output.Position = float4(input.WorldSpace, 1.0);
     output.Normal = float4(normal, 1.0);
-    output.MetallicRoughness = float4(metallicTex.r, roughnessTex.r, occlusionTex.r, 1.0);
+    output.MetallicRoughness = float4(metallicTex.r * DrawMat.MetallicColor, roughnessTex.r * DrawMat.RoughnessColor, occlusionTex.r, 1.0);
     
     return output;
 }
