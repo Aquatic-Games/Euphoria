@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Physics", "src\Eup
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Parsers", "src\Euphoria.Parsers\Euphoria.Parsers.csproj", "{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Euphoria.Audio.DNA", "src\Euphoria.Audio.DNA\Euphoria.Audio.DNA.csproj", "{8FC2655F-F5C4-4ED5-A5F0-DA41D3621006}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +140,10 @@ Global
 		{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BB0CC66-10EB-45DF-ADAF-C992E59BA217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC2655F-F5C4-4ED5-A5F0-DA41D3621006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC2655F-F5C4-4ED5-A5F0-DA41D3621006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC2655F-F5C4-4ED5-A5F0-DA41D3621006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC2655F-F5C4-4ED5-A5F0-DA41D3621006}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B6124373-549F-4A9D-8979-A48CBCB22C79} = {E1164F69-7032-446A-9DA8-23D0407C58B3}
