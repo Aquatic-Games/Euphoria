@@ -1,6 +1,12 @@
-﻿namespace Euphoria.Audio.DNA.Sources;
+﻿using System;
+
+namespace Euphoria.Audio.DNA.Sources;
 
 public abstract class Source
 {
-    internal abstract void GetBuffer(float[] outBuffer, uint sampleRate);
+    public abstract uint ActiveVoices { get; }
+
+    internal abstract void Initialize(uint sampleRate);
+    
+    internal abstract void GetBuffer(Span<float> outBuffer);
 }
