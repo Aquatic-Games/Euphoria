@@ -7,18 +7,42 @@ namespace Euphoria.Engine.Debugging;
 
 public static class EuphoriaDebug
 {
-    public static bool IsOpen;
+    private static bool _open;
+    private static bool _pinned;
 
     public static Dictionary<Type, IDebugTab> Tabs;
 
+    public static bool IsOpen => _open;
+
+    public static bool IsPinned => _pinned;
+
     static EuphoriaDebug()
     {
-        IsOpen = false;
+        _open = false;
+        _pinned = false;
         //Tabs = [new DebugConsole(), new StatsTab(), new RendererTab()];
         Tabs = new Dictionary<Type, IDebugTab>();
         AddTab(new DebugConsole());
         AddTab(new StatsTab());
         AddTab(new RendererTab());
+    }
+
+    public static void Open()
+    {
+        _open = true;
+        _pinned = false;
+    }
+
+    public static void Close()
+    {
+        _open = false;
+        _pinned = false;
+    }
+
+    public static void Pin()
+    {
+        _open = true;
+        _pinned = true;
     }
 
     public static T GetTab<T>() where T : IDebugTab
@@ -34,17 +58,24 @@ public static class EuphoriaDebug
     internal static void Update()
     {
         if (Input.IsKeyDown(Key.LeftShift) && Input.IsKeyPressed(Key.F12))
-        {
-            IsOpen = !IsOpen;
-        }
+            Open();
         
-        if (!IsOpen)
+        if (!_open)
             return;
 
-        Input.UIWantsFocus = true;
+        if (!_pinned)
+            Input.UIWantsFocus = true;
 
-        if (ImGui.Begin("Debug", ref IsOpen))
+        if (ImGui.Begin("Debug", ref _open, ImGuiWindowFlags.MenuBar | (_pinned ? ImGuiWindowFlags.NoInputs : 0)))
         {
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.MenuItem("Pin", "", _pinned))
+                    Pin();
+                
+                ImGui.EndMenuBar();
+            }
+            
             if (ImGui.BeginTabBar("debugTabs"))
             {
                 foreach ((_, IDebugTab tab) in Tabs)

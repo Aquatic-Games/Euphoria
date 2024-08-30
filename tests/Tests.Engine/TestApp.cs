@@ -71,7 +71,7 @@ public class TestApp : Application
             App.Close();
 
         if (Input.GetActionSet("UI").GetAction("ExitMenu").IsPressed)
-            EuphoriaDebug.IsOpen = false;
+            EuphoriaDebug.Close();
 
         if (Input.UIWantsFocus)
             Input.SetActiveActionSet(Input.GetActionSet("UI"));
