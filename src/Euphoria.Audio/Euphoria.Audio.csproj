@@ -6,4 +6,8 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\lib\MixrSharp\MixrSharp\MixrSharp.csproj" />
+    </ItemGroup>
+
 </Project>
