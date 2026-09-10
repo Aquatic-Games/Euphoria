@@ -1,11 +1,13 @@
 #include "RenderContext.h"
 
+#include <__filesystem/filesystem_error.h>
+
 #include "SDLUtils.h"
 
 #include "Core/Logger.h"
 #include "Core/BitUtils.h"
-
-#include <cstring>
+#include "Core/File.h"
+#include "Core/Path.h"
 
 namespace cge::Private
 {
@@ -43,6 +45,8 @@ namespace cge::Private
         CGE_TRACE("Associating device with window.");
         CGE_SDL_CHECK(SDL_ClaimWindowForGPUDevice(Device, Window), "Claim window for device");
 
+        SDL_ShaderCross_Init();
+
         _transferBufferSize = TransferBufferInitialSize;
         _transferBufferOffset = 0;
         _transferBuffer = CreateTransferBuffer(SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, _transferBufferSize);
@@ -51,8 +55,32 @@ namespace cge::Private
     RenderContext::~RenderContext()
     {
         SDL_ReleaseGPUTransferBuffer(Device, _transferBuffer);
+        SDL_ShaderCross_Quit();
         SDL_ReleaseWindowFromGPUDevice(Device, Window);
         SDL_DestroyGPUDevice(Device);
+    }
+
+    SDL_GPUShader* RenderContext::CreateShader(SDL_ShaderCross_ShaderStage stage, const std::string& name,const std::string& entryPoint)
+    {
+        auto fullPath = Path::Combine(CGE_CONTENT_DIR, "Shaders", name);
+        auto data = File::ReadBytes(fullPath);
+
+        SDL_ShaderCross_GraphicsShaderMetadata* metadata = SDL_ShaderCross_ReflectGraphicsSPIRV(data.data(), data.size(), 0);
+
+        SDL_ShaderCross_SPIRV_Info spirvInfo
+        {
+            .bytecode = data.data(),
+            .bytecode_size = data.size(),
+            .entrypoint = entryPoint.c_str(),
+            .shader_stage = stage
+        };
+
+        CGE_TRACE("Creating shader.");
+        SDL_GPUShader* shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(Device, &spirvInfo, &metadata->resource_info, 0);
+        CGE_SDL_CHECK(shader, "Create shader");
+
+        SDL_free(metadata);
+        return shader;
     }
 
     SDL_GPUTransferBuffer* RenderContext::CreateTransferBuffer(SDL_GPUTransferBufferUsage usage, u32 size) const

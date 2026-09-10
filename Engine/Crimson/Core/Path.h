@@ -6,6 +6,7 @@ namespace cge
 {
     class Path final
     {
+    public:
 #if CGE_PLATFORM_WINDOWS
         static constexpr char PathSeparator = '\\';
 #else

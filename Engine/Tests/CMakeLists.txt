@@ -18,6 +18,7 @@ foreach (dir IN LISTS CGE_TEST_DIRS)
         message(STATUS "${testname}: ${file}")
         add_executable(${testname} ${file} ${CGE_TESTS_FRAMEWORK})
         target_link_libraries(${testname} Crimson)
+        cge_setup_content(${testname} "Content" "${CMAKE_CURRENT_SOURCE_DIR}/CommonContent")
         add_custom_command(
                 TARGET ${testname} POST_BUILD
                 COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/CommonContent" "${CMAKE_CURRENT_BINARY_DIR}/Content"

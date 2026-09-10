@@ -5,6 +5,8 @@
 #include "Math/Vec2.h"
 
 #include <SDL3/SDL.h>
+#include <SDL3_shadercross/SDL_shadercross.h>
+
 #include <unordered_set>
 
 namespace cge::Private
@@ -30,6 +32,7 @@ namespace cge::Private
         explicit RenderContext(SDL_Window* window);
         ~RenderContext();
 
+        [[nodiscard]] SDL_GPUShader* CreateShader(SDL_ShaderCross_ShaderStage stage, const std::string& name, const std::string& entryPoint);
         [[nodiscard]] SDL_GPUTransferBuffer* CreateTransferBuffer(SDL_GPUTransferBufferUsage usage, u32 size) const;
 
         SDL_GPUTransferBuffer* GetUploadBuffer(u32 size, u32& offset, bool& shouldCycle);

@@ -7,6 +7,8 @@ namespace cge
     Renderer::Renderer(SDL_Window* window)
     {
         _context = std::make_unique<Private::RenderContext>(window);
+
+        SDL_GPUShader* test = _context->CreateShader(SDL_SHADERCROSS_SHADERSTAGE_VERTEX, "SpriteRenderer", "VSMain");
     }
 
     Renderer::~Renderer()

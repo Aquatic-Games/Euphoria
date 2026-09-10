@@ -9,6 +9,7 @@ namespace cge
 {
     class File final
     {
+    public:
         static std::vector<u8> ReadBytes(const std::string_view& path);
     };
 }
