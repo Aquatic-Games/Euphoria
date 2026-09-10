@@ -36,6 +36,7 @@ function (cge_setup_content target content_name content_dir)
     get_target_property(CRIMSON_DIR Crimson SOURCE_DIR)
     get_filename_component(ENGINE_DIR ${CRIMSON_DIR} DIRECTORY)
 
+    # TODO: this copies ALL files but we only want to copy the .spv files. also should compile the files from scratch.
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy_directory "${ENGINE_DIR}/Shaders" "$<TARGET_FILE_DIR:${target}>/${content_name}/Shaders"
         VERBATIM

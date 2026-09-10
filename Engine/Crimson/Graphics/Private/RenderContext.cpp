@@ -62,7 +62,7 @@ namespace cge::Private
 
     SDL_GPUShader* RenderContext::CreateShader(SDL_ShaderCross_ShaderStage stage, const std::string& name,const std::string& entryPoint)
     {
-        auto fullPath = Path::Combine(CGE_CONTENT_DIR, "Shaders", name);
+        auto fullPath = Path::Combine(CGE_CONTENT_DIR, "Shaders", std::format("{}.spv", name));
         auto data = File::ReadBytes(fullPath);
 
         SDL_ShaderCross_GraphicsShaderMetadata* metadata = SDL_ShaderCross_ReflectGraphicsSPIRV(data.data(), data.size(), 0);
