@@ -11,6 +11,14 @@ internal static class SDLUtils
             throw new Exception($"SDL operation \"{operation}\" failed: {SDL.GetError()}");
     }
 
+    public static nint Check(this nint ptr, string operation)
+    {
+        if (ptr == 0)
+            throw new Exception($"SDL operation \"{operation}\" failed: {SDL.GetError()}");
+
+        return ptr;
+    }
+
     public static T Check<T>(this T handle, string operation) where T : IHandle
     {
         if (handle.IsNull)
