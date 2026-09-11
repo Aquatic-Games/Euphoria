@@ -66,6 +66,13 @@ public static class Renderer
             return;
         }
 
+        foreach (SDL.GPUTexture texture in Context.MipmapQueue)
+        {
+            Logger.Trace($"Generating mipmaps for texture {texture.Handle}.");
+            SDL.GenerateMipmapsForGPUTexture(cb, texture);
+        }
+        Context.MipmapQueue.Clear();
+
         SDL.GPUColorTargetInfo targetInfo = new()
         {
             Texture = swapchainTexture,

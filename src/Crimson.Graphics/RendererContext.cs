@@ -20,9 +20,12 @@ internal sealed unsafe class RendererContext : IDisposable
     public readonly SDL.Window Window;
     public readonly SDL.GPUDevice Device;
 
+    public readonly HashSet<SDL.GPUTexture> MipmapQueue;
+
     public RendererContext(SDL.Window window)
     {
         Window = window;
+        MipmapQueue = [];
 
         uint props = SDL.CreateProperties();
         // always enable vulkan as a fallback and for linux
